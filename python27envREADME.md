@@ -74,6 +74,8 @@ make
 # detect actual objects and translate into physical properties (redshift, line list) sorted by significance:
 ```
 python mf_new_max_inspect_feline_output.py s2n_v250.fits > catalog.txt
+```
+```
 sort -rn -k5 catalog.txt > sorted_catalog.txt
 ```
 # create comprehensive human readable plots for each detection:
