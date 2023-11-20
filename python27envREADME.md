@@ -69,7 +69,7 @@ make clean
 make
 ```
 ```
-/feline07.bin 0 1.9 20 7
+./feline07.bin 0 1.9 20 7
 ```
 # detect actual objects and translate into physical properties (redshift, line list) sorted by significance:
 ```
