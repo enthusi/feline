@@ -16,12 +16,14 @@
 
 __version__ = '1.0.2'
 
-import sys,os,string,random, time
+import sys,os,string,random,warnings,time
 import argparse
 import multiprocessing
+import math as m
 import pylab as p
 import numpy as np
 from astropy.io import fits
+from scipy import signal
 from scipy import version
 
 scipy_version = version.version
@@ -369,12 +371,12 @@ for filter_window in filter_windows:
 # --------------------------------------------
 # (split up over several processors)
 filtered = spatial_smooth_lib.filter_parallel(filter_windows,
-											  cube_data,
-											  num_threads,
-											  selMask,
-											  mask,
-											  filename=input_filename,
-											  method='fft')
+                                              cube_data,
+                                              num_threads,
+                                              selMask,
+                                              mask,
+                                              filename=input_filename,
+                                              method='fft')
 filtered[nancube] = 0  # setting all nans in the original cube to zero in the output datacube 
 
 mask = [] # delete old mask, and dummy it
@@ -450,12 +452,12 @@ if not ignorenoise:
 
     # error propagation on all sclices of stat for the filtering
     filtered_stat = spatial_smooth_lib.filter_parallel(filter_windows_squared,
-													   stat_data,
-													   num_threads,
-													   selMask,
-													   mask,
-													   filename=input_filename,
-													   method='fft')
+                                                       stat_data,
+                                                       num_threads,
+                                                       selMask,
+                                                       mask,
+                                                       filename=input_filename,
+                                                       method='fft')
 
     print(input_filename+': Writing out final data & deletion of temporary files... '+\
               get_timestring(starttime))
