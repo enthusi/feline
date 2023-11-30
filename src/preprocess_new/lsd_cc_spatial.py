@@ -15,15 +15,12 @@
 import lib.lsd_cat_lib as lsd_cat_lib
 __version__ = lsd_cat_lib.get_version()
 
-import sys,os,string,random,warnings,time
+import sys,os,string,random, time
 from datetime import datetime
 import argparse
 import multiprocessing
-import math as m
-import pylab as p
 import numpy as np
 from astropy.io import fits
-from scipy import signal
 import gc
 
 #  macOS since Sierra uses "spawn" 
@@ -350,12 +347,12 @@ filter_windows_squared = [np.square(filter_window)
 # --------------------------------------------
 # (split up over several processors)
 filtered = spatial_smooth_lib.filter_parallel(filter_windows,
-                                              cube_data,
-                                              num_threads,
-                                              selMask,
-                                              mask,
-                                              filename=input_filename,
-                                              method='fft')
+											  cube_data,
+											  num_threads,
+											  selMask,
+											  mask,
+											  filename=input_filename,
+											  method='fft')
 filtered[nancube] = 0  # setting all nans in the original cube to zero
                        # in the output datacube
 
@@ -417,12 +414,12 @@ else:
 
     # error propagation on all sclices of stat for the filtering
     filtered_stat = spatial_smooth_lib.filter_parallel(filter_windows_squared,
-                                                       stat_data,
-                                                       num_threads,
-                                                       selMask,
-                                                       mask,
-                                                       filename=input_filename,
-                                                       method='fft')
+													   stat_data,
+													   num_threads,
+													   selMask,
+													   mask,
+													   filename=input_filename,
+													   method='fft')
 
     print(input_filename + ': Writing out final data... ' + \
           get_timestring(starttime))

@@ -100,10 +100,10 @@ foundifrom="not"
 mpl.rcParams["savefig.directory"] = "."
 cont_flag = False
 
-full_data=open('info.txt','w')
+full_data=open('../../data/lookup/info.txt', 'w')
 full_data.write('id, px, py, z, b, quality, template, used, gaussx, gaussy, gaussrot, smoothratio, oiiratio, gal_ra, gal_dec, qso_x, qso_y\n')
 
-error_log=open('errors.log','w')
+error_log=open('../../errors.log', 'w')
 #export PYTHONPATH=PYTHONPATH:~/local/lib/python2.7/site-packages
 # Martin Wendt v0.01
 # please report any bugs and/or feature requests
@@ -150,7 +150,7 @@ prev_cat=False
 max_lines_shown=12 
 columns=12
 rows=4
-ratios=open("stat_oii_ratio.txt","w")
+ratios=open("../../data/lookup/stat_oii_ratio.txt", "w")
 
 with open("raw_reordered_s2ncube.dat", 'rb') as f:
     header=f.read()[:16]
@@ -176,7 +176,7 @@ min_line_number = 2
 
 only_good = False
 
-statistics=open('statistics.txt','w')
+statistics=open('../../data/lookup/statistics.txt', 'w')
 peakratio=0
 #stat_good=open('stat_good.txt','w')
 #stat_bad=open('stat_bad.txt','w')
@@ -194,7 +194,7 @@ try:
 except:
   print "no former selections available!"
 
-verified_sources = open('output_catalog.txt','w')
+verified_sources = open('../../output_catalog.txt', 'w')
 export_ds9 = True
 
 def fill(orig, start_coords, fill_value):
@@ -502,8 +502,8 @@ imused.resize((xd,yd))
    
 
 #for data cube
-cube=Cube(sys.argv[4],ext=0)
-cubestat=Cube(sys.argv[4],ext=1)
+cube=Cube(sys.argv[4],ext=1)
+cubestat=Cube(sys.argv[4],ext=2)
 cube.info()
 
 original_cube=Cube(sys.argv[1],ext=1)
@@ -517,9 +517,9 @@ whiteimage=Cube(sys.argv[1],ext=1).sum(axis=0).data
 #whiteimage=Image(sys.argv[1]).data
 fullwhiteimage=Cube(sys.argv[1],ext=1).sum(axis=0)
 
-s2ncube=Cube(sys.argv[2],ext=0)
+s2ncube=Cube(sys.argv[2],ext=1)
 hdu = fits.open(sys.argv[2])
-coord = wcs.WCS(hdu[0].header)
+coord = wcs.WCS(hdu[1].header)
 
 dz,dy,dx=cube.shape
 
@@ -545,7 +545,7 @@ except:
   print "no QSO given"
   sys.exit(1)
     
-qso_positions_file=open('qso_centers_deg.txt','r')
+qso_positions_file=open('../../data/lookup/qso_centers_deg.txt', 'r')
 qso_found=False
 print "looking for %s" % qso_id
 for qso in qso_positions_file:

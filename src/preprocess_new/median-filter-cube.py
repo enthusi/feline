@@ -18,12 +18,11 @@ import time
 from datetime import datetime
 # numpy / scipy / astropy
 import numpy as np
-from scipy.ndimage import filters
 from astropy.io import fits
 # lsdcat/lib/line_em_funcs.py
 import line_em_funcs as lef
 import lsd_cat_lib
-from median_filter_lib import notch_interpol, medfilt_cube_para
+from median_filter_lib import medfilt_cube_para
 
 #  macOS since Sierra uses "spawn"
 try:

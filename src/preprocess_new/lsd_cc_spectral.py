@@ -20,7 +20,6 @@ import time
 from datetime import datetime
 import sys
 import os
-import math as m
 import numpy as np
 from astropy.io import fits
 import string

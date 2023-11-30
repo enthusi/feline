@@ -217,8 +217,8 @@ btop=width
 bright=xd-width
 bbottom=yd-width
 
-hdu_muse = fits.open("image00.fits",
-                     memmap=False)  
+hdu_muse = fits.open("../../image00.fits",
+					 memmap=False)
 data_muse = hdu_muse[1].data
 nan_sel = np.isnan(data_muse)
 
