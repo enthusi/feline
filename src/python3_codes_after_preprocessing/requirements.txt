@@ -6,7 +6,6 @@ imageio==2.33.0
 kiwisolver==1.4.5
 lazy_loader==0.3
 matplotlib==3.8.2
-mpdaf==3.5
 networkx==3.2.1
 numpy==1.26.2
 packaging==23.2
@@ -20,3 +19,4 @@ scikit-image==0.22.0
 scipy==1.11.4
 six==1.16.0
 tifffile==2023.9.26
+mpdaf==3.5
