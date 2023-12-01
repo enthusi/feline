@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-// #define SDLavailable 1
+#define SDLavailable 1
 
 #ifdef SDLavailable
 #include <SDL.h>

@@ -24,7 +24,7 @@ dz, dy, dx = c0.shape
 start = c0.wave.get_crval()
 print(dz, dy, dx, start)
 
-fout = open('raw_reordered_s2ncube.dat', 'wb')
+fout = open('data/raw/raw_reordered_s2ncube.dat', 'wb')
 fout.write(struct.pack('f', dz))
 fout.write(struct.pack('f', dy))
 fout.write(struct.pack('f', dx))
