@@ -13,7 +13,7 @@
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
+#define DATA_PATH "data/raw/"
 int getcolor(int v)
 {
  int red,green,blue;
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
   FILE *f;
   FILE *image;
   temp = malloc(sizeof(float)*4);
-  if ((f = fopen("raw_reordered_s2ncube.dat", "rb")) == NULL) {
+  if ((f = fopen(DATA_PATH "raw_reordered_s2ncube.dat", "rb")) == NULL) {
     perror("No File found");
     return -1;
   }
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   
   printf("Reading in full cube (%.1f MB)... ",(dx*dy*dz*sizeof(float)/1048576.0));
   temp = malloc(sizeof(float)*dz*dy*dx+sizeof(float)*size_header);
-  if ((f = fopen("raw_reordered_s2ncube.dat", "rb")) == NULL) {
+  if ((f = fopen(DATA_PATH "raw_reordered_s2ncube.dat", "rb")) == NULL) {
     perror("No File found");
     return -1;
   }
