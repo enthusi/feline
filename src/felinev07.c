@@ -105,8 +105,16 @@ int main(int argc, char *argv[])
   FILE *f;
   FILE *image;
   temp = malloc(sizeof(float)*4);
-  f = fopen("raw_reordered_s2ncube.dat", "rb");
-  fread(temp, sizeof(float)*4, 1, f);
+  if ((f = fopen("raw_reordered_s2ncube.dat", "rb")) == NULL) {
+    perror("No File found");
+    return -1;
+  }
+
+  int num = fread(temp, sizeof(float)*4, 1, f);
+  if (!num){
+	  perror("Couldn't read from file");
+	  return -1;
+  }
   fclose(f);
   
   int size_header=4;
@@ -130,8 +138,15 @@ int main(int argc, char *argv[])
   
   printf("Reading in full cube (%.1f MB)... ",(dx*dy*dz*sizeof(float)/1048576.0));
   temp = malloc(sizeof(float)*dz*dy*dx+sizeof(float)*size_header);
-  f = fopen("raw_reordered_s2ncube.dat", "rb");
-  fread(temp, (sizeof(float)*dz*dy*dx+sizeof(float)*size_header), 1, f);
+  if ((f = fopen("raw_reordered_s2ncube.dat", "rb")) == NULL) {
+    perror("No File found");
+    return -1;
+  }
+
+  num = fread(temp, (sizeof(float)*dz*dy*dx+sizeof(float)*size_header), 1, f);
+  if(!num){
+    perror("Could not read from File!");
+  }
   //printf("%d\n",sizeof(float));
   printf("DONE\n");
 
