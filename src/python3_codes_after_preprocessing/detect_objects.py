@@ -1,3 +1,4 @@
+from config import PROJECT_ROOT
 import matplotlib as mpl
 mpl.use('TkAgg')
 import numpy as np

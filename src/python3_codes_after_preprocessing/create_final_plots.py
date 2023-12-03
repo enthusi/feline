@@ -1,6 +1,8 @@
 #from mpdaf.obj import CubeDisk
 #this is the version as of 2017-11-06!
  #python new_plot_and_fit_catalog_allz.py cube.fits s2n_v250.fits sorted_catalog.txt med_filt.fits HE0153-4520
+
+from config import PROJECT_ROOT 
 import matplotlib as mpl
 mpl.use('TkAgg')
 from mpdaf.obj import Cube

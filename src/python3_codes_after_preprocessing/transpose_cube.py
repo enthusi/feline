@@ -1,3 +1,4 @@
+from config import PROJECT_ROOT
 import mpdaf.obj
 import sys
 import struct

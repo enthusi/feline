@@ -1,6 +1,6 @@
 import sys
 import mpdaf.obj
-
+from config import PROJECT_ROOT
 first = True
 
 if first:
