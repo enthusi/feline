@@ -1,9 +1,10 @@
 import sys
 import mpdaf.obj
 from config import PROJECT_ROOT
-first = True
 
-if first:
+ENABLE = True
+
+if ENABLE:
 	name = sys.argv[1]
 	data = mpdaf.obj.Cube(name, ext=1).sum(axis=0)
 	data.info()

@@ -1,8 +1,8 @@
-from config import PROJECT_ROOT
-import mpdaf.obj
 import sys
 import struct
+import mpdaf.obj
 import matplotlib.pyplot as plt
+from config import PROJECT_ROOT
 
 '''
 zqso = 1.23

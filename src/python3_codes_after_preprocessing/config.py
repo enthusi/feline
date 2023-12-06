@@ -1,8 +1,7 @@
 import os
 
-abspp = os.getcwd()
-parent = os.path.abspath(os.path.join(abspp, os.pardir))
-parent2 = os.path.abspath(os.path.join(parent, os.pardir))
+current_level_directory = os.getcwd()
+parent_level_directory = os.path.abspath(os.path.join(current_level_directory, os.pardir))
+top_level_directory = os.path.abspath(os.path.join(parent_level_directory, os.pardir))
 
-
-PROJECT_ROOT = parent2
+PROJECT_ROOT = top_level_directory
