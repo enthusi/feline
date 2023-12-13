@@ -1,18 +1,19 @@
-from mpdaf.obj import Cube
-from mpdaf.obj import Image
+import mpdaf
 import matplotlib.pyplot as plt
-from matplotlib import cm
 import math
 import struct
 import numpy as np
-from numpy import *
-from scipy.optimize import curve_fit
-from astropy import wcs
-from astropy.io import fits
+import scipy
 import ref_index
 import matplotlib as mpl
 import sys
 import astropy
+
+# from mpdaf.obj import Cube
+# from numpy import *
+# from scipy.optimize import curve_fit
+# from astropy import wcs
+# from astropy.io import fits
 
 mpl.use('TkAgg')
 
@@ -23,8 +24,21 @@ mpl.use('TkAgg')
 cosmo = astropy.cosmology.FlatLambdaCDM(H0=70, Om0=0.3)
 
 # qsotag=sys.argv[5].ljust(14)
-galaxy_absorption = [2586.65, 2600.17, 2796.35, 3890.1506, 3934.777, 3969.588, 4102.89, 4305.61, 4341.68, 4862.68,
-					 5176.7, 5895.6]
+galaxy_absorption = [
+	2586.65,
+	2600.17,
+	2796.35,
+	3890.1506,
+	3934.777,
+	3969.588,
+	4102.89,
+	4305.61,
+	4341.68,
+	4862.68,
+	5176.7,
+	5895.6
+]
+
 """
 | Transition  |  wl (vac) | comment                                 |
 |-------------+-----------+-----------------------------------------|
@@ -42,16 +56,6 @@ galaxy_absorption = [2586.65, 2600.17, 2796.35, 3890.1506, 3934.777, 3969.588, 4
 | MgI (blend) |    5176.7 |                                         |
 | Na          |    5895.6 |  
 """
-# print "looking for tag: '%s'" % qsotag
-# catfilename="../lowz_sources_v1.2.fits"
-# hdulist= pyfits.open(catfilename,ext=1)
-# print hdulist.info()
-# prihdr = hdulist[1].data
-# x=prihdr[(prihdr['QSO']==qsotag)]['RA']
-# if len(x)<1:
-#    print "BAD qso tag:",qsotag
-#    sys.exit(1)
-
 
 quiet = False
 
@@ -73,10 +77,6 @@ def get_impact(QSO_X, QSO_Y, px, py, z):
 	return theta * scale
 
 
-# gnuplot> pwd
-# /home/grus/mwendt/2017/uves/0838
-# gnuplot> plot 'good_sorted.txt' us 10:11 notitle, 'good_sorted.txt' us 10:11:4 index 3 pt 7  ps 3 palette notitle, 'qso.txt' ps 3 lc 8 title 'QSO'
-
 # dummies
 qso_x = 150
 qso_y = 150
@@ -94,14 +94,6 @@ full_data.write(
 	'id, px, py, z, b, quality, template, used, gaussx, gaussy, gaussrot, smoothratio, oiiratio, gal_ra, gal_dec, qso_x, qso_y\n')
 
 error_log = open('errors.log', 'w')
-
-
-# export PYTHONPATH=PYTHONPATH:~/local/lib/python2.7/site-packages
-# Martin Wendt v0.01
-# please report any bugs and/or feature requests
-# to mwendt@astro.physik.uni-potsdam.de
-# print ref_index.vac2air(1215.67/10.0)*10.0
-# sys.exit(0)
 
 
 def pix_to_world(coord, pix):
@@ -133,9 +125,6 @@ global use_new_pos
 use_new_pos = 0
 
 prev_cat = False
-# reading test_ok_catalog or original catalog.txt?
-# python correct_plot_catalog5.py /SCRATCH/mwendt/2017/new_qso_cubes/analysis1354/1354.fits /SCRATCH/mwendt/2017/new_qso_cubes/analysis1354/s2n_v250.fits catalog.txt /SCRATCH/mwendt/2017/new_qso_cubes/analysis1354/med_filt.fits
-# python correct_plot_catalog5.py /SCRATCH/mwendt/2017/new_qso_cubes/analysis1354/1354.fits /SCRATCH/mwendt/2017/new_qso_cubes/analysis1354/s2n_v250.fits test_ok_catalog.txt /SCRATCH/mwendt/2017/new_qso_cubes/analysis1354/med_filt.fits
 
 # 12 just woudlnt fit in!
 max_lines_shown = 12
@@ -167,8 +156,6 @@ only_good = False
 
 statistics = open('statistics.txt', 'w')
 peakratio = 0
-# stat_good=open('stat_good.txt','w')
-# stat_bad=open('stat_bad.txt','w')
 
 try:
 	pcatalog = {}
@@ -209,7 +196,7 @@ def fill(orig, start_coords, fill_value):
 	xsize, ysize = data.shape
 	orig_value = data[start_coords[0], start_coords[1]]
 
-	stack = set(((start_coords[0], start_coords[1]),))
+	stack = {(start_coords[0], start_coords[1])}
 	if fill_value == orig_value:
 		print("Filling region with same value ")
 		return 0
@@ -265,37 +252,24 @@ def galaxy(w, *p):
 		atom = atoms[k]
 		# atoms_found.append(k)
 		for emission in atom:
-			# lines_found.append(emission)
-
-			###BW13fix
-			# vacline=ref_index.air2vac(emission/10.0,warn=False)*10.0
 			vacline = emission
 			pos = vacline * (z + 1)
 			newpos = ref_index.vac2air(pos / 10.0) * 10.0
-			# name=atom_id[emission]
-			# positions.append(pos)
-			# print i,forfit_t,bin(forfit_t).count("1"),bin(forfit_t),emission
+
 			amplitude = p[2 + i]
-			# sigma=p[1+i*2+1]
-			# amplitude=10
-			# sigma=1.5
-			# print i,amplitude,sigma
+
 			flux += gauss_function(w, amplitude, newpos, sigma)
 
-			# print "ok"
 			i += 1
 	return flux
 
 
-def fit_template(t, z, f, w, sigma_array):
+def fit_template(t, z, f, w, sigma_array, scipy):
 	global forfit_t, forfit_w
 	forfit_t = t
 	forfit_w = w
-	# param=[]
-	# param.append(z)
 
 	params = []
-	# param_bounds=[]
 
 	params.append(z)
 	params.append(1.0)
@@ -322,33 +296,19 @@ def fit_template(t, z, f, w, sigma_array):
 		param_bounds_low.append(0)  # amp
 		param_bounds_high.append(np.inf)
 
-		# param_bounds_low.append(0.9) #sigma
-		# param_bounds_high.append(4.0)
-
-	# popt,pcov = curve_fit(galaxy,w,f,p0=param)
 	param_bounds = (param_bounds_low, param_bounds_high)
-	# popt, pcov = curve_fit(func, xdata, ydata,bounds=param_bounds)
-	# popt,pcov = curve_fit(galaxy,w,f,p0=params,bounds=param_bounds,maxfev=10000)
-
-	# bw13 add varyance
-	# popt,pcov = curve_fit(galaxy,w,f,p0=params,bounds=param_bounds,sigma=sigma_array,absolute_sigma=False,max_nfev=1000)
-	popt, pcov = curve_fit(galaxy, w, f, p0=params, bounds=param_bounds, max_nfev=1000)
+	popt, pcov = scipy.optimize.curve_fit(galaxy, w, f, p0=params, bounds=param_bounds, max_nfev=1000)
 
 	# print popt,pcov
 	try:
 		perr = np.sqrt(np.diag(pcov))[0]
 	except:
 		perr = 80
-	# print "**",perr
-	# plt.plot(w,f,'k-')
-	# plt.plot(w,galaxy(w,popt[0]),'r-')
-	# plt.show()
-	# raw_input("wait")
+
 	new_z = popt[0]
 	print("------------------------")
 	print(z, new_z, (new_z - z) * 300000, t, perr)
 	# print popt
-	print("------------------------")
 	print(popt)
 	return new_z, perr, popt
 
@@ -359,12 +319,13 @@ def b0pressed(event):
 	if foundz > 0:
 		verified_sources.write(
 			"%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t%f\t%f\t%f\t%.1f\t%.1f\n" % (
-			run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
-			get_impact(qso_x, qso_y, px, py, z), foundb))
+				run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
+				get_impact(qso_x, qso_y, px, py, z), foundb))
 		stat_good.write("%f %f %f\n" % (z, quality, peakratio))
 	else:
 		verified_sources.write("%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t-\t-\t-\t%.1f\n" % (
-		run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, get_impact(qso_x, qso_y, px, py, z)))
+			run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality,
+			get_impact(qso_x, qso_y, px, py, z)))
 	verified_sources.flush()
 	plt.close()
 
@@ -373,23 +334,18 @@ def b1pressed(event):
 	# correct_pos()
 	print("bad:", px, py, z)
 	verified_sources.write("%d \t%.1f \t%.1f \t%f  0 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-	run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality))
+		run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality))
 	verified_sources.flush()
 	stat_bad.write("%f %f %f\n" % (z, quality, peakratio))
 	plt.close()
 
 
 def b2pressed(event):
-	# correct_pos()
-
-	# compute a  bad new z assuming Lyman alpha
-	# from z back to wave
-	# wave=(1+z)*3727.09 #OIIa
 	wave = ref_index.vac2air((1 + z) * 3727.09 / 10.0) * 10.0
 	lyz = ref_index.air2vac(wave / 10.0) * 10.0 / 1215.67 - 1
 	print("OIIa marked as Lyman alpha ", px, py, z, lyz)
 	verified_sources.write("%d \t%.1f \t%.1f \t%f  2 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-	run_id, px, py, lyz, verr, used, gtemplate, found, ra, dec, verr, quality))
+		run_id, px, py, lyz, verr, used, gtemplate, found, ra, dec, verr, quality))
 	verified_sources.flush()
 	plt.close()
 
@@ -403,7 +359,7 @@ def b2pressedb(event):
 	lyz = ref_index.air2vac(wave / 10.0) * 10.0 / 1215.67 - 1
 	print("OIIb marked as Lyman alpha ", px, py, z, lyz)
 	verified_sources.write("%d \t%.1f \t%.1f \t%f  2 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-	run_id, px, py, lyz, verr, used, gtemplate, found, ra, dec, verr, quality))
+		run_id, px, py, lyz, verr, used, gtemplate, found, ra, dec, verr, quality))
 	verified_sources.flush()
 	plt.close()
 
@@ -413,7 +369,7 @@ def b3pressed(event):
 		correct_pos()
 	print("use old", px, py, z)
 	verified_sources.write("%d \t%.1f \t%.1f \t%f %d \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-	run_id, px, py, z, pcatalog[run_id], verr, used, gtemplate, found, ra, dec, verr, quality))
+		run_id, px, py, z, pcatalog[run_id], verr, used, gtemplate, found, ra, dec, verr, quality))
 	verified_sources.flush()
 	plt.close()
 
@@ -467,35 +423,41 @@ if len(sys.argv) == 6:
     image
     """)
 
-atoms = [[6564.61], [4862.72], [4341.68], [4102.89], [3727.09, 3729.88], [4960.30, 5008.24], \
-		 [6549.86, 6585.27], [6718.29, 6732.67], [3869.81, 3968.53], [1908.73, 1906.68], [1215.67]]
+atoms = [
+	[6564.61],
+	[4862.72],
+	[4341.68],
+	[4102.89],
+	[3727.09, 3729.88],
+	[4960.30, 5008.24],
+	[6549.86, 6585.27],
+	[6718.29, 6732.67],
+	[3869.81, 3968.53],
+	[1908.73, 1906.68],
+	[1215.67]
+]
 
 atomsize = [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1]
 
-atom_id = {}
-atom_id[6564.61] = r"H$\alpha$"
-atom_id[4862.72] = r"H$\beta$"
-atom_id[4341.68] = r"H$\gamma$"
-atom_id[4102.89] = r"H$\delta$"
-
-atom_id[3727.09] = "OIIa"
-atom_id[3729.88] = "OIIb"
-
-atom_id[4960.30] = "[OIII]a"
-atom_id[5008.24] = "[OIII]b"
-
-atom_id[6549.86] = "[NII]a"
-atom_id[6585.27] = "[NII]b"
-
-atom_id[6718.29] = "[SII]a"
-atom_id[6732.67] = "[SII]b"
-
-atom_id[3869.81] = "NeIIIa"
-atom_id[3968.53] = "NeIIIb"
-
-atom_id[1908.1] = "CIIIa"
-atom_id[1906.05] = "CIIIb"
-atom_id[1215.67] = "Lya"
+atom_id = {
+	6564.61: r"H$\alpha$",
+	4862.72: r"H$\beta$",
+	4341.68: r"H$\gamma$",
+	4102.89: r"H$\delta$",
+	3727.09: "OIIa",
+	3729.88: "OIIb",
+	4960.30: "[OIII]a",
+	5008.24: "[OIII]b",
+	6549.86: "[NII]a",
+	6585.27: "[NII]b",
+	6718.29: "[SII]a",
+	6732.67: "[SII]b",
+	3869.81: "NeIIIa",
+	3968.53: "NeIIIb",
+	1908.73: "CIIIa",
+	1906.68: "CIIIb",
+	1215.67: "Lya"
+}
 
 data = np.fromfile('float32_array_omp4.raw', dtype='float32')
 plane, redshift, template, imused = np.split(data, 4)
@@ -506,29 +468,29 @@ template.resize((xd, yd))
 imused.resize((xd, yd))
 
 # for data cube
-cube = Cube(sys.argv[4], ext=0)
-cubestat = Cube(sys.argv[4], ext=1)
+cube = mpdaf.obj.Cube(sys.argv[4], ext=0)
+cubestat = mpdaf.obj.Cube(sys.argv[4], ext=1)
 cube.info()
 
-original_cube = Cube(sys.argv[1], ext=1)
+original_cube = mpdaf.obj.Cube(sys.argv[1], ext=1)
 # NEW2017
 # if WHITEimage is an extention
 # whiteimage=Image(sys.argv[1],ext=4).data
 # fullwhiteimage=Image(sys.argv[1],ext=4)
 # use this for stand alone white image
-whiteimage = Cube(sys.argv[1], ext=1).sum(axis=0).data
+whiteimage = mpdaf.obj.Cube(sys.argv[1], ext=1).sum(axis=0).data
 
 # whiteimage=Image(sys.argv[1]).data
-fullwhiteimage = Cube(sys.argv[1], ext=1).sum(axis=0)
+fullwhiteimage = mpdaf.obj.Cube(sys.argv[1], ext=1).sum(axis=0)
 
-s2ncube = Cube(sys.argv[2], ext=0)
-hdu = fits.open(sys.argv[2])
-coord = wcs.WCS(hdu[0].header)
+s2ncube = mpdaf.obj.Cube(sys.argv[2], ext=0)
+hdu = astropy.io.fits.open(sys.argv[2])
+coord = astropy.wcs.WCS(hdu[0].header)
 
 dz, dy, dx = cube.shape
 
 catalog = open(sys.argv[3])
-colors = cm.get_cmap("winter")
+colors = mpl.cm.get_cmap("winter")
 colors._init()
 
 i = 0
@@ -560,11 +522,7 @@ for qso in qso_positions_file:
 if not qso_found:
 	print("no QSO found")
 	sys.exit(1)
-# str_qso_ra='00:14:53.364240'
-# str_qso_dec='-00:28:27.656400'
-# c = SkyCoord(str_qso_ra+str_qso_dec, unit=(u.hourangle, u.deg))
-# qso_ra=c.ra.degree
-# qso_dec=c.dec.degree
+
 print(qso_ra)
 print(qso_dec)
 qso_x, qso_y = world_to_pix(coord, (qso_ra, qso_dec))
@@ -619,9 +577,9 @@ for line in catalog:
 	print("running id", run_id)
 	if only_good:
 		if mark == 0: continue
-		# if run_id==289: continue
-		# if run_id==216: continue
-		# if run_id==450: continue
+	# if run_id==289: continue
+	# if run_id==216: continue
+	# if run_id==450: continue
 
 	if used < min_line_number: continue
 	# if quality < 200:continue
@@ -652,7 +610,7 @@ for line in catalog:
 	try:
 
 		newz, zerr, gal_model = fit_template(gtemplate, z, raw_data, raw_wave, raw_sigma.data)
-		# print 1/0
+	# print 1/0
 	except:
 		print("** fit did not converge!")
 		error_log.write('no valid model %d %.3f %d\n' % (run_id, z, gtemplate))
@@ -708,7 +666,7 @@ for line in catalog:
 
 	ax2 = plt.subplot2grid((rows, columns), (1, 0), colspan=9)
 	plt.title("(verr=%.1f), %d used lines, match strength=%d, b=%.1f" % (
-	verr, used, quality, get_impact(qso_x, qso_y, px, py, z)))
+		verr, used, quality, get_impact(qso_x, qso_y, px, py, z)))
 
 	ax2.tick_params(
 		axis='both',  # changes apply to the x-axis
@@ -1084,7 +1042,7 @@ for line in catalog:
 			plt.tick_params(axis='both', left='off', top='off', right='off', bottom='off', labelleft='off',
 							labeltop='off', labelright='off', labelbottom='off')
 			plt.gca().invert_yaxis()
-			# plt.tight_layout()
+		# plt.tight_layout()
 		except:
 			error_log.write('could not segment source for %d\n' % run_id)
 			print('could not segment source for %d' % run_id)
@@ -1098,7 +1056,7 @@ for line in catalog:
 	aw = int(min(aw, px, py))
 
 	wcs1 = fullwhiteimage.wcs
-	narrowsa = Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
+	narrowsa = mpdaf.obj.Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
 			   int(px) - aw // 2:int(px) + aw // 2]
 	spic = plt.subplot2grid((rows, columns), (3, 5))
 	smoothnarrows = narrowsa.fftconvolve_gauss(center=None, flux=1.0, fwhm=(0.7, 0.7), peak=False, rot=0.0, factor=1,
@@ -1122,7 +1080,7 @@ for line in catalog:
 	# the following block is for the 2nd image but we need the peak first
 
 	wcs1 = fullwhiteimage.wcs
-	narrows = Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
+	narrows = mpdaf.obj.Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
 			  int(px) - aw // 2:int(px) + aw // 2]
 
 	peakratio = float(maxa / maxb)
@@ -1189,7 +1147,7 @@ for line in catalog:
 	plt.gca().invert_yaxis()
 
 	wcs1 = fullwhiteimage.wcs
-	full_plane = Image(data=plane, wcs=wcs1)[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
+	full_plane = mpdaf.obj.Image(data=plane, wcs=wcs1)[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
 
 	spic = plt.subplot2grid((rows, columns), (3, 8))
 	# planbezoom=plane[py-aw:py+aw,px-aw:px+aw]
@@ -1316,15 +1274,15 @@ for line in catalog:
 		if foundz > 0:
 			verified_sources.write(
 				"%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t%f\t%f\t%f\t%.1f\t%.1f\n" % (
-				run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
-				get_impact(qso_x, qso_y, px, py, z), foundb))
+					run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
+					get_impact(qso_x, qso_y, px, py, z), foundb))
 			stat_good.write("%f %f %f\n" % (z, quality, peakratio))
 		else:
 			verified_sources.write("%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t-\t-\t-\t%.1f\n" % (
-			run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality,
-			get_impact(qso_x, qso_y, px, py, z)))
+				run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality,
+				get_impact(qso_x, qso_y, px, py, z)))
 
-			# verified_sources.write("%d \t%.1f \t%.1f \t%f %d \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (run_id,px,py,z,pcatalog[run_id],verr,used,gtemplate,found,ra,dec,verr,quality))
+		# verified_sources.write("%d \t%.1f \t%.1f \t%f %d \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (run_id,px,py,z,pcatalog[run_id],verr,used,gtemplate,found,ra,dec,verr,quality))
 		verified_sources.flush()
 		# if oiifound: ratios.write("%d %f\n" % (pcatalog[run_id],height2b/height2a))
 		plt.close()
