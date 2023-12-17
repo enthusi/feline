@@ -4,19 +4,6 @@ import mpdaf.obj
 import matplotlib.pyplot as plt
 from config import PROJECT_ROOT
 
-'''
-zqso = 1.23
-ignore_below = 1.5  # in the s2n cube
-significance = 2.5  # lines*scale*significance
-scale = 10
-# samples=400
-zstep = 0.0004  # 1/3000.0
-lmin = 4750
-lmax = 9250
-step = 1.25
-z = 0.0
-skipped = 0
-'''
 
 pre_select_sn = 2
 cubefile = sys.argv[1]
@@ -25,7 +12,7 @@ dz, dy, dx = c0.shape
 start = c0.wave.get_crval()
 print(dz, dy, dx, start)
 
-fout = open('data/raw/raw_reordered_s2ncube.dat', 'wb')
+fout = open('../../data/procesed/raw_reordered_s2ncube.dat', 'wb')
 fout.write(struct.pack('f', dz))
 fout.write(struct.pack('f', dy))
 fout.write(struct.pack('f', dx))

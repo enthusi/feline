@@ -55,11 +55,11 @@ cp preprocess/med_filt.fits med_filt.fits
 ## here the actual tool starts:
 # creating an overview image (for optional masking):
 ```
-python createnan.py cube.fits
+python create_masking_plot.py cube.fits
 ```
 # change data order from image-by-image to spectrum-by-spectrum (fast cache access):
 ```
-python preprocess_s2n_cube.py s2n_v250.fits none
+python transpose_cube.py s2n_v250.fits none
 ```
 # build and run the main Feline code (C/OpenMP):
 ```
@@ -73,12 +73,12 @@ make
 ```
 # detect actual objects and translate into physical properties (redshift, line list) sorted by significance:
 ```
-python mf_new_max_inspect_feline_output.py s2n_v250.fits > catalog.txt
+python detect_objects.py s2n_v250.fits > catalog.txt
 ```
 ```
 sort -rn -k5 catalog.txt > sorted_catalog.txt
 ```
 # create comprehensive human readable plots for each detection:
 ```
-python mf_new_plot_and_fit_catalog_allz_wcs_v3.py cube.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
+python create_final_plots.py cube.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
 ```
