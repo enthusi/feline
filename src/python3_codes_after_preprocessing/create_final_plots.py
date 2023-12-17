@@ -90,8 +90,7 @@ mpl.rcParams["savefig.directory"] = "."
 cont_flag = False
 
 full_data = open('info.txt', 'w')
-full_data.write(
-	'id, px, py, z, b, quality, template, used, gaussx, gaussy, gaussrot, smoothratio, oiiratio, gal_ra, gal_dec, qso_x, qso_y\n')
+full_data.write('id, px, py, z, b, quality, template, used, gaussx, gaussy,' ', gaussrot, smoothratio, oiiratio, gal_ra, gal_dec, qso_x, qso_y\n')
 
 error_log = open('errors.log', 'w')
 
@@ -285,13 +284,11 @@ def fit_template(t, z, f, w, sigma_array, scipy):
 
 	# but how many actual lines are that?
 	lines = get_num_lines(t)
-	# print lines
 
 	for i in range(lines):
 		amp = 20.0
 		sig = 1.0
 		params.append(amp)
-		# params.append(sig)
 
 		param_bounds_low.append(0)  # amp
 		param_bounds_high.append(np.inf)
@@ -331,7 +328,6 @@ def b0pressed(event):
 
 
 def b1pressed(event):
-	# correct_pos()
 	print("bad:", px, py, z)
 	verified_sources.write("%d \t%.1f \t%.1f \t%f  0 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
 		run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality))
