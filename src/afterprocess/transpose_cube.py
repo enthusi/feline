@@ -1,18 +1,22 @@
+import os
 import sys
 import struct
+import project_path_config
 import mpdaf.obj
 import matplotlib.pyplot as plt
-from config import PROJECT_ROOT
 
+
+filename = sys.argv[1]
+file = os.path.join(project_path_config.DATA_PATH_PROCESSED, filename)
 
 pre_select_sn = 2
-cubefile = sys.argv[1]
-c0 = mpdaf.obj.Cube(cubefile)
+
+c0 = mpdaf.obj.Cube(file)
 dz, dy, dx = c0.shape
 start = c0.wave.get_crval()
 print(dz, dy, dx, start)
 
-fout = open('../../data/procesed/raw_reordered_s2ncube.dat', 'wb')
+fout = open(project_path_config.DATA_PATH_PROCESSED + 'raw_reordered_s2ncube.dat', 'wb')
 fout.write(struct.pack('f', dz))
 fout.write(struct.pack('f', dy))
 fout.write(struct.pack('f', dx))

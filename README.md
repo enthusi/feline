@@ -1,20 +1,22 @@
 # feline
-get data cubus <br>
+
+### get data cubus
 ```
 wget http://martinwendt.de/cube.fits
 ```
 
-# Run Preprocessing, Feline and Plot-Program in Python2.7 virtual environment
+---
+## Run Preprocessing, Feline and Plot-Program in Python2.7 virtual environment
 
-## Create virtual environment with anaconda:
+### Create virtual environment with anaconda:
 ```
 conda create -n felineenv python=2.7
 ```
-## activate environment:
+### activate environment:
 ```
 conda activate felineenv
 ```
-## install all necessary packages:
+### install all necessary packages:
 
 ```
 conda install numpy
@@ -58,16 +60,19 @@ cp preprocess/s2n_v250.fits s2n_v250.fits
 ```
 cp preprocess/med_filt.fits med_filt.fits
 ```
+
+---
 ## here the actual tool starts:
-# creating an overview image (for optional masking):
+
+### creating an overview image (for optional masking):
 ```
 python create_masking_plot.py cube.fits
 ```
-# change data order from image-by-image to spectrum-by-spectrum (fast cache access):
+### change data order from image-by-image to spectrum-by-spectrum (fast cache access):
 ```
 python transpose_cube.py s2n_v250.fits none
 ```
-# build and run the main Feline code (C/OpenMP):
+### build and run the main Feline code (C/OpenMP):
 ```
 make clean
 ```
@@ -75,16 +80,16 @@ make clean
 make
 ```
 ```
-./feline07.bin 0 1.9 20 7
+./feline.bin 0 1.9 20 7
 ```
-# detect actual objects and translate into physical properties (redshift, line list) sorted by significance:
+### detect actual objects and translate into physical properties (redshift, line list) sorted by significance:
 ```
 python detect_objects.py s2n_v250.fits > catalog.txt
 ```
 ```
 sort -rn -k5 catalog.txt > sorted_catalog.txt
 ```
-# create comprehensive human readable plots for each detection:
+### create comprehensive human readable plots for each detection:
 ```
 python create_final_plots.py cube.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
 ```
