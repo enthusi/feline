@@ -1,20 +1,33 @@
 #! /usr/bin/env python
 
 # FILE: s2n-cube.py
-# AUTHOR: C. Herenz
+# AUTHOR: E. C. Herenz
 # DESCRIPTION: Create a Signal-to-Noise Datacube from a datacube 
 #              with <Signal-HDU> and <Noise-HDU>.
-# (Part of LSDCat Suite)
+#              SN = <Signal-HDU>/<Noise-HDU>
+#              (if variances are stored in the the header, sqrt first!)
+# (part of LSDCat)
 
-__version__ = '1.0.3'
+import lsd_cat_lib
+__version__ = lsd_cat_lib.get_version()
 
-import sys
+from line_em_funcs import int_or_str
+
+import sys, os
 import argparse
 from astropy.io import fits
 import numpy as np
+from datetime import datetime
 
 import warnings
-warnings.filterwarnings("ignore",category=RuntimeWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+
+now = datetime.now()
+
+# store command that was entered by the user
+command = os.path.basename(sys.argv[0])
+for entity in sys.argv[1:]:
+    command = command+' '+entity
 
 parser = argparse.ArgumentParser(description="""
 Create a signal to noise datacube from a FITS file containing a signal and a noise HDU.
@@ -33,13 +46,14 @@ field of view. Best used with with whitelight image.
 parser.add_argument("--nanmaskhdu",type=int,default=4,help="""
 HDU number (0-indexed) containing the NaN mask. 
 """)
-parser.add_argument("-o","--output",default="signal2noise.fits",help="""
-Name of output S/N datacube (default: signal2noise.fits).
-""")
-parser.add_argument("-S","--SHDU",type=int,default=0,help="""
-Number of HDU (0-indexed) in input FITS datacube containing the signal.""")
-parser.add_argument("-N","--NHDU",type=int,default=1,help="""
-HDU of HDU (0-indexed) in input FITS datacube containing the noise.""")
+parser.add_argument("-o", "--output", default=None,
+                    help=""" Name of output S/N datacube (default: s2n_+<input>). """)
+parser.add_argument("-S","--SHDU", type=int_or_str, default=0,
+                    help=""" Name or number of HDU (0-indexed) in input FITS datacube
+                    containing the signal.""")
+parser.add_argument("-N","--NHDU", type=int_or_str, default=1,
+                    help="""Name or number of HDU (0-indexed) in input FITS datacube containing
+                    the noise.""")
 parser.add_argument("--sigma",action='store_true',help="""
 Switch to interpret noise as sigma.
 """)
@@ -53,7 +67,11 @@ Write out data in 64 bit.
 
 args = parser.parse_args()
 inputfile = args.input
-outputfile = args.output
+if args.output == None:
+    outputfile = 's2n_' + inputfile
+else:
+    outputfile = args.output
+
 signalHDU = args.SHDU
 noiseHDU = args.NHDU
 variance_switch = args.sigma
@@ -63,6 +81,7 @@ if args.nanmask != None:
     nanmask_hdu = args.nanmaskhdu
 
 hdu = fits.open(inputfile)
+primary_header = hdu[0].header
 
 print(inputfile+': Reading Signal (HDU:'+\
                  str(signalHDU)+') ...')
@@ -99,8 +118,16 @@ if not args.float64:
 header['EXTNAME'] = 'SIGNALTONOISE'
 header['BUNIT'] = '1'
 print(inputfile+': Writing '+str(outputfile)+' to disk...\n')
-fits.writeto(outputfile, data=signal2noise,
-             header=header,clobber=clobber)
+
+primary_header['HISTORY'] = "Processed by LSDCat s2n-cube.py " + \
+    " -- "+now.strftime("%m/%d/%Y, %H:%M:%S")
+primary_header['HISTORY'] = '--- start of s2n-cube.py command ---'
+primary_header['HISTORY'] = command
+primary_header['HISTORY'] = '--- end of s2n-cube.py command ---'
+hdu_list = fits.HDUList(hdus=[fits.PrimaryHDU(data=None, header=primary_header),
+                              fits.ImageHDU(data=signal2noise, header=header)])
+hdu_list.writeto(outputfile, overwrite=clobber)
+
 del signal2noise
 print(inputfile+': Success!\n')
         

@@ -1,11 +1,28 @@
-# Convenience functions for project
-# "Detection and Analysis of Line-Emitters in MUSE-Datacubes"
+'''
+    File name: line_em_funcs.py
+    Author: Christian Herenz
+
+    Convience functions for use in LSDCat
+'''
 
 import math
+import re
 import sys
 import time
+
 from astropy.io import fits
 import numpy as np
+
+
+def int_or_str(hdu_str):
+    """Helper for argparse.ArgumentParser.add_argument() so that either
+    HDU numbers or HDU names can be supplied as commandline arguments.
+    """
+    if hdu_str.isdigit():
+        return int(hdu_str)
+    else:
+        return hdu_str
+
 
 def wavel(header,naxis=3,cdel_key='CD3_3'):
    """
@@ -25,6 +42,7 @@ def wavel(header,naxis=3,cdel_key='CD3_3'):
    xax = crval + (np.arange(naxis) - (crpix - 1))*crdel
 
    return xax
+
 
 def get_timestring(starttime=None):
     """
@@ -89,8 +107,25 @@ def write_primary(data,fheader,outfile):
     write_primary(data,fheader,outfile)
     """
     out = fits.PrimaryHDU(data,header=fheader)
-    out.writeto(outfile, clobber='True',output_verify='silentfix') # clobber='True' -> overwrite existing file!
+    out.writeto(outfile,
+                overwrite=True,
+                output_verify='silentfix') 
 
+def write_fitscube(data, data_header, primary_header, outfile, overwrite=False):
+    primary_hdu = fits.PrimaryHDU(data=None, header=primary_header)
+    data_hdu = fits.ImageHDU(data=data, header=data_header)
+    hdu_list = fits.HDUList([primary_hdu, data_hdu])
+    try:
+        hdu_list.writeto(outfile, overwrite=overwrite)
+    except OSError:
+        print("""
+ERROR WRITING OUTPUT FITS FILE %s.  
+Check if file exists (you may use --overwrite for overwriting the
+file). If file not exists check if you have write permissions in the
+output directory, or if the disk is full. Terminating now!""" %outfile)
+        sys.exit(2)
+    
+    
 def sexcat_to_reg(sexcat,regfile):
     # TODO: add parser for automatic collumn detection
     # TODO: maybe use asciitable or sth... this is not good atm
@@ -159,16 +194,20 @@ def expand_cat(SX_input):
     fout.close()
 
 
-def extract_spectra_circ(infile,hdu,x,y,r):
+def extract_spectra_circ(cube, x, y, r, extr_func=np.mean):
     """
-    spectrum = extract_spectra(fits,x,y,a,b,r):
+    spectrum = extract_spectra(fits, x, y, extr_func=np.mean):
+
     Extracts spectra on datacubes (given in <fits>,<hdu>) in circular apertures (well,
     only inside of points which are inside the circle...) of radius <r> at postion <x>,<y>.
     Output is 1D-array <spectrum>, with each element
     containing the mean of each spectral-channel in the aperture. 
+
+    extr_func controls which method is being used to calculate the output spectrum.
+    (e.g. could be np.mean [default], np.std, or np.sum, or something like this).
     """
 
-    cube,data = read_hdu(infile,hdu)
+    # cube,data = read_hdu(infile,hdu)
     xmax = cube.shape[2]
     ymax = cube.shape[1]
     zmax = cube.shape[0]
@@ -179,19 +218,197 @@ def extract_spectra_circ(infile,hdu,x,y,r):
         sys.exit(2)
     # TODO: test for radius, that is out of bounds
     # TODO: aperture photometry
-
     # make boolean array with spaxels to extract = true:
-    xcen=x-1; ycen=y-1
-    ygrid,xgrid = np.indices((ymax,xmax),float)
+    xcen = x - 1; ycen = y - 1
+    ygrid, xgrid = np.indices((ymax, xmax), float)
     dy = ygrid - ycen
     dx = xgrid - xcen
     radius = np.sqrt(dy**2 + dx**2)
-    select=radius<=r
+    select = radius <= r
     
-    # create a table with the fluxes at each spectral "bin"
-    spectrum = np.zeros(zmax)
-    for i in xrange(zmax):
-        spectrum[i] = np.mean(cube[i,:,:][select])
+    # create an array with the fluxes at each spectral "bin"
+    spectrum = np.zeros(zmax, dtype=cube.dtype)
+    for i in range(zmax):
+        spectrum[i] = extr_func(cube[i,:,:][select])
 
     return spectrum
 
+
+def hierarch_multi_line(header, keyword, value, comment):
+    field_len = 80 - len(keyword) - 4  # assumes keyword inc. "HIERARCH "
+    if len(value) <= field_len:
+        header[keyword] = (value, comment)
+        return header
+    else:
+        header[keyword] = value[:field_len]
+        remaining_val = value[field_len:]
+        i = 0
+        while len(remaining_val) >= field_len - 1:
+            i += 1
+            header[keyword + str(i)] = remaining_val[:field_len - 1]
+            remaining_val = remaining_val[field_len - 1:]
+        header[keyword + str(i + 1)] = (remaining_val, comment)
+        return header
+
+    
+def ccs_header(ccs_routine, version, input_filename,
+               data_hdu, stat_hdu, pix_scale, mask_filename, mask_hdu,
+               filter_name, trunc_constant, pc, lambda_0, bc,
+               cube_header):
+    cube_header['HIERARCH LSD CCS'] = (ccs_routine,
+                                       'spatial cross-correlation (CCS) routine')
+    cube_header['HIERARCH LSD CCSV'] = (version,
+                                        'CCS version')
+   
+    cube_header = hierarch_multi_line(cube_header, 'HIERARCH LSD CCSIN', input_filename,
+                                      'CCS input filename')
+    cube_header['HIERARCH LSD CCSINS'] = (data_hdu,
+                                          'CCS input data HDU - 0-indexed')
+    cube_header['HIERARCH LSD CCSINN'] = (stat_hdu,
+                                          'CCS input variance HDU - 0-indexed')
+    cube_header['HIERARCH LSD CCSPXSC'] = (pix_scale,
+                                           'assumed pix scale arcsec/pix in datacube')
+    cube_header = hierarch_multi_line(cube_header, 'HIERARCH LSD CCMSK', mask_filename,
+                                      'SSC mask filename')
+    cube_header['HIERARCH LSD CCSMSKH'] = (mask_hdu,
+                                           'CCS mask filename HDU')
+    cube_header['HIERARCH LSD CCSFILT'] = (filter_name,
+                                           'CCS filter funtion - i.e. Moffat or Gaussian')
+    cube_header['HIERARCH LSD CCSFILTT'] = (trunc_constant,
+                                            'CCS filter truncated at CCSFILTT x FWHM')
+    cube_header['HIERARCH LSD CCSPLY'] = (True, 'p(l) = sum_n p_n (l-l0)^n')
+    cube_header['HIERARCH LSD CCSPLYL0'] = (lambda_0, 'l0')
+
+    for pi in enumerate(pc[::-1]):
+        if pi[0] == 0:
+            unit = '[arcsec]'
+        elif pi[0] == 1:
+            unit = '[arcsec/AA]'
+        else:
+            unit = '[arcsec/AA**'+str(pi[0])+']'
+
+        cube_header['HIERARCH LSD CCSPLYP'+str(pi[0])] = \
+                                           (pi[1], ' '.join(['p_'+str(pi[0]), unit]))
+
+    if filter_name == 'Moffat':
+        cube_header['HIERARCH LSD CCSBETA'] = (True,
+                                               'beta(l) = sum_n b_n (l-l0)^n')
+        for bi in enumerate(bc[::-1]):
+            if bi[0] == 0:
+                unit = '[1]'
+            elif bi[0] == 1:
+                unit = '[1/AA]'
+            else:
+                unit = '[1/AA**'+str(bi[0])+']'
+
+            cube_header['HIERARCH LSD CCSB'+str(bi[0])] = \
+                                           (bi[1], ' '.join(['b_'+str(bi[0]), unit]))
+
+    return cube_header
+
+
+def ccl_header(ccl_routine, version,  inputfile, data_hdu,
+               noise_hdu, velocity, header, varspec=None):
+    header['HIERARCH LSD CCL'] = (ccl_routine,
+                          'spectral cross-correlation (CCL) routine')
+    header['HIERARCH LSD CCLV'] = (version, 'CCL version')
+    header['HIERARCH LSD CCLINS'] = (data_hdu, 'CCL input data HDU')
+    header['HIERARCH LSD CCLINN'] = (noise_hdu, 'CCL input variance HDU')
+    header['HIERARCH LSD CCLVFWHM'] = (velocity, 'CCL filter FWHM [km/s]')
+    if varspec != None:
+        header = hierarch_multi_line(header,
+                                     'HIERARCH LSD CCLEAVS', varspec,
+                                     'CCL 1d varspec filename')
+
+    header = hierarch_multi_line(header, 'HIERARCH LSD CCLIN', inputfile,
+                                 'CCL input filename')
+    return header
+
+
+def mf_header(mfr_routine, version, width, gwidth, fitscube,
+              signalHDU, varHDU, header):
+    header['HIERARCH LSD MFR'] = (mfr_routine,'median filter subtract routine')
+    header['HIERARCH LSD MFRV'] = (version, 'MFR version')
+    header['HIERARCH LSD MFRW'] = (width, 'MFR median filter width')
+    header['HIERARCH LSD MFRGW'] = (gwidth, 'MFR gauss sigma width')
+    header = hierarch_multi_line(header, 'HIERARCH LSD MFRIN', fitscube,
+                                 'ENR input FITS file')
+    header['HIERARCH LSD MFRINS'] = (signalHDU, 'ENRIN flux HDU name/number')
+    if varHDU != -1:
+        header['HIERARCH LSD MFRINN'] = (varHDU, 'ENRIN variance HDU number')
+
+    return header
+
+
+def search_header(search_routine, version, inputfile, shdu, nhdu,
+                  expmap, expmaphdu, thresh, tabvalues, radius, spaxscale, border_dist,
+                  zeroidx, segcube, header):
+    header['HIERARCH LSD CAT'] = (search_routine, 'LSDCat search routine')
+    header['HIERARCH LSD CATV'] = (version, 'LSDCat search version')
+    header = hierarch_multi_line(header, 'HIERARCH LSD CATIN', inputfile,
+                                 'LSDCat search infile')
+    if nhdu != None:
+        header['HIERARCH LSD SHDU'] = (shdu, 'LSDCat search classic SHDU')
+        header['HIERARCH LSD NHDU'] = (nhdu, 'LSDCat search classic NHDU')
+    else:
+        header['HIERARCH LSD SHDU'] = (shdu, 'LSDCat search MF HDU')
+
+    if expmap != None:
+        header = hierarch_multi_line(header, 'HIERARCH LSD EMAP', expmap,
+                                     'LSDCat search exposure map')
+        header['HIERARCH LSD EMAPHDU'] = (expmaphdu, 'LSDCat search exposure map HDU')
+
+    header['HIERARCH LSD THRESH'] = (thresh, 'LSDCat search detection threshold')
+    header = hierarch_multi_line(header, 'HIERARCH LSD TABVALS', tabvalues,
+                                 'LSDCat search tabvalues')
+    header['HIERARCH LSD RADIUS'] = (radius, 'LSDCat search grouping radius [asec]')
+    header['HIERARCH LSD SCALE'] = (spaxscale, 'LSDCat search spaxscale [asec/px]')
+    if 'BORDER' in tabvalues:
+        header['HIERARCH LSD BDIST'] = (border_dist, 'LSDCat search borderdist [px]')
+
+    if zeroidx:
+        header['HIERARCH LSD ORIGIN'] = (0, 'LSDCat search coords are zero-indexed')
+    else:
+        header['HIERARCH LSD ORIGIN'] = (1, 'LSDCat search coords are one-indexed')
+
+    if segcube != None:
+        header = hierarch_multi_line(header, 'HIERARCH LSD SEGCUBE', segcube,
+                                     'LSDCat search segmentation cube')
+
+    return header
+
+
+def copy_hist_header(header, other_header):
+    """
+    Copy HISTORY cards from other_header into header,
+    but remove duplicates.
+    """
+    try:
+        for hist_item in other_header['HISTORY']:
+            header['HISTORY'] = hist_item
+
+        # uniquify history items 
+        hist_list_o = list(header['HISTORY'])
+        hist_list = [i for n, i in enumerate(hist_list_o)
+                     if i not in hist_list_o[:n]]
+
+        # remove all items and populate with unique items
+        header.remove('HISTORY', remove_all=True)
+        for hist_item in hist_list:
+            header['HISTORY'] = hist_item
+
+    except KeyError:
+        # silently ignore that other_header does not contain any
+        # history
+        pass
+
+    return header
+
+
+def string_from_multiline_head(header, keystart):
+    string = ''
+    extra_keys = [key for key in header.keys()
+                  if bool(re.search('\d\Z', key)) and key.startswith(keystart)]
+    for key in [keystart] + extra_keys:
+        string += header[key]
+    return string
