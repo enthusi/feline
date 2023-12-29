@@ -7,7 +7,11 @@ import scipy
 import ref_index
 import matplotlib as mpl
 import sys
-import astropy
+import astropy.cosmology
+import astropy.io.fits
+import astropy.wcs
+import project_path_config
+import os
 
 # from mpdaf.obj import Cube
 # from numpy import *
@@ -129,9 +133,9 @@ prev_cat = False
 max_lines_shown = 12
 columns = 12
 rows = 4
-ratios = open("stat_oii_ratio.txt", "w")
+ratios = open(project_path_config.DATA_PATH_LOOKUP + "stat_oii_ratio.txt", "w")
 
-with open("raw_reordered_s2ncube.dat", 'rb') as f:
+with open(project_path_config.DATA_PATH_PROCESSED + "raw_reordered_s2ncube.dat", 'rb') as f:
 	header = f.read()[:16]
 
 dz = struct.unpack('f', header[0:4])[0]
@@ -455,7 +459,7 @@ atom_id = {
 	1215.67: "Lya"
 }
 
-data = np.fromfile('float32_array_omp4.raw', dtype='float32')
+data = np.fromfile(project_path_config.DATA_PATH_ROOT + "float32_array_omp4.raw", dtype="float32")
 plane, redshift, template, imused = np.split(data, 4)
 
 plane.resize((xd, yd))
@@ -464,23 +468,23 @@ template.resize((xd, yd))
 imused.resize((xd, yd))
 
 # for data cube
-cube = mpdaf.obj.Cube(sys.argv[4], ext=0)
-cubestat = mpdaf.obj.Cube(sys.argv[4], ext=1)
+cube = mpdaf.obj.Cube(project_path_config.DATA_PATH_PROCESSED + sys.argv[4], ext=0)
+cubestat = mpdaf.obj.Cube(project_path_config.DATA_PATH_PROCESSED + sys.argv[4], ext=1)
 cube.info()
 
-original_cube = mpdaf.obj.Cube(sys.argv[1], ext=1)
+original_cube = mpdaf.obj.Cube(project_path_config.DATA_PATH_RAW + sys.argv[1], ext=1)
 # NEW2017
 # if WHITEimage is an extention
 # whiteimage=Image(sys.argv[1],ext=4).data
 # fullwhiteimage=Image(sys.argv[1],ext=4)
 # use this for stand alone white image
-whiteimage = mpdaf.obj.Cube(sys.argv[1], ext=1).sum(axis=0).data
+whiteimage = mpdaf.obj.Cube(project_path_config.DATA_PATH_RAW + sys.argv[1], ext=1).sum(axis=0).data
 
 # whiteimage=Image(sys.argv[1]).data
-fullwhiteimage = mpdaf.obj.Cube(sys.argv[1], ext=1).sum(axis=0)
+fullwhiteimage = mpdaf.obj.Cube(project_path_config.DATA_PATH_RAW + sys.argv[1], ext=1).sum(axis=0)
 
-s2ncube = mpdaf.obj.Cube(sys.argv[2], ext=0)
-hdu = astropy.io.fits.open(sys.argv[2])
+s2ncube = mpdaf.obj.Cube(project_path_config.DATA_PATH_PROCESSED + sys.argv[2], ext=0)
+hdu = astropy.io.fits.open(project_path_config.DATA_PATH_PROCESSED + sys.argv[2])
 coord = astropy.wcs.WCS(hdu[0].header)
 
 dz, dy, dx = cube.shape
@@ -506,7 +510,7 @@ except:
 	print("no QSO given")
 	sys.exit(1)
 
-qso_positions_file = open('qso_centers_deg.txt', 'r')
+qso_positions_file = open(project_path_config.DATA_PATH_LOOKUP + "qso_centers_deg.txt", "r")
 qso_found = False
 print("looking for %s" % qso_id)
 for qso in qso_positions_file:

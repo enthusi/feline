@@ -1,15 +1,17 @@
 import os
 import struct
 import sys
-import astropy
+import astropy.io.fits
+import astropy.wcs
 import imageio
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import skimage
+import project_path_config
 
-mpl.use('TkAgg')
+mpl.use("TkAgg")
 
 
 def onclick(event):
@@ -36,10 +38,10 @@ def pix_to_world(coord, pix):
 	return ra, dec
 
 
-hdu = astropy.io.fits.open(sys.argv[1])
+hdu = astropy.io.fits.open(project_path_config.DATA_PATH_PROCESSED + sys.argv[1])
 coord = astropy.wcs.WCS(hdu[0].header)
 
-with open("raw_reordered_s2ncube.dat", 'rb') as f:
+with open(project_path_config.DATA_PATH_PROCESSED + "raw_reordered_s2ncube.dat", 'rb') as f:
 	header = f.read()[:16]
 
 dz = struct.unpack('f', header[0:4])[0]
@@ -128,7 +130,7 @@ def print_lines(toggle, z):
 isize = xd * yd
 size = isize
 
-data = np.fromfile('float32_array_omp4.raw', dtype='float32')
+data = np.fromfile(project_path_config.DATA_PATH_ROOT + "float32_array_omp4.raw", dtype="float32")
 plane, redshift, template, used = np.split(data, 4)
 
 plane.resize((xd, yd))
@@ -143,7 +145,7 @@ plane_scaled = (plane - np.min(plane)) / (np.max(plane) - np.min(plane))
 plane_uint8 = (plane_scaled * 255).astype(np.uint8)
 
 # Save the image using imageio.imwrite
-imageio.imsave('image.png', plane_uint8)
+imageio.imsave("image.png", plane_uint8)
 
 if os.path.isfile("imagemask.png"):
 	mymask = imageio.v2.imread("imagemask.png")
@@ -207,8 +209,8 @@ for hit in xy:  # y,x
 	print_lines(t_i, z_i)
 	run_id += 1
 
-plt.plot(ay, ax, 'rx', markersize=2)
+plt.plot(ay, ax, "rx", markersize=2)
 
 plt.title("%d sources " % (len(xy)))
 plt.show()
-plt.savefig('result.png', bbox_inches='tight')
+plt.savefig("result.png", bbox_inches="tight")
