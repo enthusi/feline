@@ -41,18 +41,18 @@ def pix_to_world(coord, pix):
 hdu = astropy.io.fits.open(project_path_config.DATA_PATH_PROCESSED + sys.argv[1])
 coord = astropy.wcs.WCS(hdu[0].header)
 
-with open(project_path_config.DATA_PATH_PROCESSED + "raw_reordered_s2ncube.dat", 'rb') as f:
+with open(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), "rb") as f:
 	header = f.read()[:16]
 
-dz = struct.unpack('f', header[0:4])[0]
-xd = struct.unpack('f', header[4:8])[0]
-yd = struct.unpack('f', header[8:12])[0]
+dz = struct.unpack("f", header[0:4])[0]
+xd = struct.unpack("f", header[4:8])[0]
+yd = struct.unpack("f", header[8:12])[0]
 
 xd = int(xd)
 yd = int(yd)
 dz = int(dz)
 
-print("#Cube dimensions (z,y,x): %d, %d, %d" % (dz, xd, yd))
+print(f"Cube dimensions (z,y,x): ({dz}, {yd}, {xd})")
 
 atoms = [
 	[6564.61],
@@ -130,7 +130,7 @@ def print_lines(toggle, z):
 isize = xd * yd
 size = isize
 
-data = np.fromfile(project_path_config.DATA_PATH_ROOT + "float32_array_omp4.raw", dtype="float32")
+data = np.fromfile(os.path.join(project_path_config.DATA_PATH_ROOT, "float32_array_omp4.raw"), dtype="float32")
 plane, redshift, template, used = np.split(data, 4)
 
 plane.resize((xd, yd))
@@ -186,7 +186,7 @@ for val in coordinates:
 
 print("#", len(xy))
 
-test = plt.imshow(data, vmin=30, vmax=500, interpolation='nearest', cmap='jet')
+test = plt.imshow(data, vmin=30, vmax=500, interpolation="nearest", cmap="jet")
 
 plt.colorbar()
 

@@ -19,7 +19,7 @@ def create_masking_plot():
 	snimage = data.copy()
 	snimage.data = data.data / statistic.data
 	snimage.info()
-	snimage.write('image00.fits')
+	snimage.write("image00.fits")
 	print(f"file created")
 
 
