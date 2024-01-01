@@ -1,9 +1,9 @@
 import os
-import sys
 import struct
-import project_path_config
-import mpdaf.obj
+import sys
 import matplotlib.pyplot as plt
+import mpdaf.obj
+import project_path_config
 
 
 filename = sys.argv[1]
@@ -15,10 +15,10 @@ start = c0.wave.get_crval()
 print(f"{dz}, {dy}, {dx}, {start}")
 
 with open(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), "wb") as fout:
-	fout.write(struct.pack('f', dz))
-	fout.write(struct.pack('f', dy))
-	fout.write(struct.pack('f', dx))
-	fout.write(struct.pack('f', start))
+	fout.write(struct.pack("f", dz))
+	fout.write(struct.pack("f", dy))
+	fout.write(struct.pack("f", dx))
+	fout.write(struct.pack("f", start))
 
 	for y in range(dy):
 		if not (y % 10):
@@ -28,7 +28,7 @@ with open(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s
 			myfmt = "f" * len(spec.data)
 			fout.write(struct.pack(myfmt, *spec.data))
 
-# brauchen wir das noch?
+############ brauchen wir das noch? ############
 pre_select_sn = 2
 
 c1 = c0 > pre_select_sn

@@ -1,7 +1,7 @@
 import os
 import sys
-import project_path_config
 import mpdaf
+import project_path_config
 
 
 def create_masking_plot():
