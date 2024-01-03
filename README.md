@@ -5,7 +5,6 @@
 wget http://martinwendt.de/cube.fits
 ```
 
----
 ## Run Preprocessing, Feline and Plot-Program in Python2.7 virtual environment
 
 ### Create virtual environment with anaconda:
@@ -61,7 +60,6 @@ cp preprocess/s2n_v250.fits s2n_v250.fits
 cp preprocess/med_filt.fits med_filt.fits
 ```
 
----
 ## here the actual tool starts:
 
 ### creating an overview image (for optional masking):
