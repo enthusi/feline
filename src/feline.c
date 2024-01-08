@@ -3,11 +3,13 @@
 #include <omp.h>
 #include <math.h>
 
-// #define SDLavailable 1
-
-#ifdef SDLavailable
-#include <SDL.h>
+#if __has_include(<SDL.h>)
+    #include <SDL.h>
+    #define SDLavailable 1
+#else
+    #define SDLavailable 0
 #endif
+
 
 // new in version 7: export to 2d float arrays
 
