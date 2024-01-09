@@ -3,11 +3,11 @@
 #include <omp.h>
 #include <math.h>
 
-#if __has_include(<SDL.h>)
-    #include <SDL.h>
-    #define SDLavailable 1
+#if __has_include(<SDL2/SDL.h>)
+#include <SDL2/SDL.h>
+#define SDLavailable 1
 #else
-    #define SDLavailable 0
+#define SDLavailable 0
 #endif
 
 
@@ -83,14 +83,16 @@ int main(int argc, char *argv[]) {
     float *prev_array;
 #ifdef SDLavailable
     SDL_Surface *screen;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
     SDL_Event event;
 
     Uint8 *keys;
-    Uint8 pixelr,pixelg,pixelb;
+    Uint8 pixelr, pixelg, pixelb;
 #endif
     int i, x, y;
 
-    printf("Feline v0.6 - 2019/12/20\n");
+    printf("Feline v0.7.2 - 2024/01/09\n");
     printf("Martin Wendt\n");
     if (argc < 5) {
         printf("Syntax: %s zlow zhigh max_match ignore_below\n", argv[0]);
@@ -125,7 +127,7 @@ int main(int argc, char *argv[]) {
     float lmin = (float) (temp[3]);
     float lmax = lmin + dz * 1.25;
     printf("%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
-/*  
+/*
   if (argc==4)
   {
       printf("Loading previously generated file '%s'\n" , argv[3]);
@@ -152,24 +154,38 @@ int main(int argc, char *argv[]) {
     printf("DONE\n");
 
 #ifdef SDLavailable
-    //init SDL
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-      fputs(SDL_GetError(), stderr);
-      exit(1);
+    // Init SDL
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        fputs(SDL_GetError(), stderr);
+        exit(1);
     }
+
     atexit(SDL_Quit);
-    if((screen = SDL_SetVideoMode(dx*4,dy+1,32,SDL_HWSURFACE)) == NULL)
-    {
-      fputs(SDL_GetError(), stderr);
-      exit(1);
+
+    window = SDL_CreateWindow("Feline v0.7.2 - Martin Wendt", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, dx * 4, dy + 1, SDL_WINDOW_SHOWN);
+    if (window == NULL) {
+        fputs(SDL_GetError(), stderr);
+        exit(1);
     }
 
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (renderer == NULL) {
+        fputs(SDL_GetError(), stderr);
+        exit(1);
+    }
+
+// Access pixels directly from the window surface
+    screen = SDL_CreateRGBSurface(0, dx * 4, dy + 1, 32, 0, 0, 0, 0);
+    if (screen == NULL) {
+        fputs(SDL_GetError(), stderr);
+        exit(1);
+    }
+    SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, dx * 4, dy + 1);
     if (SDL_MUSTLOCK(screen)) {
-      SDL_LockSurface(screen);
+        SDL_LockSurface(screen);
     }
-    Uint32 *pixels = (Uint32 *) screen->pixels;
 
+    Uint32 *pixels = (Uint32 *)screen->pixels;
 #endif
 
 
@@ -177,7 +193,7 @@ int main(int argc, char *argv[]) {
 
     printf("Seeking for Emitters... ");
 #ifdef SDLavailable
-#pragma omp parallel for schedule(dynamic) shared(temp,dx,dy,dz,size_header,pixels,screen,res_i,prev_array,previous)  default(shared) 
+#pragma omp parallel for schedule(dynamic) shared(temp, dx, dy, dz, size_header, pixels, texture, res_i, prev_array, previous)  default(shared)
 #else
 #pragma omp parallel for schedule(dynamic) shared(temp, dx, dy, dz, size_header, res_i, prev_array, previous)  default(shared)
 #endif
@@ -308,16 +324,16 @@ int main(int argc, char *argv[]) {
 
 
 #ifdef SDLavailable
-        int width=dx*4;   
-        
-   
-        pixels[y*width+x+dx*0]=getcolor((((int)(best_sum))>>2));
-        pixels[y*width+x+dx*1]=getcolor(((best_used-min_used+1)<<4));
-        if ((((int)(best_sum))>>2) > 10)
-            pixels[y*width+x+dx*2]=getcolor((Uint8)(best_redshift/zqso*256.0));
+        int width = dx * 4;
+
+
+        pixels[y * width + x + dx * 0] = getcolor((((int) (best_sum)) >> 2));
+        pixels[y * width + x + dx * 1] = getcolor(((best_used - min_used + 1) << 4));
+        if ((((int) (best_sum)) >> 2) > 10)
+            pixels[y * width + x + dx * 2] = getcolor((Uint8)(best_redshift / zqso * 256.0));
         else
-            pixels[y*width+x+dx*2]=0xffffff;
-        pixels[y*width+x+dx*3]=getcolor((Uint8)(best_template));
+            pixels[y * width + x + dx * 2] = 0xffffff;
+        pixels[y * width + x + dx * 3] = getcolor((Uint8)(best_template));
 #endif
         res_i[y * dx + x + dx * dy * 0] = best_sum;
         res_i[y * dx + x + dx * dy * 1] = best_redshift;
@@ -330,7 +346,10 @@ int main(int argc, char *argv[]) {
 
             {
 #ifdef SDLavailable
-                SDL_Flip(screen);
+                SDL_UpdateTexture(texture, NULL, pixels, dx * 4 * sizeof(Uint32));
+                SDL_RenderClear(renderer);
+                SDL_RenderCopy(renderer, texture, NULL, NULL);
+                SDL_RenderPresent(renderer);
 #endif
                 printf("\rSeeking for Emitters... %.1f", ((i * 100.0) / (dy * dx)));
                 //fflush(stdout);
@@ -352,13 +371,18 @@ int main(int argc, char *argv[]) {
 
 #ifdef SDLavailable
     char *file = "map_omp4.bmp";
-        if (SDL_SaveBMP(screen, file) != 0) {
+    SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, screen->pixels, screen->pitch);
+    if (SDL_SaveBMP(screen, file) != 0) {
         fprintf(stderr, "Could not write %s!\n", file);
-        }
+    }
 
-     SDL_Flip(screen);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
+
     if (SDL_MUSTLOCK(screen)) {
-        SDL_UnlockSurface(screen);  }
+        SDL_UnlockSurface(screen);
+    }
 
 #endif
     return 0;
