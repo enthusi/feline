@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -O3 -ffast-math -fopenmp -g $(shell sdl-config --cflags) -std=c99
-LDFLAGS = $(shell sdl-config --libs) -lm
+CFLAGS = -O3 -ffast-math -fopenmp -g $(shell sdl2-config --cflags) -std=c99
+LDFLAGS = $(shell sdl2-config --libs) -lm
 TARGET = feline.bin
 SOURCE = src/feline.c
 
@@ -11,4 +11,3 @@ $(TARGET): $(SOURCE)
 
 clean:
 	rm -f $(TARGET)
-
