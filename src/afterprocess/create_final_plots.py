@@ -327,7 +327,7 @@ def b0pressed(event):
             "%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t%f\t%f\t%f\t%.1f\t%.1f\n" % (
                 run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
                 get_impact(qso_x, qso_y, px, py, z), foundb))
-        stat_good.write("%f %f %f\n" % (z, quality, peakratio))
+        # stat_good.write("%f %f %f\n" % (z, quality, peakratio))
     else:
         verified_sources.write("%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t-\t-\t-\t%.1f\n" % (
             run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality,
@@ -341,7 +341,7 @@ def b1pressed(event):
     verified_sources.write("%d \t%.1f \t%.1f \t%f  0 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
         run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality))
     verified_sources.flush()
-    stat_bad.write("%f %f %f\n" % (z, quality, peakratio))
+    # stat_bad.write("%f %f %f\n" % (z, quality, peakratio))
     plt.close()
 
 
@@ -385,7 +385,7 @@ def correct_pos():
         return
 
     global px, py, npx, npy
-    use_new_pos = check.lines[0][0].get_visible()
+    # use_new_pos = check.lines[0][0].get_visible()
     print("===>", use_new_pos)
     if use_new_pos > 0:
         px = npx
@@ -1180,7 +1180,7 @@ for line in catalog:
                 "%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t%f\t%f\t%f\t%.1f\t%.1f\n" % (
                     run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
                     get_impact(qso_x, qso_y, px, py, z), foundb))
-            stat_good.write("%f %f %f\n" % (z, quality, peakratio))
+            # stat_good.write("%f %f %f\n" % (z, quality, peakratio))
         else:
             verified_sources.write("%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t-\t-\t-\t%.1f\n" % (
                 run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality,
