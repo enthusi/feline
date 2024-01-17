@@ -5,7 +5,7 @@ import unittest.mock
 import pytest
 
 def test_gauss2d():
-    with unittest.mock.patch.object(sys, 'argv', ["detect_objects.py", "dummy.fits"]):
+    with unittest.mock.patch.object(sys, 'argv', ["detect_objects.py", "/home/runner/work/feline/data/processed/dummy.fits"]):
         # Now, import the module that uses sys.argv
         from feline.src.afterprocess.detect_objects import gauss2d
     # Define parameters for testing
@@ -28,7 +28,7 @@ def test_gauss2d():
     assert result == expected_result
 
 def test_twoD_Gaussian():
-    with unittest.mock.patch.object(sys, 'argv', ["detect_objects.py", "dummy.fits"]):
+    with unittest.mock.patch.object(sys, 'argv', ["detect_objects.py", "/home/runner/work/feline/data/processed/dummy.fits"]):
         # Now, import the module that uses sys.argv
         from feline.src.afterprocess.detect_objects import twoD_Gaussian
     # Define parameters for testing
