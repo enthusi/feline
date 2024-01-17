@@ -13,8 +13,8 @@ def test_world_to_pix():
     header = {'NAXIS': 2, 'CRVAL1': 0, 'CRVAL2': 0, 'CRPIX1': 1, 'CRPIX2': 1, 'CTYPE1': 'RA---TAN', 'CTYPE2': 'DEC--TAN'}
     coord = WCS(header)
 
-    # Set up sample radius
-    rad = [10.0, 20.0]
+    # Set up sample coordinates
+    rad = np.array([[10.0, 20.0, 0]])  # Ensure the shape is (N, 2)
 
     # Call the function
     result = world_to_pix(coord, rad)
