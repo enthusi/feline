@@ -4,8 +4,8 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from feline.src.afterprocess.detect_objects import world_to_pix
-import project_path_config
+from afterprocess.detect_objects import world_to_pix
+import afterprocess.project_path_config
 
 
 def test_world_to_pix():
