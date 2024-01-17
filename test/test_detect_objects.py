@@ -1,11 +1,6 @@
 import numpy as np
-import sys
-import os
+from feline.src.afterprocess.detect_objects import world_to_pix
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from afterprocess.detect_objects import world_to_pix
-import afterprocess.project_path_config
 
 
 def test_world_to_pix():
