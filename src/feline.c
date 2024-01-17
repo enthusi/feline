@@ -3,11 +3,8 @@
 #include <omp.h>
 #include <math.h>
 
-#if __has_include(<SDL2/SDL.h>)
+#ifdef SDLavailable
 #include <SDL2/SDL.h>
-#define SDLavailable 1
-#else
-#define SDLavailable 0
 #endif
 
 
