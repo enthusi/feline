@@ -1,5 +1,7 @@
 import numpy as np
 from feline.src.afterprocess.detect_objects import world_to_pix
+import feline.src.afterprocess.project_path_config
+
 
 def test_world_to_pix():
     # Assuming you have a Coord object with wcs_world2pix method
