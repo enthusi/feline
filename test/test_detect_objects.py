@@ -1,28 +1,49 @@
 # test/test_detect_objects.py
 import numpy as np
-import astropy.wcs
-import pytest
 from afterprocess.detect_objects import world_to_pix
 
-# Mock Astropy's WCS class for testing
-class MockWCS:
-    def wcs_world2pix(self, radarray, dummy):
-        # Implement a simple mock behavior
-        return np.array([[10.0, 20.0]])
+def test_gauss2d():
+    # Define parameters for testing
+    xy = (1.0, 2.0)
+    amp = 3.0
+    x0 = 1.5
+    y0 = 2.5
+    a = 0.1
+    b = 0.2
+    c = 0.3
 
-def test_world_to_pix_with_dummy_file(monkeypatch):
-    # Create an instance of the MockWCS class
-    mock_coord = MockWCS()
+    # Call the gauss2d method with the defined parameters
+    result = gauss2d(xy, amp, x0, y0, a, b, c)
 
-    # Define a radius for testing
-    radius = [30.0, 40.0]
-
-    # Use monkeypatch to set sys.argv[1] to "dummy.fits" during the test
-    monkeypatch.setattr("sys.argv", ["script_name.py", "dummy.fits"])
-
-    # Call the world_to_pix method with the modified sys.argv
-    result = world_to_pix(mock_coord, radius)
+    # Calculate the expected result
+    inner = a * (xy[0] - x0) ** 2 + 2 * b * (xy[0] - x0) ** 2 * (xy[1] - y0) ** 2 + c * (xy[1] - y0) ** 2
+    expected_result = amp * np.exp(-inner)
 
     # Check the result against the expected values
-    expected_result = (10.0, 20.0)
     assert result == expected_result
+
+def test_twoD_Gaussian():
+    # Define parameters for testing
+    amplitude = 1.0
+    xo = 0.0
+    yo = 0.0
+    sigma_x = 1.0
+    sigma_y = 1.0
+    theta = 0.0
+    offset = 0.0
+
+    # Create a grid of coordinates for testing
+    x, y = np.meshgrid(np.linspace(-5, 5, 11), np.linspace(-5, 5, 11))
+    coordinates = np.vstack((x.ravel(), y.ravel()))
+
+    # Call the twoD_Gaussian method with the defined parameters
+    result = twoD_Gaussian(coordinates, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
+
+    # Calculate the expected result
+    a = (np.cos(theta) ** 2) / (2 * sigma_x ** 2) + (np.sin(theta) ** 2) / (2 * sigma_y ** 2)
+    b = -(np.sin(2 * theta)) / (4 * sigma_x ** 2) + (np.sin(2 * theta)) / (4 * sigma_y ** 2)
+    c = (np.sin(theta) ** 2) / (2 * sigma_x ** 2) + (np.cos(theta) ** 2) / (2 * sigma_y ** 2)
+    expected_result = offset + amplitude * np.exp(- (a * ((x - xo) ** 2) + 2 * b * (x - xo) * (y - yo) + c * ((y - yo) ** 2))).ravel()
+
+    # Check the result against the expected values
+    assert np.array_equal(result, expected_result)
