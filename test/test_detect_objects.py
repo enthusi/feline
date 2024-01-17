@@ -1,5 +1,8 @@
 # test/test_detect_objects.py
 import numpy as np
+import sys
+import unittest.mock
+import pytest
 
 def test_gauss2d():
     with unittest.mock.patch.object(sys, 'argv', ["detect_objects.py", "dummy.fits"]):
