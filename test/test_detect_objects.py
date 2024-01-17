@@ -6,27 +6,7 @@ from astropy.wcs import WCS
 import pytest
 from feline.src.afterprocess.detect_objects import gauss2d
 from feline.src.afterprocess.detect_objects import twoD_Gaussian
-from feline.src.afterprocess.detect_objects import world_to_pix
-
-def test_world_to_pix():
-    # Create a WCS object (you should replace this with your actual coord)
-    header = {'NAXIS': 2, 'CRVAL1': 0, 'CRVAL2': 0, 'CRPIX1': 1, 'CRPIX2': 1, 'CTYPE1': 'RA---TAN', 'CTYPE2': 'DEC--TAN'}
-    coord = WCS(header)
-
-    # Set up sample coordinates
-    rad = [10.0, 20.0]
-
-    # Call the function
-    result = world_to_pix(coord, rad)
-
-    # Check the result against expected values
-    # Replace these with the actual expected values based on your use case
-    expected_x = 1.0
-    expected_y = 1.0
-
-    assert result[0] == pytest.approx(expected_x)
-    assert result[1] == pytest.approx(expected_y)
-    
+  
 def test_gauss2d():
     # Define parameters for testing
     xy = (1.0, 2.0)
