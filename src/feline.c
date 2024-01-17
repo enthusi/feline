@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <omp.h>
 #include <math.h>
-
-#ifdef SDLavailable
-#include <SDL2/SDL.h>
+#if SDLavailable
+    #include <SDL2/SDL.h>
 #endif
 
 
@@ -78,7 +77,7 @@ int main(int argc, char *argv[]) {
     float *res_u;
 
     float *prev_array;
-#ifdef SDLavailable
+#if SDLavailable
     SDL_Surface *screen;
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -150,7 +149,7 @@ int main(int argc, char *argv[]) {
     //printf("%d\n",sizeof(float));
     printf("DONE\n");
 
-#ifdef SDLavailable
+#if SDLavailable
     // Init SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fputs(SDL_GetError(), stderr);
@@ -189,7 +188,7 @@ int main(int argc, char *argv[]) {
     res_i = malloc(sizeof(float) * dy * dx * layer);
 
     printf("Seeking for Emitters... ");
-#ifdef SDLavailable
+#if SDLavailable
 #pragma omp parallel for schedule(dynamic) shared(temp, dx, dy, dz, size_header, pixels, texture, res_i, prev_array, previous)  default(shared)
 #else
 #pragma omp parallel for schedule(dynamic) shared(temp, dx, dy, dz, size_header, res_i, prev_array, previous)  default(shared)
@@ -320,7 +319,7 @@ int main(int argc, char *argv[]) {
         }//templates loop
 
 
-#ifdef SDLavailable
+#if SDLavailable
         int width = dx * 4;
 
 
@@ -342,7 +341,7 @@ int main(int argc, char *argv[]) {
             //if (i % (dy) == 0) {
 
             {
-#ifdef SDLavailable
+#if SDLavailable
                 SDL_UpdateTexture(texture, NULL, pixels, dx * 4 * sizeof(Uint32));
                 SDL_RenderClear(renderer);
                 SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -366,7 +365,7 @@ int main(int argc, char *argv[]) {
     fwrite(res_i, (sizeof(float) * dy * dx * layer), 1, res_i_file);
 
 
-#ifdef SDLavailable
+#if SDLavailable
     char *file = "map_omp4.bmp";
     SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, screen->pixels, screen->pitch);
     if (SDL_SaveBMP(screen, file) != 0) {

@@ -20,7 +20,7 @@ CFLAGS += $(SDL2_CFLAGS)
 LDFLAGS += $(SDL2_LIBS)
 
 # Define the SDLavailable macro for use in your source code
-CFLAGS += -DSDLavailable=$(SDLavailable)
+CFLAGS += -D SDLavailable=$(SDLavailable)
 
 all: $(TARGET)
 
