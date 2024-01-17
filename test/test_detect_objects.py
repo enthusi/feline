@@ -1,6 +1,7 @@
 # test/test_detect_objects.py
 import numpy as np
-from afterprocess.detect_objects import world_to_pix
+from afterprocess.detect_objects import twoD_Gaussian
+from afterprocess.detect_objects import gauss2d
 
 def test_gauss2d():
     # Define parameters for testing
