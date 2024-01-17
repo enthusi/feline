@@ -4,6 +4,7 @@ from afterprocess.detect_objects import twoD_Gaussian
 from afterprocess.detect_objects import gauss2d
 
 def test_gauss2d():
+    sys.argv = ["detect_objects.py", "dummy.fits"]
     # Define parameters for testing
     xy = (1.0, 2.0)
     amp = 3.0
@@ -24,6 +25,7 @@ def test_gauss2d():
     assert result == expected_result
 
 def test_twoD_Gaussian():
+    sys.argv = ["detect_objects.py", "dummy.fits"]
     # Define parameters for testing
     amplitude = 1.0
     xo = 0.0
