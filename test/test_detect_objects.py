@@ -1,19 +1,22 @@
 import numpy as np
+import astropy.wcs
 from feline.src.afterprocess.detect_objects import world_to_pix
 
+class MockWCS:
+    def wcs_world2pix(self, radarray, dummy):
+        # Implement a simple mock behavior
+        return np.array([[10.0, 20.0]])
 
-@mock.patch('matplotlib.pyplot.use')    
 def test_world_to_pix():
-    # Assuming you have a Coord object with wcs_world2pix method
-    class MockCoord:
-        def wcs_world2pix(self, radarray, _):
-            # Mock implementation for testing
-            return np.array([[10, 20]])
+    # Create an instance of the MockWCS class
+    mock_coord = MockWCS()
 
-    coord = MockCoord()
-    rad = [1, 1]
+    # Define a radius for testing
+    radius = [30.0, 40.0]
 
-    result = world_to_pix(coord, rad)
+    # Call the world_to_pix method with the mock data
+    result = world_to_pix(mock_coord, radius)
 
-    # Assert the expected result based on the mock implementation
-    assert result == (10, 20)
+    # Check the result against the expected values
+    expected_result = (10.0, 20.0)
+    assert result == expected_result
