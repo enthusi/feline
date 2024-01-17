@@ -1,9 +1,38 @@
 import os
 import struct
 import sys
-import matplotlib.pyplot as plt
 import mpdaf.obj
 import project_path_config
+
+
+def write_to_file(file_path, data):
+    """
+    Function to write data to a file
+
+    Parameters:
+    file_path (str): Path to the file
+    data (float): Data to be written to the file
+    """
+    with open(file_path, "wb") as fout:
+        fout.write(struct.pack("f", data))
+
+
+def process_cube_data(cube_data, dy, dx, file_path):
+    """
+    Function to process cube data and write it to a file
+
+    Parameters:
+    cube_data (numpy array): The cube data to be processed
+    dy (int): The y dimension of the cube data
+    dx (int): The x dimension of the cube data
+    file_path (str): Path to the file where the processed data will be written
+    """
+    with open(file_path, "wb") as fout:
+        for y in range(dy):
+            for x in range(dx):
+                spec = cube_data[:, y, x]
+                myfmt = "f" * len(spec.data)
+                fout.write(struct.pack(myfmt, *spec.data))
 
 
 filename = sys.argv[1]
@@ -12,29 +41,10 @@ file = os.path.join(project_path_config.DATA_PATH_PROCESSED, filename)
 c0 = mpdaf.obj.Cube(file)
 dz, dy, dx = c0.shape
 start = c0.wave.get_crval()
-print(f"{dz}, {dy}, {dx}, {start}")
 
-with open(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), "wb") as fout:
-	fout.write(struct.pack("f", dz))
-	fout.write(struct.pack("f", dy))
-	fout.write(struct.pack("f", dx))
-	fout.write(struct.pack("f", start))
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), dz)
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), dy)
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), dx)
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), start)
 
-	for y in range(dy):
-		if not (y % 10):
-			print(f"{float(y) / float(dy) * 100:.1f} done.\r")
-		for x in range(dx):
-			spec = c0.data[:, y, x]
-			myfmt = "f" * len(spec.data)
-			fout.write(struct.pack(myfmt, *spec.data))
-
-############ brauchen wir das noch? ############
-pre_select_sn = 2
-
-c1 = c0 > pre_select_sn
-i1 = c1.sum(axis=0)
-
-if sys.argv[2] == "plot":
-	i1.plot()
-	plt.show()
-	input("press any key")
+process_cube_data(c0.data, dy, dx, os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"))
