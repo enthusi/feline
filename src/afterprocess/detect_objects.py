@@ -12,7 +12,10 @@ import skimage
 import struct
 import feline.src.afterprocess.project_path_config as project_path_config
 
-mpl.use("TkAgg")
+try:
+    mpl.use("TkAgg")
+except:
+    mpl.use("Agg")
 
 
 def onclick(event):
