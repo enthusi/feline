@@ -14,7 +14,7 @@ def test_world_to_pix():
     coord = WCS(header)
 
     # Set up sample coordinates
-    rad = np.array([[10.0, 20.0, 0]])  # Ensure the shape is (N, 2)
+    rad = [10.0, 20.0]
 
     # Call the function
     result = world_to_pix(coord, rad)
