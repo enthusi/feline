@@ -16,25 +16,47 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/*.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
+
     - name: Install system dependencies
       run: sudo apt-get install python3-tk -y
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f src/afterprocess/requirements.txt ]; then pip install -r src/afterprocess/requirements.txt; fi
+
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
+
+    - name: Cache system dependencies
+      uses: actions/cache@v2
+      with:
+        path: /path/to/your/system/dependencies  # Replace with the actual path
+        key: ${{ runner.os }}-system-${{ hashFiles('**/YourSystemDependencies.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-system-
+
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 src/afterprocess --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 src/afterprocess --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     - name: Test with pytest
       run: |
         pytest
