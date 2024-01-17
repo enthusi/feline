@@ -2,6 +2,7 @@
 import numpy as np
 import sys
 import unittest.mock
+from astropy.wcs import WCS
 import pytest
 from feline.src.afterprocess.detect_objects import gauss2d
 from feline.src.afterprocess.detect_objects import twoD_Gaussian
