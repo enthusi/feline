@@ -7,7 +7,7 @@ import pytest
 def test_gauss2d():
     with unittest.mock.patch.object(sys, 'argv', ["detect_objects.py", "dummy.fits"]):
         # Now, import the module that uses sys.argv
-        from afterprocess.detect_objects import gauss2d
+        from feline.src.afterprocess.detect_objects import gauss2d
     # Define parameters for testing
     xy = (1.0, 2.0)
     amp = 3.0
@@ -30,7 +30,7 @@ def test_gauss2d():
 def test_twoD_Gaussian():
     with unittest.mock.patch.object(sys, 'argv', ["detect_objects.py", "dummy.fits"]):
         # Now, import the module that uses sys.argv
-        from afterprocess.detect_objects import twoD_Gaussian
+        from feline.src.afterprocess.detect_objects import twoD_Gaussian
     # Define parameters for testing
     amplitude = 1.0
     xo = 0.0
