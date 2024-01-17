@@ -26,7 +26,7 @@ jobs:
         pip install flake8 pytest
         if [ -f src/afterprocess/requirements.txt ]; then pip install -r src/afterprocess/requirements.txt; fi
     - name: Set PYTHONPATH
-      run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+      run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
