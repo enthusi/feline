@@ -10,7 +10,7 @@ import numpy as np
 import scipy
 import skimage
 import struct
-import feline.src.afterprocess.project_path_config as project_path_config
+import feline.src.postprocessing.project_path_config as project_path_config
 
 try:
     mpl.use("TkAgg")
