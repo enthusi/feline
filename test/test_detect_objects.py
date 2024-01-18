@@ -4,9 +4,10 @@ import sys
 import unittest.mock
 from astropy.wcs import WCS
 import pytest
-from feline.src.afterprocess.detect_objects import gauss2d
-from feline.src.afterprocess.detect_objects import twoD_Gaussian
-  
+from feline.src.postprocessing.detect_objects import gauss2d
+from feline.src.postprocessing.detect_objects import twoD_Gaussian
+
+
 def test_gauss2d():
     # Define parameters for testing
     xy = (1.0, 2.0)
