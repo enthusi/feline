@@ -10,10 +10,7 @@ import numpy as np
 import scipy
 import skimage
 import struct
-try:
-    import project_path_config
-except:
-    pass        
+import project_path_config   
 
 try:
     mpl.use("TkAgg")
