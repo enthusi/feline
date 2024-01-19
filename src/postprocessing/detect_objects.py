@@ -77,7 +77,7 @@ def print_lines(toggle, z):
 
         for emission in atom:
             pos = emission * (z + 1)
-            name = atoms["atom_id"].get(emission)
+            name = atoms["atom_id"].get(str(emission))
             print("%s (%.1f)," % (name, pos), end=" ")
     print()
 
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     yd = int(yd)
     dz = int(dz)
     
-    print(f"Cube dimensions (z,y,x): ({dz}, {yd}, {xd})")
+    print(f"#Cube dimensions (z,y,x): {dz}, {xd}, {yd}")
     
     
     with open(os.path.join(project_path_config.DATA_PATH_LOOKUP, "atoms.json"), "r") as data:

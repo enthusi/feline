@@ -500,6 +500,7 @@ except:
 # should be in config gile, just 3 values in the end:
 # ra,dec of quasar
 # redshif of quasar
+"""
 qso_positions_file = open(os.path.join(project_path_config.DATA_PATH_LOOKUP, "qso_centers_deg.txt"), "r")
 qso_found = False
 print("looking for %s" % qso_id)
@@ -517,6 +518,7 @@ print(qso_ra)
 print(qso_dec)
 qso_x, qso_y = world_to_pix(coord, (qso_ra, qso_dec))
 print(qso_x, qso_y)
+"""
 
 for line in catalog:
     if line[0] == "#": continue
@@ -534,6 +536,7 @@ for line in catalog:
     # if reading in my own catalog
     if True:
         run_id = int((line.split()[0]))
+        print(f"################################# RUN_ID: {run_id}############################")
         py = float((line.split()[1]))
         px = float((line.split()[2]))
         z = float(line.split()[3])
