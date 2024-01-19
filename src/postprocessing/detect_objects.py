@@ -10,7 +10,10 @@ import numpy as np
 import scipy
 import skimage
 import struct
-import feline.src.postprocessing.project_path_config as project_path_config
+try:
+    import project_path_config
+except:
+    pass        
 
 try:
     mpl.use("TkAgg")
