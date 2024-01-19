@@ -37,7 +37,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        if [ -f src/postprocessing/requirements.txt ]; then pip install -r src/postprocessing/requirements.txt; fi
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
