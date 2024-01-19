@@ -4,7 +4,7 @@ import sys
 import unittest.mock
 from astropy.wcs import WCS
 import pytest
-sys.path.insert(0, '../src/postprocessing/')
+sys.path.insert(0, '/home/runner/work/feline/src/postprocessing')
 from detect_objects import gauss2d
 from detect_objects import twoD_Gaussian
 
