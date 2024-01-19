@@ -62,14 +62,11 @@ cp preprocess/med_filt.fits med_filt.fits
 
 ## here the actual tool starts:
 
-### creating an overview image (for optional masking):
+### optional masking plot and fast cache access
 ```
-python create_masking_plot.py cube.fits
+python combination.py cube.fits s2n_v250.fits
 ```
-### change data order from image-by-image to spectrum-by-spectrum (fast cache access):
-```
-python transpose_cube.py s2n_v250.fits none
-```
+
 ### build and run the main Feline code (C/OpenMP):
 ```
 make clean

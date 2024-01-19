@@ -72,14 +72,15 @@ create_masking_plot()
 filename_second_argument = sys.argv[2]
 processed_file = os.path.join(project_path_config.DATA_PATH_PROCESSED, filename_second_argument)
 
-c0 = mpdaf.obj.Cube(processed_file)
-dimension_z, dimension_y, dimension_x = c0.shape
-start = c0.wave.get_crval()
+cube_from_processed_file = mpdaf.obj.Cube(processed_file)
+cube_dimensions_z, cube_dimensions_y, cube_dimensions_x = cube_from_processed_file.shape
+wavelength_at_reference_pixel = cube_from_processed_file.wave.get_crval()
 
-write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), dimension_z)
-write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), dimension_y)
-write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), dimension_x)
-write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), start)
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), cube_dimensions_z)
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), cube_dimensions_y)
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), cube_dimensions_x)
+write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"),
+              wavelength_at_reference_pixel)
 
-process_cube_data(c0.data, dimension_y, dimension_x,
+process_cube_data(cube_from_processed_file.data, cube_dimensions_y, cube_dimensions_x,
                   os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"))
