@@ -42,14 +42,6 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
 
-    - name: Cache system dependencies
-      uses: actions/cache@v2
-      with:
-        path: /path/to/your/system/dependencies  # Replace with the actual path
-        key: ${{ runner.os }}-system-${{ hashFiles('**/YourSystemDependencies.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-system-
-
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
