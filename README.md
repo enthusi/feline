@@ -69,9 +69,6 @@ python combination.py cube.fits s2n_v250.fits
 
 ### build and run the main Feline code (C/OpenMP):
 ```
-make clean
-```
-```
 make
 ```
 ```
