@@ -2,7 +2,7 @@
 
 # Test case 1
 echo "Running Test Case 1..."
-wget https://martinwendt.de/cube.fits  # Download a file
+wget http://martinwendt.de/cube.fits  # Download a file
 if [ -f cube.fits ]; then
   echo "Cube downloaded successfully for Test Case 1"
 else
