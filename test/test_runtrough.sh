@@ -16,7 +16,7 @@ echo "Running Test Case 2..."
 
 #Test case 2
 python src/preprocessing/median-filter-cube.py data/raw/cube.fits --signalHDU=1 --varHDU=2 --num_cpu=2 --width=151 --output=data/processed/med_filt.fits
-if [-f data/processed/med_filt.fits]; then
+if [ -f data/processed/med_filt.fits]; then
   echo "created med_filt.fits successfully for Test Case 2"
 else
   echo "Failed to create med_filt.fits for Test Case 2"
