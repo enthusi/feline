@@ -10,4 +10,5 @@ else
   exit 1 # send error code to github workflow when test failes
 fi
 
+exit 0
 
