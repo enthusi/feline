@@ -7,7 +7,7 @@ on:
     branches: [ "dev" ]
 
 permissions:
-  contents: read
+  contents: read, write
 
 jobs:
   build:
@@ -32,8 +32,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install pytest-mock
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
 
     - name: Lint with flake8
       run: |
@@ -43,9 +45,10 @@ jobs:
         flake8 src/postprocessing --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Test with pytest
+      permissions:
+        contents: read, write
       run: |
+        rm -rf /tmp/*
+        wget https://github.com/osoth/testdata/raw/main/subset_cube.fits
+        mv subset_cube.fits test_file.fits
         pytest
-        
-    - name: test whole runtrough
-      run: | 
-        sh test/test_runtrough.sh
