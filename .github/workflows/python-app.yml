@@ -7,7 +7,7 @@ on:
     branches: [ "dev" ]
 
 permissions:
-  contents: read, write
+  contents: read
 
 jobs:
   build:
