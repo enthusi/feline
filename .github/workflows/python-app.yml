@@ -7,8 +7,7 @@ on:
     branches: [ "dev" ]
 
 permissions:
-  contents: read
-
+  contents: write
 jobs:
   build:
 
@@ -44,8 +43,14 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 src/postprocessing --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+    - name: Set up environment
+      run: |
+        mkdir -p $HOME/tmp
+        export TMPDIR=$HOME/tmp
+
     - name: Test with pytest
       run: |
         wget https://github.com/osoth/testdata/raw/main/subset_cube.fits
         mv subset_cube.fits test_file.fits
+        cp test_file.fits data/raw/test_file.fits
         pytest

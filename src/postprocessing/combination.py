@@ -31,13 +31,11 @@ def create_masking_plot():
     """
     filename_first_argument = sys.argv[1]
     file = os.path.join(project_path_config.DATA_PATH_RAW, filename_first_argument)
-
     data = load_data(file, 1)
     statistic = load_data(file, 2)
-
     snimage = data.copy()
     snimage.data = data.data / statistic.data
-    snimage.write("image00.fits")
+    snimage.write('image00.fits')
 
 
 def write_to_file(file_path, data):
