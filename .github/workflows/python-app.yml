@@ -46,7 +46,6 @@ jobs:
 
     - name: Test with pytest
       run: |
-        rm -rf /tmp/*
         wget https://github.com/osoth/testdata/raw/main/subset_cube.fits
         mv subset_cube.fits test_file.fits
         pytest
