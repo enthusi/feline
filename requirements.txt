@@ -23,3 +23,4 @@ six>=1.16.0
 tifffile>=2023.7.10
 zipp>=3.17.0
 mpdaf>=3.5
+pypdf>=4.1

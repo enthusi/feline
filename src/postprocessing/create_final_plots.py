@@ -34,26 +34,6 @@ expected_galaxy_absorption_positions = [
     5895.6
 ]
 
-"""
-| Transition  |  wl (vac) | comment                                 |
-|-------------+-----------+-----------------------------------------|
-| Fe II       |   2586.65 |                                         |
-| Fe II       |   2600.17 |                                         |
-| Mg II       |   2796.35 | no need to mark 2803, I think           |
-| H$\zeta$    | 3890.1506 |                                         |
-| K(Ca)       |  3934.777 |                                         |
-| H(Ca)       |  3969.588 |                                         |
-| H$\epsilon$ | 3971.1951 | blended with H(Ca), so maybe don"t mark |
-| H$\delta$   |   4102.89 |                                         |
-| G           |   4305.61 |                                         |
-| $H\gamma$   |   4341.68 |                                         |
-| $H\beta$    |   4862.68 |                                         |
-| MgI (blend) |    5176.7 |                                         |
-| Na          |    5895.6 |  
-"""
-
-quiet = False
-
 
 def scale_params(redshift):
     ps = cosmo.kpc_proper_per_arcmin(redshift).value / 60.0
@@ -81,15 +61,6 @@ foundm = -1
 foundqop = -1
 foundifrom = "not"
 
-mpl.rcParams["savefig.directory"] = "."
-cont_flag = False
-
-full_data = open("info.txt", "w")
-full_data.write(
-    "id, px, py, z, b, quality, template, used, gaussx, gaussy," ", gaussrot, smoothratio, oiiratio, gal_ra, gal_dec, qso_x, qso_y\n")
-
-error_log = open("errors.log", "w")
-
 
 # MW23 it is ageneral annoyance to convert pixel positions in an
 # image to world coordinates (WCS) given as two angles on the sky (ra, dec)
@@ -115,7 +86,7 @@ def world_to_pix(coord, rad):
     return x, y
 
 
-global px, py, z, run_id, forfit_t, forfit_w, used, gtemplate, npx, npy, zerr, ra, dec, verr, quality
+global px, py, z, run_id, forfit_t, forfit_w, used, gtemplate, npx, npy, zerr, ra, dec, quality
 forfit_t = 0
 forfit_w = np.zeros(10)
 global use_new_pos
@@ -142,81 +113,9 @@ dz = int(dz)
 xd = int(xd)
 yd = int(yd)
 
-############ ignored below ############
-print("#Cube dimensions (z,y,x): %d, %d, %d" % (dz, xd, yd))
 
-Lorrie = False
-
-read_own = False
-min_line_number = 2
-
-only_good = False
-
-statistics = open("statistics.txt", "w")
-peakratio = 0
-
-try:
-    pcatalog = {}
-    previous = open("input_catalog.txt", "r")
-    for line in previous:
-        run_id = int((line.split()[0]))
-        mark = int((line.split()[4]))
-        pcatalog[run_id] = mark
-    prev_cat = True
-    previous.close()
-    print("read in former selections")
-except:
-    print("no former selections available!")
-
-############ ignored abvoe ############
-
-verified_sources = open("output_catalog.txt", "w")
+# verified_sources = open("output_catalog.txt", "w")
 export_ds9 = True
-
-
-############ function not needed ############
-def fill(orig, start_coords, fill_value):
-    area = 0
-    """
-    Flood fill algorithm
-    
-    Parameters
-    ----------
-    data : (M, N) ndarray of uint8 type
-        Image with flood to be filled. Modified inplace.
-    start_coords : tuple
-        Length-2 tuple of ints defining (row, col) start coordinates.
-    fill_value : int
-        Value the flooded area will take after the fill.
-        
-    Returns
-    -------
-    None, ``data`` is modified inplace.
-    """
-    data = orig.copy()
-    xsize, ysize = data.shape
-    orig_value = data[start_coords[0], start_coords[1]]
-
-    stack = {(start_coords[0], start_coords[1])}
-    if fill_value == orig_value:
-        print("Filling region with same value ")
-        return 0
-
-    while stack:
-        x, y = stack.pop()
-
-        if data[x, y] == orig_value:
-            data[x, y] = fill_value
-            area += 1
-            if x > 0:
-                stack.add((x - 1, y))
-            if x < (xsize - 1):
-                stack.add((x + 1, y))
-            if y > 0:
-                stack.add((x, y - 1))
-            if y < (ysize - 1):
-                stack.add((x, y + 1))
-    return area
 
 
 # MW23 a single model ist just an integer number, here the set bit's are essentially counted
@@ -318,72 +217,7 @@ def fit_template(t, z, f, w, sigma_array, scipy):
     return new_z, perr, popt
 
 
-############ remove GUI ############
-def b0pressed(event):
-    correct_pos()
-    print("ok", px, py, z)
-    if foundz > 0:
-        verified_sources.write(
-            "%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t%f\t%f\t%f\t%.1f\t%.1f\n" % (
-                run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
-                get_impact(qso_x, qso_y, px, py, z), foundb))
-        # stat_good.write("%f %f %f\n" % (z, quality, peakratio))
-    else:
-        verified_sources.write("%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t-\t-\t-\t%.1f\n" % (
-            run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality,
-            get_impact(qso_x, qso_y, px, py, z)))
-    verified_sources.flush()
-    plt.close()
-
-
-def b1pressed(event):
-    print("bad:", px, py, z)
-    verified_sources.write("%d \t%.1f \t%.1f \t%f  0 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-        run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality))
-    verified_sources.flush()
-    # stat_bad.write("%f %f %f\n" % (z, quality, peakratio))
-    plt.close()
-
-
-def b2pressed(event):
-    wave = ref_index.vac2air((1 + z) * 3727.09 / 10.0) * 10.0
-    lyz = ref_index.air2vac(wave / 10.0) * 10.0 / 1215.67 - 1
-    print("OIIa marked as Lyman alpha ", px, py, z, lyz)
-    verified_sources.write("%d \t%.1f \t%.1f \t%f  2 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-        run_id, px, py, lyz, verr, used, gtemplate, found, ra, dec, verr, quality))
-    verified_sources.flush()
-    plt.close()
-
-
-def b2pressedb(event):
-    # correct_pos()
-
-    # compute a  bad new z assuming Lyman alpha
-    # from z back to wave
-    wave = ref_index.vac2air((1 + z) * 3729.88 / 10.0) * 10.0
-    lyz = ref_index.air2vac(wave / 10.0) * 10.0 / 1215.67 - 1
-    print("OIIb marked as Lyman alpha ", px, py, z, lyz)
-    verified_sources.write("%d \t%.1f \t%.1f \t%f  2 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-        run_id, px, py, lyz, verr, used, gtemplate, found, ra, dec, verr, quality))
-    verified_sources.flush()
-    plt.close()
-
-
-def b3pressed(event):
-    if pcatalog[run_id] > 0:  # dont correct positions for "NO"
-        correct_pos()
-    print("use old", px, py, z)
-    verified_sources.write("%d \t%.1f \t%.1f \t%f %d \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (
-        run_id, px, py, z, pcatalog[run_id], verr, used, gtemplate, found, ra, dec, verr, quality))
-    verified_sources.flush()
-    plt.close()
-
-
 def correct_pos():
-    if read_own:
-        print("wont fix own list")
-        return
-
     global px, py, npx, npy
     # use_new_pos = check.lines[0][0].get_visible()
     print("===>", use_new_pos)
@@ -391,14 +225,6 @@ def correct_pos():
         px = npx
         py = npy
         ra, dec = pix_to_world(coord, (px, py))
-
-
-def checkpressed(event):
-    # global use_new_pos
-    # if event == "2 Hz":
-    #  use_new_pos^=1
-    #  print use_new_pos
-    pass
 
 
 def correctlimit(ax, x, y):
@@ -549,8 +375,6 @@ for line in catalog:
         border_distance = min(min(px, py), min(dx - px, dy - py))
         if border_distance < 15: continue
 
-    if prev_cat:
-        mark = pcatalog[run_id]
 
     # use THIS line to look for a specific object by ID
     # if quality > 300: continue
@@ -568,13 +392,12 @@ for line in catalog:
     #    continue
     print()
     print("running id", run_id)
-    if only_good:
-        if mark == 0: continue
+
     # if run_id==289: continue
     # if run_id==216: continue
     # if run_id==450: continue
 
-    if used < min_line_number: continue
+    # if used < min_line_number: continue
     # if quality < 200:continue
     toggle = gtemplate
     positions = []
@@ -603,18 +426,6 @@ for line in catalog:
     # sys.exit(1)
 
     valid_model = True
-    try:
-
-        newz, zerr, gal_model = fit_template(gtemplate, z, raw_data, raw_wave, raw_sigma.data)
-    # print 1/0
-    except:
-        print("** fit did not converge!")
-        error_log.write("no valid model %d %.3f %d\n" % (run_id, z, gtemplate))
-        # sys.exit(1)
-        newz = z
-        zerr = 100
-        gal_model = 0
-        valid_model = False
 
     for k in range(len(atoms["atoms"])):
         # is k in the template?
@@ -647,10 +458,10 @@ for line in catalog:
     j = 0
     count = len(positions)
     c = 299792.458
-    dv = (z - newz) * c
-    verr = zerr * c / (z + 1)
+    # dv = (z - newz) * c
+    #verr = zerr * c / (z + 1)
     zguess = z
-    z = newz
+    # z = newz
 
     # MW23 here I start that one big plot
     plt.figure(figsize=(16, 9))
@@ -663,8 +474,8 @@ for line in catalog:
     # plt.title("id=%d, x=%.1f, y=%.1f, z=%.6f (verr=%.1f), used=%d, quality=%d" % (run_id,px,py,z,verr,used,quality))
 
     ax2 = plt.subplot2grid((rows, columns), (1, 0), colspan=9)
-    plt.title("(verr=%.1f), %d used lines, match strength=%d, b=%.1f" % (
-        verr, used, quality, get_impact(qso_x, qso_y, px, py, z)))
+    plt.title("%d used lines, match strength=%d, b=%.1f" % (
+        used, quality, get_impact(qso_x, qso_y, px, py, z)))
 
     ax2.tick_params(
         axis="both",  # changes apply to the x-axis
@@ -760,15 +571,10 @@ for line in catalog:
     # ax1.set_xticks(np.arange(4699.59.0,9300.0,200))
     # waven_high=np.arange(spec.wave.crval, spec.wave.crval#+spec.wave.cdelt*spec.wave.shape,spec.wave.cdelt/10.0)
     # print "xxx"
-    print(gal_model)
     print(forfit_t)
     print("xxx")
 
     ax1.step(waven, data1, where="mid", color="blue")
-    try:
-        ax1.plot(waven_high, galaxy(waven_high, *gal_model), "k-")
-    except:
-        print("no model to plot available")
     ax1.set_xticks(np.arange(crval, crmax, 200))
     ax1.set_xlim(crval, crmax)
     # find bottom:
@@ -821,15 +627,12 @@ for line in catalog:
         # ax3.axvline(x=wobs2,color="b", linestyle="--")
 
         # ax3.step(waven,data2,where="mid")
-        try:
-            ax3.plot(waven_high, galaxy(waven_high, *gal_model), "r-")
-        except:
-            print("no model to plot available")
+
         ax3.plot(waven, data1, linestyle="-", drawstyle="steps-mid")
         ax3.plot(waven, data2, linestyle="-", drawstyle="steps-mid")
         fakewav = np.arange(wobs - 5, wobs + 5, 0.1)
 
-        if valid_model:
+        """if valid_model:
             if atoms["atom_id"].get(lines_found[h]) == "[OIII]a":
                 heighta = sum(galaxy(fakewav, *gal_model))
             if atoms["atom_id"].get(lines_found[h]) == "[OIII]b":
@@ -853,7 +656,7 @@ for line in catalog:
         else:
             height2a = 1
             height2b = 1
-
+        """
         if atoms["atom_id"].get(lines_found[h]) == r"H$\alpha$": hain = True
         if atoms["atom_id"].get(lines_found[h]) == r"H$\beta$": hbin = True
         dl = 15.0
@@ -896,8 +699,7 @@ for line in catalog:
     plt.tight_layout()
 
     mark = 0
-    if prev_cat:
-        mark = pcatalog[run_id]
+
 
     # 2020 fix below ================================================
     galfit_x = 0
@@ -920,11 +722,6 @@ for line in catalog:
         # ax4.plot(waven,data2,linestyle="-", drawstyle="steps-mid")
 
         # ax3.step(waven,data2,where="mid")
-        try:
-            ax4.plot(waven_high, galaxy(waven_high, *gal_model), "r-")
-
-        except:
-            print("no model to plot available")
         ax4.fill_between(waven, data1 - raw_sigma, data1 + raw_sigma, alpha=0.3, facecolor="#888888")
         ax4.plot(waven, data1, linestyle="-", drawstyle="steps-mid")
         # ax4.plot(waven,var1,linestyle="-", drawstyle="steps-mid")
@@ -1096,8 +893,8 @@ for line in catalog:
     testarea = redshift[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
 
     plt.imshow(testarea, interpolation="none", cmap="jet")
-    area = fill(testarea, (aw, aw), 2)
-    plt.xlabel("area:%d" % area)
+    # area = fill(testarea, (aw, aw), 2)
+    # plt.xlabel("area:%d" % area)
     # plt.xlim(px-10,px+10)
     # plt.ylim(py-10,py+10)
     plt.axis("on")
@@ -1144,55 +941,9 @@ for line in catalog:
 
     # only write plots for verified ones!
 
-    plt.savefig("%04d_%04d_%d_f%d_fig%04d.png" % (quality, run_id, mark, found, i))  # show()
+    # plt.savefig("%04d_%04d_%d_f%d_fig%04d.png" % (quality, run_id, mark, found, i))  # show()
+    file = "%04d_%04d_%d_f%d_fig%04d.pdf" % (quality, run_id, mark, found, i)
+    # file = f"{quality:04d}_{run_id:04d}_{mark:d}_f{found:d}_fig{i:04d}.pdf"
+    plt.savefig(os.path.join(project_path_config.DATA_PATH_PDF, file), format="pdf")
     # plt.savefig("pdf%04d_%04d_%d_f%d_fig%04d.pdf"% (quality,run_id,mark,found,i))#show()
     i += 1
-    if not quiet:
-        plt.show()
-
-    statistics.write(
-        "%d %d %d %d %.1f %d %d %.1f\n" % (run_id, mark, area, border_distance, verr, used, use_new_pos, peakratio))
-    statistics.flush()
-
-    # compute RA,DEC from px,py
-    # full_data.write("#id, px, py, z, b, quality, template, used, gaussx, gaussy, gaussrot, smoothratio, oiiratio, qso_ra, qso_dec, qso_x, qso_y")
-
-    full_data.write("%04d, " % run_id)
-    full_data.write("%.2f, " % px)
-    full_data.write("%.2f, " % py)
-    full_data.write("%.6f, " % z)
-    full_data.write("%.1f, " % get_impact(qso_x, qso_y, px, py, z))
-    full_data.write("%d, " % quality)
-    full_data.write("%d, " % gtemplate)
-    full_data.write("%d, " % used)
-
-    full_data.write("%.2f, " % galfit_x)
-    full_data.write("%.2f, " % galfit_y)
-    full_data.write("%.2f, " % galfit_rot)
-    full_data.write("%.2f, " % peakratio)
-    full_data.write("%.2f, " % (height2b / height2a))
-    full_data.write("%.4f, " % ra)  # NEW in WCS version
-    full_data.write("%.4f, " % dec)  # NEW in WCS version
-    full_data.write("%.2f, " % qso_x)
-    full_data.write("%.2f" % qso_y)
-    full_data.write("\n")
-
-    if quiet:
-        if foundz > 0:
-            verified_sources.write(
-                "%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t%f\t%f\t%f\t%.1f\t%.1f\n" % (
-                    run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality, z, foundz, foundm,
-                    get_impact(qso_x, qso_y, px, py, z), foundb))
-            # stat_good.write("%f %f %f\n" % (z, quality, peakratio))
-        else:
-            verified_sources.write("%d \t%.1f \t%.1f \t%f  1 \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\t-\t-\t-\t%.1f\n" % (
-                run_id, px, py, z, verr, used, gtemplate, found, ra, dec, verr, quality,
-                get_impact(qso_x, qso_y, px, py, z)))
-
-        # verified_sources.write("%d \t%.1f \t%.1f \t%f %d \t%.1f \t%d \t%d \t%d\t%f\t%f\t%f\t%d\n" % (run_id,px,py,z,pcatalog[run_id],verr,used,gtemplate,found,ra,dec,verr,quality))
-        verified_sources.flush()
-        # if oiifound: ratios.write("%d %f\n" % (pcatalog[run_id],height2b/height2a))
-        plt.close()
-    del raw_flux
-    del spec
-    del data1

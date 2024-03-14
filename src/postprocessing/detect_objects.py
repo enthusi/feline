@@ -186,9 +186,9 @@ if __name__ == "__main__":
         print("\t%.6f %.6f" % (ra, dec), end=" ")
         print_lines(t_i, z_i)
         run_id += 1
-    
-    plt.plot(ay, ax, "rx", markersize=2)
-    
-    plt.title("%d sources " % (len(xy)))
-    plt.show()
-    plt.savefig("result.png", bbox_inches="tight")
+
+    ### brauchen wir eigentlich nicht oer??? ####
+    # plt.plot(ay, ax, "rx", markersize=2)
+    # plt.title("%d sources " % (len(xy)))
+    # plt.show()
+    # plt.savefig("result.png", bbox_inches="tight")
