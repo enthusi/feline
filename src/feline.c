@@ -8,6 +8,7 @@
 
 
 // new in version 7: export to 2d float arrays
+// new in version 7.2: Change from SDL to SDL2
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
