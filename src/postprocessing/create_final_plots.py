@@ -463,7 +463,8 @@ for line in catalog:
     zguess = z
     # z = newz
 
-    # MW23 here I start that one big plot
+    ################################# MW23 here I start that one big plot
+    #################################
     plt.figure(figsize=(16, 9))
 
     ax1 = plt.subplot2grid((rows, columns), (0, 0), colspan=9)
@@ -797,10 +798,10 @@ for line in catalog:
     # center_peak=whitezoom[aw,aw]
     center_value = center_mean + center_std * 2.0
 
-    plt.imshow(smoothnarrows.data, interpolation="none", cmap="jet", vmax=center_value)
-    plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-                    labelright="off", labelbottom="off")
-    plt.title("max %.1f" % (peakratio))
+    # plt.imshow(smoothnarrows.data, interpolation="none", cmap="jet", vmax=center_value)
+    # plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
+    #                labelright="off", labelbottom="off")
+    # plt.title("max %.1f" % (peakratio))
 
     spic = plt.subplot2grid((rows, columns), (3, 6))
 
