@@ -98,7 +98,6 @@ prev_cat = False
 max_lines_shown = 12
 columns = 12
 rows = 4
-# ratios = open(project_path_config.DATA_PATH_LOOKUP + "stat_oii_ratio.txt", "w")
 
 with open(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), "rb") as f:
     header = f.read()[:16]
@@ -112,11 +111,6 @@ crmax = crval + dz * 1.25
 dz = int(dz)
 xd = int(xd)
 yd = int(yd)
-
-
-# verified_sources = open("output_catalog.txt", "w")
-export_ds9 = True
-
 
 # MW23 a single model ist just an integer number, here the set bit's are essentially counted
 def get_num_lines(toggle):
@@ -203,7 +197,6 @@ def fit_template(t, z, f, w, sigma_array, scipy):
     param_bounds = (param_bounds_low, param_bounds_high)
     popt, pcov = scipy.optimize.curve_fit(galaxy, w, f, p0=params, bounds=param_bounds, max_nfev=1000)
 
-    # print popt,pcov
     try:
         perr = np.sqrt(np.diag(pcov))[0]
     except:
@@ -212,7 +205,6 @@ def fit_template(t, z, f, w, sigma_array, scipy):
     new_z = popt[0]
     print("------------------------")
     print(z, new_z, (new_z - z) * 300000, t, perr)
-    # print popt
     print(popt)
     return new_z, perr, popt
 
@@ -244,17 +236,6 @@ if len(sys.argv) < 2:
     print("SYNTAX: %s cube.fits catalog.cat [ds9.reg]" % sys.argv[0])
     sys.exit(0)
 
-if len(sys.argv) == 6:
-    regfile = open(sys.argv[5], "w")
-    size = 4.0
-    export_ds9 = True
-    regfile.write("""# Region file format: DS9 version 4.1
-    # Filename: qso1422.fits[DATA]
-    global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
-    image
-    """)
-
-
 # MW23 remember? would be nice to read this in from the SAME config file in all codes that need it
 # MW23 lazy way to tell which lines are pairs and which are not
 # something like for: entry in atoms use len(entry)
@@ -280,17 +261,11 @@ cubestat = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, 
 cube.info()
 
 original_cube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_RAW, sys.argv[1]), ext=1)
-# NEW2017
-# if WHITEimage is an extention
-# whiteimage=Image(sys.argv[1],ext=4).data
-# fullwhiteimage=Image(sys.argv[1],ext=4)
-# use this for stand alone white image
 
 # MW23 general understanding
 # summing up a CUBE along axis 0 means flattening it into a single image (adds up all layers)
 whiteimage = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_RAW, sys.argv[1])).sum(axis=0).data
 
-# whiteimage=Image(sys.argv[1]).data
 fullwhiteimage = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_RAW, sys.argv[1]), ext=1).sum(axis=0)
 
 s2ncube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[2]), ext=0)
@@ -305,10 +280,7 @@ colors._init()
 
 i = 0
 vp = 4
-objid = 0
-oldid = 0
 objects = []
-# spatial aperture (pix)
 ds = 3
 
 # interval blue and redward of detection (pix)
@@ -326,25 +298,6 @@ except:
 # should be in config gile, just 3 values in the end:
 # ra,dec of quasar
 # redshif of quasar
-"""
-qso_positions_file = open(os.path.join(project_path_config.DATA_PATH_LOOKUP, "qso_centers_deg.txt"), "r")
-qso_found = False
-print("looking for %s" % qso_id)
-for qso in qso_positions_file:
-    if qso_id in qso:
-        qso_found = True
-        qso_ra = float(qso.split()[1])
-        qso_dec = float(qso.split()[2])
-
-if not qso_found:
-    print("no QSO found")
-    sys.exit(1)
-
-print(qso_ra)
-print(qso_dec)
-qso_x, qso_y = world_to_pix(coord, (qso_ra, qso_dec))
-print(qso_x, qso_y)
-"""
 
 for line in catalog:
     if line[0] == "#": continue
@@ -375,30 +328,9 @@ for line in catalog:
         border_distance = min(min(px, py), min(dx - px, dy - py))
         if border_distance < 15: continue
 
-
-    # use THIS line to look for a specific object by ID
-    # if quality > 300: continue
-    # if min(px,py)<8:
-    #  print "TOO CLOSE TO BORDER"
-    #  continue
-
-    # if run_id != 81: continue
-    # start at a certain ID
-    # if run_id==448:
-    #    cont_flag = True
-    #    continue
-    # if not cont_flag: continue
-    # if run_id in [18]:
-    #    continue
     print()
     print("running id", run_id)
 
-    # if run_id==289: continue
-    # if run_id==216: continue
-    # if run_id==450: continue
-
-    # if used < min_line_number: continue
-    # if quality < 200:continue
     toggle = gtemplate
     positions = []
 
@@ -410,21 +342,11 @@ for line in catalog:
 
     raw_flux = cube[:, int(py) - ds:int(py) + ds, int(px) - ds:int(px) + ds].mean(axis=(1, 2))
     raw_data = raw_flux.data
-    # raw_wave=np.arange(raw_flux.wave.crval, raw_flux.wave.crval+raw_flux.wave.cdelt*raw_flux.wave.shape,raw_flux.wave.cdelt)
     raw_wave = np.arange(raw_flux.wave.get_crval(),
                          raw_flux.wave.get_crval() + raw_flux.wave.get_step() * raw_flux.wave.shape,
                          raw_flux.wave.get_step())
     print("fitting now")
     raw_sigma = cubestat[:, int(py) - ds:int(py) + ds, int(px) - ds:int(px) + ds].mean(axis=(1, 2))
-    # raw_sigma.data=sqrt(raw_sigma.data)#/math.sqrt((4*ds*ds)))
-    # raw_flux.plot()
-    # raw_sigma.plot()
-    # plt.show()
-    # raw_input("tets")
-
-    # print raw_data/raw_sigma
-    # sys.exit(1)
-
     valid_model = True
 
     for k in range(len(atoms["atoms"])):
@@ -441,15 +363,8 @@ for line in catalog:
             lines_found.append(emission)
             pos = emission * (z + 1)
             name = atoms["atom_id"].get(emission)
-            # print "%s (%.1f)," % (name,pos),
             positions.append(pos)
-    # print
     print(positions)
-
-    ############ remove ############
-    if export_ds9 and objid > oldid:
-        regfile.write("circle (%d,%d,%f) # text = {%s}\n" % (px, py, size, objid))
-    oldid = objid
 
     wavemin = 4780
     wavemax = 9300
@@ -458,21 +373,15 @@ for line in catalog:
     j = 0
     count = len(positions)
     c = 299792.458
-    # dv = (z - newz) * c
-    #verr = zerr * c / (z + 1)
     zguess = z
-    # z = newz
 
-    ################################# MW23 here I start that one big plot
-    #################################
+
+
+    ########## MW23 here I start that one big plot ##########
     plt.figure(figsize=(16, 9))
 
     ax1 = plt.subplot2grid((rows, columns), (0, 0), colspan=9)
     plt.title("%s id=%04d, x=%.1f, y=%.1f, ra=%.6f dec=%.6f z=%.6f" % (qso_id, run_id, px, py, ra, dec, z))
-    # print "***",z,new_z,perr
-    # print "delta: %.1f error on new: %.1f" % ((z-new_z)*c,perr*c)
-
-    # plt.title("id=%d, x=%.1f, y=%.1f, z=%.6f (verr=%.1f), used=%d, quality=%d" % (run_id,px,py,z,verr,used,quality))
 
     ax2 = plt.subplot2grid((rows, columns), (1, 0), colspan=9)
     plt.title("%d used lines, match strength=%d, b=%.1f" % (
@@ -492,18 +401,17 @@ for line in catalog:
     # MW23 vac2air is important to compute the position once it was observed THROUGH Earth atmosphere
     for absline in expected_galaxy_absorption_positions:
         abs_wav = ref_index.vac2air(absline * (z + 1) / 10.0) * 10.0
-        if abs_wav > crval and abs_wav < crmax:
+        if crval < abs_wav < crmax:
             ax1.axvline(x=abs_wav, color="aquamarine", linestyle="-", linewidth=4.0)
 
     for absline in expected_galaxy_absorption_positions:
         abs_wav = ref_index.vac2air(absline * (z + 1) / 10.0) * 10.0
-        if abs_wav > crval and abs_wav < crmax:
+        if crval < abs_wav < crmax:
             ax2.axvline(x=abs_wav, color="aquamarine", linestyle="-", linewidth=4.0)
 
     # plot actual flux spectrum
     spec = cube[:, int(py) - ds:int(py) + ds, int(px) - ds:int(px) + ds].mean(axis=(1, 2))
     original_spec = original_cube[:, int(py) - ds:int(py) + ds, int(px) - ds:int(px) + ds].mean(axis=(1, 2))
-    # ax1=fig.add_subplot(gs[0])
     data1 = spec.data
     original_data1 = original_spec.data
     waven = np.arange(spec.wave.get_crval(), spec.wave.get_crval() + spec.wave.get_step() * spec.wave.shape,
@@ -515,7 +423,7 @@ for line in catalog:
     for a in atoms["atoms"]:
         for b in a:
             p = ref_index.vac2air(b * (z + 1) / 10.0) * 10.0
-            if p > crval and p < crmax:
+            if crval < p < crmax:
                 ax1.axvline(x=p, color="k", linestyle="--")
 
     # plot detected emission  above that
@@ -526,7 +434,6 @@ for line in catalog:
         print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
         print(wobs, positions[g])
-        # wobs=ref_index.vac2air(wobs/10.0)*10.0
         ax1.axvline(x=wobs, color="r", linestyle="--")
 
     # plot possible positions for emission
@@ -534,7 +441,7 @@ for line in catalog:
         for b in a:
             # p=b*(z+1)
             p = ref_index.vac2air(b * (z + 1) / 10.0) * 10.0
-            if p > crval and p < crmax:
+            if crval < p < crmax:
                 ax2.axvline(x=p, color="k", linestyle="--")
 
     # plot detected emission  above that
@@ -548,7 +455,6 @@ for line in catalog:
         f = 4  # narrow band width
         d = 10
         p = int((wobs - crval) / 1.25)
-        # all_band = cube[p-f:p+f, py-d:py+d ,px-d:px+d]
         all_band = cube[p - f:p + f, :, :]
         if g == 0:
             all_ima = all_band.sum(axis=0)
@@ -558,20 +464,9 @@ for line in catalog:
         # wobs=ref_index.vac2air(wobs/10.0)*10.0
         ax2.axvline(x=wobs, color="r", linestyle="--")
 
-    # var1=spec.var
-    # print spec.var
-    # sys.exit(1)
-
     waven_high = np.arange(spec.wave.get_crval(), spec.wave.get_crval() + spec.wave.get_step() * spec.wave.shape,
                            spec.wave.get_step() / 10.0)
     print("xxx")
-
-    # waven=np.arange(spec.wave.crval, spec.wave.crval+spec.wave.cdelt*spec.wave.shape,spec.wave.cdelt)
-
-    # ax1.step(waven,data1,where="mid")
-    # ax1.set_xticks(np.arange(4699.59.0,9300.0,200))
-    # waven_high=np.arange(spec.wave.crval, spec.wave.crval#+spec.wave.cdelt*spec.wave.shape,spec.wave.cdelt/10.0)
-    # print "xxx"
     print(forfit_t)
     print("xxx")
 
@@ -586,9 +481,7 @@ for line in catalog:
     ax1.set_ylim(bottom, max(data1) * 1.2)
 
     s2nspec = s2ncube[:, int(py) - ds:int(py) + ds, int(px) - ds:int(px) + ds].mean(axis=(1, 2))
-    # test=fig.add_subplot(gs[1])
     data2 = s2nspec.data
-    # waven=np.arange(spec.wave.crval, spec.wave.crval+spec.wave.cdelt*spec.wave.shape,spec.wave.cdelt)
     ax2.step(waven, data2, where="mid")
     ax2.set_xticks(np.arange(crval, crmax, 200))
     ax2.set_xlim(crval, crmax)
@@ -621,43 +514,13 @@ for line in catalog:
         thision = atoms["atom_id"].get(wave)
         print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
-        # wobs2=ref_index.vac2air(wave*(zguess+1)/10.0)*10.0
         print(wobs, positions[h])
-        # wobs=ref_index.vac2air(wobs/10.0)*10.0
         ax3.axvline(x=wobs, color="r", linestyle="--")
-        # ax3.axvline(x=wobs2,color="b", linestyle="--")
-
-        # ax3.step(waven,data2,where="mid")
 
         ax3.plot(waven, data1, linestyle="-", drawstyle="steps-mid")
         ax3.plot(waven, data2, linestyle="-", drawstyle="steps-mid")
         fakewav = np.arange(wobs - 5, wobs + 5, 0.1)
 
-        """if valid_model:
-            if atoms["atom_id"].get(lines_found[h]) == "[OIII]a":
-                heighta = sum(galaxy(fakewav, *gal_model))
-            if atoms["atom_id"].get(lines_found[h]) == "[OIII]b":
-                heightb = sum(galaxy(fakewav, *gal_model))
-                print("OOO", heightb / heighta, heighta, heightb)
-                if heightb / heighta < 10: plt.xlabel("ratio:%.1f" % (heightb / heighta))
-        else:
-            heighta = 1
-            heightb = 1
-
-        if valid_model:
-            if atoms["atom_id"].get(lines_found[h]) == "OIIa":
-                oiifound = True
-                height2a = (galaxy([wobs], *gal_model))
-            if atoms["atom_id"].get(lines_found[h]) == "OIIb":
-                height2b = (galaxy([wobs], *gal_model))
-
-                # ratios.write("%f\n" % (height2b / height2a))
-                if height2b / height2a < 10: plt.xlabel("ratio:%.1f" % (height2b / height2a))
-                oiifound = True
-        else:
-            height2a = 1
-            height2b = 1
-        """
         if atoms["atom_id"].get(lines_found[h]) == r"H$\alpha$": hain = True
         if atoms["atom_id"].get(lines_found[h]) == r"H$\beta$": hbin = True
         dl = 15.0
@@ -711,21 +574,14 @@ for line in catalog:
     if oiifound:
         ax4 = plt.subplot2grid((rows, columns), (3, 0), colspan=4)
         wobs = ref_index.vac2air(3728.0 * (z + 1) / 10.0) * 10.0
-        # print wobs,positions[h]
 
         wobs1 = ref_index.vac2air(3727.09 * (z + 1) / 10.0) * 10.0
         wobs2 = ref_index.vac2air(3729.88 * (z + 1) / 10.0) * 10.0
         ax4.axvline(x=wobs1, color="k", linestyle="--")
         ax4.axvline(x=wobs2, color="k", linestyle="--")
         ax4.axhline(y=0, color="lightgrey")
-        # ax3.axvline(x=wobs2,color="b", linestyle="--")
-
-        # ax4.plot(waven,data2,linestyle="-", drawstyle="steps-mid")
-
-        # ax3.step(waven,data2,where="mid")
         ax4.fill_between(waven, data1 - raw_sigma, data1 + raw_sigma, alpha=0.3, facecolor="#888888")
         ax4.plot(waven, data1, linestyle="-", drawstyle="steps-mid")
-        # ax4.plot(waven,var1,linestyle="-", drawstyle="steps-mid")
 
         dl = 25.0
         lim_low = max(crval, wobs - dl)
@@ -733,10 +589,6 @@ for line in catalog:
         while (lim_high - lim_low) < (2 * dl):
             lim_high += dl / 3.0
         ax4.set_xlim(lim_low, lim_high)
-        try:
-            correctlimit(ax4, waven, data1)
-        except:
-            pass
 
         ax4.tick_params(
             axis="both",  # changes apply to the x-axis
@@ -748,11 +600,6 @@ for line in catalog:
             left="off",
             labelleft="off")  # labels along the bottom edge are off
 
-        try:
-            correctlimit(ax4, waven, data1)
-        except:
-            pass
-
     bigpic = plt.subplot2grid((rows, 10), (0, 8), colspan=4, rowspan=2)
     bigpic.imshow(plane, vmax=1000, interpolation="none", cmap="jet")
     bigpic.plot(px, py, "r*", ms=15)
@@ -763,26 +610,14 @@ for line in catalog:
     wcs1 = fullwhiteimage.wcs
     narrowsa = mpdaf.obj.Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
                int(px) - aw // 2:int(px) + aw // 2]
-    spic = plt.subplot2grid((rows, columns), (3, 5))
+    spic = plt.subplot2grid((rows, columns), (3, 6))
     smoothnarrows = narrowsa.fftconvolve_gauss(center=None, flux=1.0, fwhm=(0.7, 0.7), peak=False, rot=0.0, factor=1,
                                                unit_fwhm=None, inplace=False)
-    # gaussian_filter(sigma=1,inplace=False)
 
-    # narrowsa.write("testa.fits")
-    # narrowsb.write("testb.fits")
     maxa = np.max(narrowsa.data)
     maxb = np.max(smoothnarrows.data)
-    # ratio=narrowsa/smoothnarrows
-    # ratio=narrowsa.correlate2d(smoothnarrows.data)
-    # ratio=Image(data=ratio.data, wcs=wcs1)[int(py)-aw/2:int(py)+aw/2,int(px)-aw/2:int(px)+aw/2]
-    # ratio.write("testc.fits")
-    print("-=-=-=-=-=-=")
-    # narrowsa.info()
-    # narrowsb.info()
-    # ratio.info()
-    print("-=-=-=-=-=-=")
 
-    # the following block is for the 2nd image but we need the peak first
+    # the following block is for the 2nd image, but we need the peak first
 
     wcs1 = fullwhiteimage.wcs
     narrows = mpdaf.obj.Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
@@ -790,37 +625,17 @@ for line in catalog:
 
     peakratio = float(maxa / maxb)
 
-    # center_value=narrows[aw/2,aw/2]
-
     center_area = narrows[aw // 2 - 3:aw // 2 + 3, aw // 2 - 3:aw // 2 + 3]
     center_mean = np.mean(center_area.data)
     center_std = np.std(center_area.data)
-    # center_peak=whitezoom[aw,aw]
     center_value = center_mean + center_std * 2.0
-
-    # plt.imshow(smoothnarrows.data, interpolation="none", cmap="jet", vmax=center_value)
-    # plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-    #                labelright="off", labelbottom="off")
-    # plt.title("max %.1f" % (peakratio))
-
-    spic = plt.subplot2grid((rows, columns), (3, 6))
 
     plt.imshow(narrows.data, interpolation="none", cmap="jet", vmax=center_value)
     plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
                     labelright="off", labelbottom="off")
-    # plt.tight_layout()
-    # for some mysterious reason this is required
-    # plt.gca().invert_yaxis()
-    # try:
-    #  plt.colorbar()
-    # except:
-    #  pass
-    # compute ratio of original divided by smoothed:
-
     plt.title("collapsed")
 
-    # whiteimage
-
+    # whiteimage plot
     whitezoom = whiteimage[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
     spic = plt.subplot2grid((rows, columns), (3, 7))
 
@@ -833,20 +648,9 @@ for line in catalog:
     plt.imshow(whitezoom, interpolation="none", cmap="jet", vmax=center_value)
     plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
                     labelright="off", labelbottom="off")
-    # plt.tight_layout()
-    # try:
-    #  plt.colorbar()
-    # except:
-    #  pass
-
     plt.title("white")
     plt.xlim(aw - 10, aw + 10)
     plt.ylim(aw - 10, aw + 10)
-    # plt.ylim(py-10,py+10)
-    # plt.axis("off")
-    # plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off", labelright="off", labelbottom="off")
-    # spic.plot(px,py,"r*",ms=10)
-    # spic.plot(aw+px-int(px),aw+py-int(py),"r*",ms=10)
     plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
                     labelright="off", labelbottom="off")
     plt.gca().invert_yaxis()
@@ -854,63 +658,34 @@ for line in catalog:
     wcs1 = fullwhiteimage.wcs
     full_plane = mpdaf.obj.Image(data=plane, wcs=wcs1)[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
 
+    # quality plot
     spic = plt.subplot2grid((rows, columns), (3, 8))
-    # planbezoom=plane[py-aw:py+aw,px-aw:px+aw]
     center_value = full_plane[aw, aw]
 
     plt.imshow(full_plane.data, interpolation="none", cmap="jet", vmax=1.0 * center_value)
-    # plt.tight_layout()
-
-    # try:
-    #  plt.colorbar()
-    # except:
-    #  pass
-    # plt.gca().invert_yaxis()
     plt.title("quality")
-    # plt.xlim(aw-10,aw+10)
-    # plt.ylim(aw-10,aw+10)
     plt.xlim(aw - 10, aw + 10)
     plt.ylim(aw - 10, aw + 10)
 
     plt.axis("off")
     plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
                     labelright="off", labelbottom="off")
-    # spic.plot(aw,aw,"r*",ms=10)
-    # spic.plot(aw+px-int(px),aw+py-int(py),"r*",ms=10)
     plt.gca().invert_yaxis()
-    # http://mpdaf.readthedocs.io/en/latest/api/mpdaf.obj.Gauss2D.html#mpdaf.obj.Gauss2D
-    # bestgauss=full_plane.gauss_fit(circular=True,pix=True,pos_min=[aw-4,aw-4],pos_max=[aw+4,aw+10],plot=True)
     bestgauss = full_plane.gauss_fit(circular=True, pos_min=[aw - 4, aw - 4], pos_max=[aw + 4, aw + 10],
                                      unit_center=None, unit_fwhm=None)
     a, b = bestgauss.center
-    # spic.plot(aw+a-int(a),aw+b-int(b),"w.",ms=10)
     fwhm = bestgauss.fwhm
 
-    # redshift
+    # redshift plot
     spic = plt.subplot2grid((rows, columns), (3, 9))
-    # plt.imshow(redshift, interpolation="none")
-    # aw=10
-    # aw=min(aw,px,py)
     testarea = redshift[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
 
     plt.imshow(testarea, interpolation="none", cmap="jet")
-    # area = fill(testarea, (aw, aw), 2)
-    # plt.xlabel("area:%d" % area)
-    # plt.xlim(px-10,px+10)
-    # plt.ylim(py-10,py+10)
-    plt.axis("on")
     plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
                     labelright="off", labelbottom="off")
-    # spic.plot(px,py,"r*",ms=10)
-    # spic.plot(aw,aw,"r*",ms=10)
-    # try:
-    #  plt.colorbar()
-    # except:
-    #  pass
-
     plt.title("redshift")
 
-    # imused
+    # no lines plot
     spic = plt.subplot2grid((rows, columns), (3, 10))
     plt.imshow(imused, interpolation="none", cmap="jet")
 
@@ -919,32 +694,15 @@ for line in catalog:
     plt.axis("off")
     plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
                     labelright="off", labelbottom="off")
-    # spic.plot(px,py,"r*",ms=10)
-    # try:
-    #  plt.colorbar()
-    # except:
-    #  pass
+
     plt.gca().invert_yaxis()
     plt.title("no. lines")
-
-    # go FULLSCREEN for the window(!)
-    # this might only work in Linux!
-    # http://stackoverflow.com/questions/12439588/how-to-maximize-a-plt-show-window-using-python
-    # mng = plt.get_current_fig_manager()
-    # mng.resize(*mng.window.maxsize())
-    mng = plt.get_current_fig_manager()
-    # mng.full_screen_toggle()
 
     print(px, py)
     npx = px - aw + b
     npy = py - aw + a
     print(npx, npy)
 
-    # only write plots for verified ones!
-
-    # plt.savefig("%04d_%04d_%d_f%d_fig%04d.png" % (quality, run_id, mark, found, i))  # show()
     file = "%04d_%04d_%d_f%d_fig%04d.pdf" % (quality, run_id, mark, found, i)
-    # file = f"{quality:04d}_{run_id:04d}_{mark:d}_f{found:d}_fig{i:04d}.pdf"
     plt.savefig(os.path.join(project_path_config.DATA_PATH_PDF, file), format="pdf")
-    # plt.savefig("pdf%04d_%04d_%d_f%d_fig%04d.pdf"% (quality,run_id,mark,found,i))#show()
     i += 1
