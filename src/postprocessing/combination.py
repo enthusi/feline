@@ -35,7 +35,7 @@ def create_masking_plot():
     statistic = load_data(file, 2)
     snimage = data.copy()
     snimage.data = data.data / statistic.data
-    snimage.write('image00.fits')
+    snimage.write(project_path_config.DATA_PATH_PROCESSED + '/image00.fits')
 
 
 def write_to_file(file_path, data):
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     filename_second_argument = sys.argv[2]
     processed_file = os.path.join(project_path_config.DATA_PATH_PROCESSED, filename_second_argument)
 
-    cube_from_processed_file = mpdaf.obj.Cube(processed_file)
+    cube_from_processed_file = mpdaf.obj.Cube(processed_file, ext=1)
     cube_dimensions_z, cube_dimensions_y, cube_dimensions_x = cube_from_processed_file.shape
     wavelength_at_reference_pixel = cube_from_processed_file.wave.get_crval()
 
