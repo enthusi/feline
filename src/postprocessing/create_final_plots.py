@@ -501,12 +501,18 @@ for line in catalog:
     first = True
     height2b = 1
     height2a = 1
-
     oiifound = False
+
+    positions1 = []
+    for atom in atoms["atom_id"]:
+        positions1.append(atom)
+        print("Hallo", atom)
+    positions1.sort()
+
     for h in range(min(len(positions), max_lines_shown)):
         ax3 = plt.subplot2grid((rows, columns), (2, h))
 
-        plt.title("%s" % (atoms["atom_id"].get(lines_found[h])), fontsize=10)
+        plt.title("%s" % (atoms["atom_id"].get(positions1[h])), fontsize=10)
         wave = lines_found[h]
         # remember Oiii ratio
 
