@@ -83,7 +83,7 @@ def print_lines(toggle, z):
 
 if __name__ == "__main__":
     hdu = astropy.io.fits.open(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[1]))
-    coord = astropy.wcs.WCS(hdu[0].header)
+    coord = astropy.wcs.WCS(hdu[1].header)
     
     with open(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), "rb") as f:
         header = f.read()[:16]
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     yd = int(yd)
     dz = int(dz)
     
-    print(f"#Cube dimensions (z,y,x): {dz}, {xd}, {yd}")
+    print(f"# Cube dimensions (z,y,x): {dz}, {xd}, {yd}")
     
     
     with open(os.path.join(project_path_config.DATA_PATH_LOOKUP, "atoms.json"), "r") as data:
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     bright = xd - width
     bbottom = yd - width
     
-    hdu_muse = astropy.io.fits.open("image00.fits", memmap=False)
+    hdu_muse = astropy.io.fits.open(project_path_config.DATA_PATH_PROCESSED + "/image00.fits", memmap=False)
     data_muse = hdu_muse[1].data
     nan_sel = np.isnan(data_muse)
     
@@ -169,8 +169,7 @@ if __name__ == "__main__":
     plt.colorbar()
     
     plt.autoscale(False)
-
-    catalog_lines = []
+    
     run_id = 0
     for hit in xy:  # y,x
         y, x = hit
@@ -181,37 +180,15 @@ if __name__ == "__main__":
         z_i = redshift[y, x]
         q_i = plane[y, x]
         t_i = int(template[y, x])
-
+    
         print("%d %d %d %1.6f %d %d %d" % (run_id, int(y), int(x), z_i, q_i, u_i, t_i), end=" ")
-        # catalog_lines.append()
         ra, dec = pix_to_world(coord, (x, y))
         print("\t%.6f %.6f" % (ra, dec), end=" ")
         print_lines(t_i, z_i)
         run_id += 1
-
-    ### brauchen wir eigentlich nicht oer??? ####
-    # plt.plot(ay, ax, "rx", markersize=2)
-    # plt.title("%d sources " % (len(xy)))
-    # plt.show()
-    # plt.savefig("result.png", bbox_inches="tight")
-
-
-def sort_catalog():
-    # Read the contents of the file into a list of lines
-    with open("catalog.txt", "r") as file:
-        lines = file.readlines()
-
-    # Sort the lines based on the fifth field in reverse numerical order
-    sorted_lines = sorted(lines, key=lambda line: float(line.split()[4]), reverse=True)
-
-    # Write the sorted lines to a new file
-    with open("sorted_catalog.txt", "w") as output_file:
-        output_file.writelines(sorted_lines)
-
-
-def remove_catalog():
-    os.remove("catalog.txt")
-
-
-# sort_catalog()
-# remove_catalog()
+    
+    plt.plot(ay, ax, "rx", markersize=2)
+    
+    plt.title("%d sources " % (len(xy)))
+    plt.show()
+    plt.savefig("result.png", bbox_inches="tight")
