@@ -560,10 +560,6 @@ for line in catalog:
                 left="off",
                 labelleft="off")  # labels along the bottom edge are off
 
-        try:
-            correctlimit(ax3, waven, data1)
-        except:
-            pass
         first = False
 
     plt.tight_layout()
@@ -637,8 +633,8 @@ for line in catalog:
     center_value = center_mean + center_std * 2.0
 
     plt.imshow(narrows.data, interpolation="none", cmap="jet", vmax=center_value)
-    plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-                    labelright="off", labelbottom="off")
+    plt.tick_params(axis="both", which="both", right=True, top=True, left=True, bottom=True, labelbottom=False,
+                    labelleft=False, labeltop=False, labelright=False)
     plt.title("collapsed")
 
     # whiteimage plot
@@ -652,13 +648,13 @@ for line in catalog:
     center_value = center_mean + center_std * 4.0
 
     plt.imshow(whitezoom, interpolation="none", cmap="jet", vmax=center_value)
-    plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-                    labelright="off", labelbottom="off")
+    plt.tick_params(axis="both", which="both", right=True, top=True, left=True, bottom=True, labelbottom=False,
+                    labelleft=False, labeltop=False, labelright=False)
     plt.title("white")
     plt.xlim(aw - 10, aw + 10)
     plt.ylim(aw - 10, aw + 10)
-    plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-                    labelright="off", labelbottom="off")
+    plt.tick_params(axis="both", which="both", right=True, top=True, left=True, bottom=True, labelbottom=False,
+                    labelleft=False, labeltop=False, labelright=False)
     plt.gca().invert_yaxis()
 
     wcs1 = fullwhiteimage.wcs
@@ -673,9 +669,8 @@ for line in catalog:
     plt.xlim(aw - 10, aw + 10)
     plt.ylim(aw - 10, aw + 10)
 
-    plt.axis("off")
-    plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-                    labelright="off", labelbottom="off")
+    plt.tick_params(axis="both", which="both", right=True, top=True, left=True, bottom=True, labelbottom=False,
+                    labelleft=False, labeltop=False, labelright=False)
     plt.gca().invert_yaxis()
     bestgauss = full_plane.gauss_fit(circular=True, pos_min=[aw - 4, aw - 4], pos_max=[aw + 4, aw + 10],
                                      unit_center=None, unit_fwhm=None)
@@ -687,8 +682,8 @@ for line in catalog:
     testarea = redshift[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
 
     plt.imshow(testarea, interpolation="none", cmap="jet")
-    plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-                    labelright="off", labelbottom="off")
+    plt.tick_params(axis="both", which="both", right=True, top=True, left=True, bottom=True, labelbottom=False,
+                    labelleft=False, labeltop=False, labelright=False)
     plt.title("redshift")
 
     # no lines plot
@@ -697,9 +692,8 @@ for line in catalog:
 
     plt.xlim(px - 10, px + 10)
     plt.ylim(py - 10, py + 10)
-    plt.axis("off")
-    plt.tick_params(axis="both", left="off", top="off", right="off", bottom="off", labelleft="off", labeltop="off",
-                    labelright="off", labelbottom="off")
+    plt.tick_params(axis="both", which="both", right=True, top=True, left=True, bottom=True, labelbottom=False,
+                    labelleft=False, labeltop=False, labelright=False)
 
     plt.gca().invert_yaxis()
     plt.title("no. lines")
