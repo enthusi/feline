@@ -86,7 +86,7 @@ sort -rn -k5 catalog.txt > sorted_catalog.txt
 python create_final_plots.py cube.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
 ```
 
-### create a PDF file containing all plots:
+### create a PDF file containing all plotss:
 ```
 python create_pdf.py
 ```
