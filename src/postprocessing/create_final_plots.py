@@ -566,12 +566,6 @@ for line in catalog:
 
     mark = 0
 
-
-    # 2020 fix below ================================================
-    galfit_x = 0
-    galfit_y = 0
-    galfit_rot = 0
-
     # NEW 2020! plot o2 zoom in with model
     if oiifound:
         ax4 = plt.subplot2grid((rows, columns), (3, 0), colspan=4)
@@ -609,23 +603,13 @@ for line in catalog:
     aw = 20
     aw = int(min(aw, px, py))
 
-    wcs1 = fullwhiteimage.wcs
-    narrowsa = mpdaf.obj.Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
-               int(px) - aw // 2:int(px) + aw // 2]
     spic = plt.subplot2grid((rows, columns), (3, 6))
-    smoothnarrows = narrowsa.fftconvolve_gauss(center=None, flux=1.0, fwhm=(0.7, 0.7), peak=False, rot=0.0, factor=1,
-                                               unit_fwhm=None, inplace=False)
-
-    maxa = np.max(narrowsa.data)
-    maxb = np.max(smoothnarrows.data)
 
     # the following block is for the 2nd image, but we need the peak first
 
     wcs1 = fullwhiteimage.wcs
     narrows = mpdaf.obj.Image(data=all_ima.data, wcs=wcs1)[int(py) - aw // 2:int(py) + aw // 2,
               int(px) - aw // 2:int(px) + aw // 2]
-
-    peakratio = float(maxa / maxb)
 
     center_area = narrows[aw // 2 - 3:aw // 2 + 3, aw // 2 - 3:aw // 2 + 3]
     center_mean = np.mean(center_area.data)
@@ -644,7 +628,7 @@ for line in catalog:
     center_area = whitezoom[aw - 4:aw + 4, aw - 4:aw + 4]
     center_mean = np.mean(center_area.data)
     center_std = np.std(center_area.data)
-    center_peak = whitezoom[aw, aw]
+    # center_peak = whitezoom[aw, aw]
     center_value = center_mean + center_std * 4.0
 
     plt.imshow(whitezoom, interpolation="none", cmap="jet", vmax=center_value)
@@ -657,7 +641,6 @@ for line in catalog:
                     labelleft=False, labeltop=False, labelright=False)
     plt.gca().invert_yaxis()
 
-    wcs1 = fullwhiteimage.wcs
     full_plane = mpdaf.obj.Image(data=plane, wcs=wcs1)[int(py) - aw:int(py) + aw, int(px) - aw:int(px) + aw]
 
     # quality plot
