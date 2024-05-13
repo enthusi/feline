@@ -2,3 +2,4 @@ DATACUBE_UDF-10.fits
 cube.fits
 .idea
 venv
+__pycache__

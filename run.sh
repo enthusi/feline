@@ -160,7 +160,7 @@ cd ../../ || exit
 make >"$extension"
 ./feline.bin $zlow $zhigh $max_match $ignore_below
 draw_progress_bar 70
-echo "Starting Postprocessing and plotting..."
+echo "Starting Postprocessing and creating PDF..."
 # Detect objects and plot results
 cd src/postprocessing || exit
 python detect_objects.py s2n_v250.fits > catalog.txt
@@ -174,7 +174,7 @@ cd ../../ || exit
 # Clean Everything (Optional)
 read -p "Do you want to clean everything for the next run? (y/n): " clean_choice
 if [ "$clean_choice" = "y" ]; then
-  	find data/raw ! -name '.gitkeep' -type f -delete
+  find data/raw ! -name '.gitkeep' -type f -delete
 
 	# Delete all files except .gitkeep in data/processed
 	find data/processed ! -name '.gitkeep' -type f -delete
