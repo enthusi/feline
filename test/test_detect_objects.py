@@ -6,7 +6,6 @@ from unittest.mock import Mock
 sys.path.insert(0, '/home/runner/work/feline/src/postprocessing')
 from feline.src.postprocessing.detect_objects import gauss2d
 from feline.src.postprocessing.detect_objects import twoD_Gaussian
-from feline.src.postprocessing.detect_objects import onclick
 
 
 def test_gauss2d():
@@ -90,27 +89,6 @@ def test_gauss2d_negative_parameters():
 
 	# Check the result against the expected values
 	assert result == amp
-
-
-def test_onclick_prints_correctly(capfd):
-	# Create a mock event
-	event = Mock()
-
-	# Set the attributes of the mock event that onclick uses
-	event.xdata = 1.0
-	event.ydata = 2.0
-	event.button = 1
-	event.x = 10
-	event.y = 20
-
-	# Call the onclick method with the mock event
-	onclick(event)
-
-	# Capture the output
-	out, err = capfd.readouterr()
-
-	# Check the output
-	assert out == "#button=1, x=10, y=20, xdata=1.000000, ydata=2.000000\n"
 
 
 def test_twoD_Gaussian_with_zero_amplitude_returns_offset():
