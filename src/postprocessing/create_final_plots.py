@@ -256,7 +256,7 @@ template.resize((xd, yd))
 imused.resize((xd, yd))
 
 # for data cube
-cube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[4]), ext=0)
+cube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[4]), ext=1)
 cubestat = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[4]), ext=1)
 cube.info()
 
@@ -268,9 +268,9 @@ whiteimage = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_RAW, sys.
 
 fullwhiteimage = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_RAW, sys.argv[1]), ext=1).sum(axis=0)
 
-s2ncube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[2]), ext=0)
+s2ncube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[2]), ext=1)
 hdu = astropy.io.fits.open(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[2]))
-coord = astropy.wcs.WCS(hdu[0].header)
+coord = astropy.wcs.WCS(hdu[1].header)
 
 dz, dy, dx = cube.shape
 

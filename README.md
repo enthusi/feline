@@ -1,92 +1,81 @@
-# feline
+# Find Emmision Lines (FELINE) #
+<img src="https://github.com/enthusi/feline/assets/115990442/3f7e12a4-6ca2-4a22-a5f0-b358296e80b2" width="390" height="300" />
 
-### get data cubus
+## 1. Clone Repository and Install Requirements ##
+### Clone Repository ###
+```bash
+git clone git@github.com:enthusi/feline.git
 ```
-wget http://martinwendt.de/cube.fits
+### Install Requirements ###
+If not already done create a Python3 Virtual Environment
+```bash
+cd feline
 ```
-
-## Run Preprocessing, Feline and Plot-Program in Python2.7 virtual environment
-
-### Create virtual environment with anaconda:
+```bash
+python3 -m venv venv
 ```
-conda create -n felineenv python=2.7
+```bash
+source venv/bin/activate
 ```
-### activate environment:
+install requirements:
+```bash
+pip install -r requirements.txt
 ```
-conda activate felineenv
+## 2. Usage ##
+### Preprocessing (LSDcat: BSD-3 License Christian Herenz) ###
+set Path of Cubefile which should be used:
+```bash
+export CUBEFILE=$(realpath <cubefile>.fits)
 ```
-### install all necessary packages:
-
+set the Number of Cores that should be used for preprocessing (default: 4)
+```bash
+export CORES=<num_cores>
 ```
-conda install numpy
+do all preprocessing
+```bash
+sh preprocessing.sh
 ```
+### some tweaking after the preprocessing ###
+```bash
+cd src/postprocessing
 ```
-conda install scipy
+create optional masking plot 
+```bash
+python create_masking_plot.py <cubefile>.fits
 ```
-```
-conda install matplotlib
-```
-```
-conda install astropy
-```
-```
-pip install mpdaf pyfits scikit-image ref_index
-```
-## In preprocess dir:
-### apply median filter to 'flat' out the data (emission lines remain):
-```
-python median-filter-cube.py ../cube.fits --signalHDU=1 --varHDU=2 --num_cpu=6 --width=151 --output=med_filt.fits
-```
-### filter the data cube with a 'typical line' template in spatial dimension first:
-```
-python lsd_cc_spatial_mask.py --input=med_filt.fits --SHDU=0 --NHDU=1 --threads=4 --gaussian --lambda0=7050 -p0=0.7 --output=spatial_cc.fits
-```
-### filter the data cube with a 'typical line' template in spectral dimension:
-```
-python lsd_cc_spectral.py --input=spatial_cc.fits --threads=2 --FWHM=250 --SHDU=0 --NHDU=1 --output=spectral_cc.fits
-```
-### filter the data cube with a 'typical line' template in spectral dimension:
-```
-python s2n-cube.py --input=spectral_cc.fits --output=s2n_v250.fits --clobber
-```
-### construct a signal-to-noise cube:
-```
-cd ..
-```
-```
-cp preprocess/s2n_v250.fits s2n_v250.fits
-```
-```
-cp preprocess/med_filt.fits med_filt.fits
+transpose the cube data so for Cache Optimization
+```bash
+python transpose_cube.py s2n_v250.fits none
 ```
 
-## here the actual tool starts:
-
-### optional masking plot and fast cache access
-```
-python combination.py cube.fits s2n_v250.fits
-```
-
-### build and run the main Feline code (C/OpenMP):
-```
+### Compile and run FELINE ###
+(go back to project root)
+```bash
 make
 ```
+```bash
+./feline.bin <zlow> <zhigh> <max_match> <ignore_below>
 ```
-./feline.bin 0 1.9 20 7
+### detect objects and plot results ###
+```bash
+cd src/postprocessing
 ```
-### detect actual objects and translate into physical properties (redshift, line list) sorted by significance:
-```
+```bash
 python detect_objects.py s2n_v250.fits > catalog.txt
 ```
-```
+```bash
 sort -rn -k5 catalog.txt > sorted_catalog.txt
 ```
-### create comprehensive human readable plots for each detection:
+```bash
+python create_final_plots.py <cubefile>.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
 ```
-python create_final_plots.py cube.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
+<<Your results are saved to data/final_plots/*>>
+### Clean Everything for next run (Optional) ###
+```bash
+sh cleanup.sh
 ```
 
-### create a PDF file containing all plotss:
-```
-python create_pdf.py
-```
+
+
+
+

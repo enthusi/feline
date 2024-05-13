@@ -92,14 +92,14 @@ __global__ void seekEmitters(float *temp, float *res_i, int dz, int dy, int dx, 
 
         for (int s = 0; s < samples; s++) {
             redshift = zmin + redshift_step * s;
-            if (fabs(redshift - avoid_z) < 0.05) {continue;}
+            if (abs(redshift - avoid_z) < 0.05) {continue;}
             sum = 0.0;
             for (int k = 0; k < lines_ptr; k++) {
                 emission = all_lines[k] * (redshift + 1);
                 z = (int) ((emission - lmin) / 1.25);
                 v = temp[z + y * dx * dz + x * dz + size_header];
                 if (v < ignore_below) v = 0;
-                if (v > max_match) v = max_match + log(v);
+                if (v > max_match) v = max_match + logf(v);
                 sum += v * scale;
             }
             sum = sum - lines_ptr * scale * significance;

@@ -13,21 +13,13 @@ import struct
 
 try:
     import project_path_config   
-except:
+except ImportError:
     import feline.src.postprocessing.project_path_config
 
 try:
     mpl.use("TkAgg")
-except:
+except ImportError:
     mpl.use("Agg")
-
-
-def onclick(event):
-    print(("#button=%d, x=%d, y=%d, xdata=%f, ydata=%f" % (event.button, event.x, event.y, event.xdata, event.ydata)))
-    manuals = []  # was ist mit der manuals liste?
-    plt.plot(event.xdata, event.ydata, "yo")
-    manuals.append((event.ydata, event.xdata))  # was ist mit der manuals liste?
-    plt.show()
 
 
 def world_to_pix(coord, rad):
@@ -65,6 +57,7 @@ def twoD_Gaussian(xxx_todo_changeme, amplitude, xo, yo, sigma_x, sigma_y, theta,
 
 
 def print_lines(toggle, z):
+    lines = []
     for k in range(len(atoms["atoms"])):
         # is k in the template?
         if toggle & 0x1 == 0:
@@ -78,8 +71,29 @@ def print_lines(toggle, z):
         for emission in atom:
             pos = emission * (z + 1)
             name = atoms["atom_id"].get(str(emission))
-            print("%s (%.1f)," % (name, pos), end=" ")
-    print()
+            lines.append("%s (%.1f)," % (name, pos))
+    return lines
+
+
+def sort_catalog(catalog_lines):
+    # Separate lines starting with '#' and lines not starting with '#'
+    hash_lines = [line for line in catalog_lines if line.startswith('#')]
+    non_hash_lines = [line for line in catalog_lines if not line.startswith('#')]
+
+    # Sort the non-hash lines based on the 5th value
+    sorted_non_hash_lines = sorted(non_hash_lines, key=lambda line: -int(line.split()[4]))
+
+    # Combine the sorted and unsorted lines
+    sorted_catalog = hash_lines + sorted_non_hash_lines
+
+    return sorted_catalog
+
+
+def write_to_file(catalog_list):
+    with open('sorted_catalog.txt', 'w') as file:
+        for line1 in catalog_list:
+            file.write(line1 + '\n')
+
 
 if __name__ == "__main__":
     hdu = astropy.io.fits.open(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[1]))
@@ -95,10 +109,9 @@ if __name__ == "__main__":
     xd = int(xd)
     yd = int(yd)
     dz = int(dz)
-    
-    print(f"# Cube dimensions (z,y,x): {dz}, {xd}, {yd}")
-    
-    
+
+    catalog = [f"# Cube dimensions (z,y,x): {dz}, {xd}, {yd}"]
+
     with open(os.path.join(project_path_config.DATA_PATH_LOOKUP, "atoms.json"), "r") as data:
         atoms = json.load(data)
     
@@ -162,33 +175,22 @@ if __name__ == "__main__":
         ay.append(ny)
         xy.append((nx, ny))
     
-    print("#", len(xy))
-    
-    test = plt.imshow(data, vmin=30, vmax=500, interpolation="nearest", cmap="jet")
-    
-    plt.colorbar()
-    
-    plt.autoscale(False)
+    catalog.append("# " + str(len(xy)))
     
     run_id = 0
     for hit in xy:  # y,x
         y, x = hit
-        if x < 1: continue
+        if x < 1:
+            continue
         y = int(y)
         x = int(x)
         u_i = int(used[y, x])
         z_i = redshift[y, x]
         q_i = plane[y, x]
         t_i = int(template[y, x])
-    
-        print("%d %d %d %1.6f %d %d %d" % (run_id, int(y), int(x), z_i, q_i, u_i, t_i), end=" ")
         ra, dec = pix_to_world(coord, (x, y))
-        print("\t%.6f %.6f" % (ra, dec), end=" ")
-        print_lines(t_i, z_i)
+        catalog.append("%d %d %d %1.6f %d %d %d" % (run_id, int(y), int(x), z_i, q_i, u_i, t_i) + "\t%.6f %.6f" % (ra, dec) + " " + ' '.join(print_lines(t_i, z_i)))
         run_id += 1
-    
-    plt.plot(ay, ax, "rx", markersize=2)
-    
-    plt.title("%d sources " % (len(xy)))
-    plt.show()
-    plt.savefig("result.png", bbox_inches="tight")
+
+    catalog = sort_catalog(catalog)
+    write_to_file(catalog)
