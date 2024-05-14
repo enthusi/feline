@@ -26,14 +26,20 @@ CFLAGS += -D SDLavailable=$(SDLavailable)
 
 #CUBELINK := "martinwendt.de/cube.fits"
 #CUBENAME := "cube.fits"
-CUBE_LINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-CUBE_NAME := "DATACUBE_UDF-10.fits"
+CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+CUBENAME := "DATACUBE_UDF-10.fits"
 
 ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
 IGNORE_BELOW="7"
-                                                                                      
+# Define a variable to store the directory path
+MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+CUBEFILE := $(MAKEFILE_DIR)$(CUBENAME)
+CUBEFILENAME := $(CUBENAME)
+CORES := $(shell nproc)
+
+
 
 
 
@@ -44,7 +50,7 @@ $(TARGET): $(SOURCE)
 
 
 run:
-
+	@echo $(CUBEFILE)
 	@echo "Downloading Cube File..."
 	@if [ -f $(CUBE_NAME) ]; then \
 		echo "File exists";\
@@ -52,11 +58,6 @@ run:
 		echo "File does not exist";\
 		wget --no-check-certificate $(CUBE_LINK) ;\
 	fi
-
-	CUBEFILE:=$(shell realpath $(CUBENAME))
-	CUBEFILENAME=$(CUBENAME)
-	CORES=$(shell nproc)
-
 
 	@echo "Setting up environment..."
 	python3 -m venv venv
