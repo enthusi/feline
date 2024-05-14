@@ -24,19 +24,17 @@ LDFLAGS += $(SDL2_LIBS)
 # Define the SDLavailable macro for use in your source code
 CFLAGS += -D SDLavailable=$(SDLavailable)
 
-CUBELINK := "martinwendt.de/cube.fits"
-CUBENAME := "cube.fits"
-#CUBE_LINK="https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-#CUBE_NAME="DATACUBE_UDF-10.fits"
+#CUBELINK := "martinwendt.de/cube.fits"
+#CUBENAME := "cube.fits"
+CUBE_LINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+CUBE_NAME := "DATACUBE_UDF-10.fits"
 
 ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
 IGNORE_BELOW="7"
                                                                                       
-CUBEFILE:=$(shell realpath $(CUBENAME))
-CUBEFILENAME=$(CUBENAME)
-CORES=$(shell nproc)
+
 
 
 all: clean $(TARGET)                                   
@@ -48,12 +46,16 @@ $(TARGET): $(SOURCE)
 run:
 
 	@echo "Downloading Cube File..."
-	@if [ -f ${cube_name} ]; then \
+	@if [ -f $(CUBE_NAME) ]; then \
 		echo "File exists";\
 	else\
 		echo "File does not exist";\
-		wget --no-check-certificate ${cube_link};\
+		wget --no-check-certificate $(CUBE_LINK) ;\
 	fi
+
+	CUBEFILE:=$(shell realpath $(CUBENAME))
+	CUBEFILENAME=$(CUBENAME)
+	CORES=$(shell nproc)
 
 
 	@echo "Setting up environment..."
