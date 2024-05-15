@@ -606,7 +606,9 @@ for line in catalog:
 
         first = False
 
-    plt.tight_layout()
+    # Adjust the space between subplots
+    plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05,
+                        wspace=0.6, hspace=0.7)
 
     mark = 0
 
@@ -642,7 +644,7 @@ for line in catalog:
 
     bigpic = plt.subplot2grid((rows, 10), (0, 8), colspan=4, rowspan=2)
     bigpic.imshow(plane, vmax=1000, interpolation="none", cmap="jet")
-    bigpic.plot(px, py, "r*", ms=15)
+    bigpic.plot(px, py,  "*", color="#FF00DD", ms=15)
 
     aw = 20
     aw = int(min(aw, px, py))
