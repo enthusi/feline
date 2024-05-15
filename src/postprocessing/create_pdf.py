@@ -11,7 +11,7 @@ def create_pdf_file():
 	pdf_files = []
 
 	for pdf_file in files_in_directory:
-		if pdf_file.endswith(".pdf"):
+		if "fig" in pdf_file and pdf_file.endswith(".pdf"):
 			pdf_files.append(os.path.join(project_path_config.DATA_PATH_PDF,
 			                              pdf_file))
 
