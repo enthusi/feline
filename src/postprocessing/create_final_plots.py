@@ -349,7 +349,40 @@ for line in catalog:
     raw_sigma = cubestat[:, int(py) - ds:int(py) + ds, int(px) - ds:int(px) + ds].mean(axis=(1, 2))
     valid_model = True
 
+    """
+    atoms = [[6564.61], [4862.72], [4341.68], [4102.89], [3727.09, 3729.88],
+			 [4960.30, 5008.24], [6549.86, 6585.27], [6718.29, 6732.67], [3869.81, 3968.53],
+			 [1908.73, 1906.68], [1215.67]]
+    """
+    atom_id = {}
+    atom_id[6564.61] = r"H$\alpha$"
+    atom_id[4862.72] = r"H$\beta$"
+    atom_id[4341.68] = r"H$\gamma$"
+    atom_id[4102.89] = r"H$\delta$"
+
+    atom_id[3727.09] = "OIIa"
+    atom_id[3729.88] = "OIIb"
+
+    atom_id[4960.30] = "[OIII]a"
+    atom_id[5008.24] = "[OIII]b"
+
+    atom_id[6549.86] = "[NII]a"
+    atom_id[6585.27] = "[NII]b"
+
+    atom_id[6718.29] = "[SII]a"
+    atom_id[6732.67] = "[SII]b"
+
+    atom_id[3869.81] = "NeIIIa"
+    atom_id[3968.53] = "NeIIIb"
+
+    atom_id[1908.1] = "CIIIa"
+    atom_id[1906.05] = "CIIIb"
+    atom_id[1215.67] = "Lya"
+
+
+
     for k in range(len(atoms["atoms"])):
+    #for k in range(len(atoms)):
         # is k in the template?
         if toggle & 0x1 == 0:
             toggle = toggle // 2
@@ -358,13 +391,16 @@ for line in catalog:
         # ok, we consider this atom/transition
         toggle = toggle // 2
         atom = atoms["atoms"][k]
+        #atom = atoms[k]
         atoms_found.append(k)
         for emission in atom:
             lines_found.append(emission)
             pos = emission * (z + 1)
-            name = atoms["atom_id"].get(emission)
             positions.append(pos)
     print(positions)
+
+    lines_found.sort()
+
 
     wavemin = 4780
     wavemax = 9300
@@ -421,6 +457,7 @@ for line in catalog:
     # plot possible positions for emission
 
     for a in atoms["atoms"]:
+    #for a in atoms:
         for b in a:
             p = ref_index.vac2air(b * (z + 1) / 10.0) * 10.0
             if crval < p < crmax:
@@ -430,7 +467,8 @@ for line in catalog:
     for g in range(len(positions)):
         wave = lines_found[g]
 
-        thision = atoms["atom_id"].get(wave)
+        thision = atoms["atom_id"].get(str(wave))
+        #thision = atom_id[wave]
         print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
         print(wobs, positions[g])
@@ -438,6 +476,7 @@ for line in catalog:
 
     # plot possible positions for emission
     for a in atoms["atoms"]:
+    #for a in atoms:
         for b in a:
             # p=b*(z+1)
             p = ref_index.vac2air(b * (z + 1) / 10.0) * 10.0
@@ -447,7 +486,8 @@ for line in catalog:
     # plot detected emission  above that
     for g in range(len(positions)):
         wave = lines_found[g]
-        thision = atoms["atom_id"].get(wave)
+        thision = atoms["atom_id"].get(str(wave))
+        #thision = atom_id[wave]
         print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
         print(wobs, positions[g])
@@ -503,21 +543,23 @@ for line in catalog:
     height2a = 1
     oiifound = False
 
-    positions1 = []
-    for atom in atoms["atom_id"]:
-        positions1.append(atom)
-        print("Hallo", atom)
-    positions1.sort()
+    #positions1 = []
+    #for atom in atoms["atom_id"]:
+     #   positions1.append(atom)
+      #  print("Hallo", atom)
+    #positions1.sort()
 
     for h in range(min(len(positions), max_lines_shown)):
         ax3 = plt.subplot2grid((rows, columns), (2, h))
 
-        plt.title("%s" % (atoms["atom_id"].get(positions1[h])), fontsize=10)
+        #plt.title("%s" % (atoms["atom_id"].get(str(lines_found[h]))), fontsize=10)
+        plt.title("%s" % (atom_id[lines_found[h]]),fontsize=10)
         wave = lines_found[h]
         # remember Oiii ratio
 
         #  oxy1=
-        thision = atoms["atom_id"].get(wave)
+        #thision = atom_id[wave]
+        thision = atoms["atom_id"].get(str(wave))
         print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
         print(wobs, positions[h])
@@ -527,8 +569,10 @@ for line in catalog:
         ax3.plot(waven, data2, linestyle="-", drawstyle="steps-mid")
         fakewav = np.arange(wobs - 5, wobs + 5, 0.1)
 
-        if atoms["atom_id"].get(lines_found[h]) == r"H$\alpha$": hain = True
-        if atoms["atom_id"].get(lines_found[h]) == r"H$\beta$": hbin = True
+        if atoms["atom_id"].get(atoms["atom_id"].get(str(lines_found[h]))) == r"H$\alpha$": hain = True
+        #if atom_id[lines_found[h]] == r"H$\alpha$": hain = True
+        if atoms["atom_id"].get(atoms["atom_id"].get(str(lines_found[h]))) == r"H$\beta$": hbin = True
+        #if atom_id[lines_found[h]] == r"H$\beta$": hbin = True
         dl = 15.0
         lim_low = max(crval, wobs - dl)
         lim_high = min(wobs + dl, crmax)
