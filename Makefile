@@ -24,10 +24,10 @@ LDFLAGS += $(SDL2_LIBS)
 # Define the SDLavailable macro for use in your source code
 CFLAGS += -D SDLavailable=$(SDLavailable)
 
-#CUBELINK := "martinwendt.de/cube.fits"
-#CUBENAME := "cube.fits"
-CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-CUBENAME := "DATACUBE_UDF-10.fits"
+CUBELINK := "martinwendt.de/cube.fits"
+CUBENAME := "cube.fits"
+#CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+#CUBENAME := "DATACUBE_UDF-10.fits"
 
 ZLOW="0"
 ZHIGH="1.9"
@@ -43,7 +43,7 @@ CORES := $(shell nproc)
 
 
 
-all: clean $(TARGET)                                   
+all: $(TARGET)                                   
 
 $(TARGET): $(SOURCE)
 	$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
@@ -59,8 +59,11 @@ run:
 		wget --no-check-certificate $(CUBE_LINK) ;\
 	fi
 
-	@echo "Setting up environment..."
-	python3 -m venv venv
+	@if [ ! -d "venv" ]; then \
+		echo "Setting up environment..."; \
+		python3 -m venv venv; \
+	fi
+
 	@. venv/bin/activate; pip install -Ur requirements.txt > /dev/null
 	export PYTHONWARNING="ignore"
 
