@@ -1,6 +1,7 @@
 import os
 import pypdf
 import project_path_config
+import datetime
 
 
 def create_pdf_file():
@@ -15,8 +16,9 @@ def create_pdf_file():
 
 	for pdf_file in pdf_files:
 		merger.append(pdf_file)
-
-	merger.write(os.path.join(project_path_config.DATA_PATH_PDF, "all_images.pdf"))
+	timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+	file_name = f"result_{timestamp}.pdf"
+	merger.write(os.path.join(project_path_config.DATA_PATH_PDF, file_name))
 	merger.close()
 	print("\033[92m All single PDF files successfully merged! \033[0m")
 
@@ -24,7 +26,7 @@ def create_pdf_file():
 def remove_pdf_files():
 	pdf_file_list = os.listdir(project_path_config.DATA_PATH_PDF)
 	for pdf_file in range(len(pdf_file_list)):
-		if pdf_file_list[pdf_file].endswith(".pdf") and not pdf_file_list[pdf_file] == "all_images.pdf":
+		if "fig" in pdf_file_list[pdf_file]:
 			os.remove(os.path.join(project_path_config.DATA_PATH_PDF, pdf_file_list[pdf_file]))
 	# print("\033[91m All single PDF files successfully deleted! \033[0m")
 
