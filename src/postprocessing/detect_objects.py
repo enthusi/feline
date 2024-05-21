@@ -136,7 +136,22 @@ if __name__ == "__main__":
     
     # Convert the floating-point values to integers in the range [0, 255]
     plane_uint8 = (plane_scaled * 255).astype(np.uint8)
-    
+
+    # Create a new figure with a specific size (you may adjust the size as needed)
+    plt.figure(figsize=(10, 10))
+
+    # Display the image
+    plt.imshow(plane_uint8, cmap='jet')
+
+    # Remove the axis
+    plt.axis('off')
+
+    # Save the figure to a PDF file
+    plt.savefig(project_path_config.DATA_PATH_PDF + "/0000_0000_0_f0_fig9999.pdf", format='pdf', bbox_inches='tight')
+
+    # Close the figure to free up memory
+    plt.close()
+
     # Save the image using imageio.imwrite
     imageio.imsave("image.png", plane_uint8)
     

@@ -104,7 +104,7 @@ run:
 	cd src/postprocessing || exit ; \
 	python detect_objects.py s2n_v250.fits ; \
 	python create_final_plots.py $(CUBEFILENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
-	python create_pdf.py
+	#python create_pdf.py
 
 
 clean:
