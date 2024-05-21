@@ -275,7 +275,7 @@ coord = astropy.wcs.WCS(hdu[1].header)
 dz, dy, dx = cube.shape
 
 catalog = open(sys.argv[3])
-colors = mpl.cm.get_cmap("winter")
+colors = mpl.colormaps['winter']
 colors._init()
 
 i = 0

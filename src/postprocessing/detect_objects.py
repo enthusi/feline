@@ -8,7 +8,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
+import scipy.ndimage
 import skimage
+import skimage.feature
 import struct
 
 try:

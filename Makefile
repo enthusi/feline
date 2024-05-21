@@ -33,6 +33,7 @@ ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
 IGNORE_BELOW="7"
+
 # Define a variable to store the directory path
 MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 CUBEFILE := $(MAKEFILE_DIR)$(CUBENAME)
@@ -52,11 +53,11 @@ $(TARGET): $(SOURCE)
 run:
 	@echo $(CUBEFILE)
 	@echo "Downloading Cube File..."
-	@if [ -f $(CUBE_NAME) ]; then \
+	@if [ -f $(CUBENAME) ]; then \
 		echo "File exists";\
 	else\
 		echo "File does not exist";\
-		wget --no-check-certificate $(CUBE_LINK) ;\
+		wget --no-check-certificate $(CUBELINK) ;\
 	fi
 
 	@if [ ! -d "venv" ]; then \
@@ -64,7 +65,7 @@ run:
 		python3 -m venv venv; \
 	fi
 
-	@. venv/bin/activate; pip install -Ur requirements.txt > /dev/null
+	@. venv/bin/activate; pip install --use-pep517 -Ur requirements.txt > /dev/null
 	export PYTHONWARNING="ignore"
 
 	@echo "Starting preprocessing..."
