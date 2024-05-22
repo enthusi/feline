@@ -33,7 +33,6 @@ ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
 IGNORE_BELOW="7"
-
 # Define a variable to store the directory path
 MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 CUBEFILE := $(MAKEFILE_DIR)$(CUBENAME)
@@ -65,7 +64,7 @@ run:
 		python3 -m venv venv; \
 	fi
 
-	@. venv/bin/activate; pip install -r requirements.txt > /dev/null
+	@. venv/bin/activate; pip install --prefer-binary -r requirements.txt > /dev/null
 	export PYTHONWARNING="ignore"
 
 	@echo "Starting preprocessing..."
