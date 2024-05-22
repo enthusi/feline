@@ -3,3 +3,4 @@ cube.fits
 .idea
 venv
 __pycache__
+/data/pdf_files/*

@@ -62,10 +62,10 @@ run:
 
 	@if [ ! -d "venv" ]; then \
 		echo "Setting up environment..."; \
-		python3 -m venv venv; \
+		python3.8 -m venv venv; \
 	fi
 
-	@. venv/bin/activate; pip install --use-pep517 -Ur requirements.txt > /dev/null
+	@. venv/bin/activate; pip install -r requirements.txt > /dev/null
 	export PYTHONWARNING="ignore"
 
 	@echo "Starting preprocessing..."
@@ -104,7 +104,7 @@ run:
 	cd src/postprocessing || exit ; \
 	python detect_objects.py s2n_v250.fits ; \
 	python create_final_plots.py $(CUBEFILENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
-	#python create_pdf.py
+	python create_pdf.py
 
 
 clean:
