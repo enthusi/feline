@@ -45,7 +45,6 @@ def scale_params(redshift):
 # then:
 
 def get_impact(QSO_X, QSO_Y, px, py, z):
-    print(QSO_X, QSO_Y, px, py, z)
     theta = math.sqrt((QSO_X - px) ** 2 + (QSO_Y - py) ** 2) * 0.2
     scale = scale_params(z)
     # print theta,scale, theta*scale, b
@@ -65,10 +64,8 @@ foundifrom = "not"
 # MW23 it is ageneral annoyance to convert pixel positions in an
 # image to world coordinates (WCS) given as two angles on the sky (ra, dec)
 def pix_to_world(coord, pix):
-    print(pix)
 
     pixarray = np.array([[pix[0], pix[1], 0]], np.float_)
-    print(pixarray)
     world = coord.wcs_pix2world(pixarray, 0)
     ra = world[0][0]
     dec = world[0][1]
@@ -203,16 +200,12 @@ def fit_template(t, z, f, w, sigma_array, scipy):
         perr = 80
 
     new_z = popt[0]
-    print("------------------------")
-    print(z, new_z, (new_z - z) * 300000, t, perr)
-    print(popt)
     return new_z, perr, popt
 
 
 def correct_pos():
     global px, py, npx, npy
     # use_new_pos = check.lines[0][0].get_visible()
-    print("===>", use_new_pos)
     if use_new_pos > 0:
         px = npx
         py = npy
@@ -258,7 +251,7 @@ imused.resize((xd, yd))
 # for data cube
 cube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[4]), ext=1)
 cubestat = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED, sys.argv[4]), ext=1)
-cube.info()
+#cube.info()
 
 original_cube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_RAW, sys.argv[1]), ext=1)
 
@@ -289,7 +282,7 @@ try:
     qso_id = sys.argv[5]
 
 except:
-    print("no QSO given")
+    # print("no QSO given")
     sys.exit(1)
 
 # MW23 this information is vital but we only have ONE position per data cube
@@ -315,7 +308,6 @@ for line in catalog:
     # if reading in my own catalog
     if True:
         run_id = int((line.split()[0]))
-        print(f"################################# RUN_ID: {run_id}############################")
         py = float((line.split()[1]))
         px = float((line.split()[2]))
         z = float(line.split()[3])
@@ -328,8 +320,6 @@ for line in catalog:
         border_distance = min(min(px, py), min(dx - px, dy - py))
         if border_distance < 15: continue
 
-    print()
-    print("running id", run_id)
 
     toggle = gtemplate
     positions = []
@@ -345,44 +335,11 @@ for line in catalog:
     raw_wave = np.arange(raw_flux.wave.get_crval(),
                          raw_flux.wave.get_crval() + raw_flux.wave.get_step() * raw_flux.wave.shape,
                          raw_flux.wave.get_step())
-    print("fitting now")
     raw_sigma = cubestat[:, int(py) - ds:int(py) + ds, int(px) - ds:int(px) + ds].mean(axis=(1, 2))
     valid_model = True
 
-    """
-    atoms = [[6564.61], [4862.72], [4341.68], [4102.89], [3727.09, 3729.88],
-			 [4960.30, 5008.24], [6549.86, 6585.27], [6718.29, 6732.67], [3869.81, 3968.53],
-			 [1908.73, 1906.68], [1215.67]]
-    """
-    atom_id = {}
-    atom_id[6564.61] = r"H$\alpha$"
-    atom_id[4862.72] = r"H$\beta$"
-    atom_id[4341.68] = r"H$\gamma$"
-    atom_id[4102.89] = r"H$\delta$"
-
-    atom_id[3727.09] = "OIIa"
-    atom_id[3729.88] = "OIIb"
-
-    atom_id[4960.30] = "[OIII]a"
-    atom_id[5008.24] = "[OIII]b"
-
-    atom_id[6549.86] = "[NII]a"
-    atom_id[6585.27] = "[NII]b"
-
-    atom_id[6718.29] = "[SII]a"
-    atom_id[6732.67] = "[SII]b"
-
-    atom_id[3869.81] = "NeIIIa"
-    atom_id[3968.53] = "NeIIIb"
-
-    atom_id[1908.1] = "CIIIa"
-    atom_id[1906.05] = "CIIIb"
-    atom_id[1215.67] = "Lya"
-
-
 
     for k in range(len(atoms["atoms"])):
-    #for k in range(len(atoms)):
         # is k in the template?
         if toggle & 0x1 == 0:
             toggle = toggle // 2
@@ -391,13 +348,11 @@ for line in catalog:
         # ok, we consider this atom/transition
         toggle = toggle // 2
         atom = atoms["atoms"][k]
-        #atom = atoms[k]
         atoms_found.append(k)
         for emission in atom:
             lines_found.append(emission)
             pos = emission * (z + 1)
             positions.append(pos)
-    print(positions)
 
     lines_found.sort()
 
@@ -405,7 +360,6 @@ for line in catalog:
     wavemin = 4780
     wavemax = 9300
 
-    print("new plot", i)
     j = 0
     count = len(positions)
     c = 299792.458
@@ -457,7 +411,6 @@ for line in catalog:
     # plot possible positions for emission
 
     for a in atoms["atoms"]:
-    #for a in atoms:
         for b in a:
             p = ref_index.vac2air(b * (z + 1) / 10.0) * 10.0
             if crval < p < crmax:
@@ -468,15 +421,11 @@ for line in catalog:
         wave = lines_found[g]
 
         thision = atoms["atom_id"].get(str(wave))
-        #thision = atom_id[wave]
-        print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
-        print(wobs, positions[g])
         ax1.axvline(x=wobs, color="r", linestyle="--")
 
     # plot possible positions for emission
     for a in atoms["atoms"]:
-    #for a in atoms:
         for b in a:
             # p=b*(z+1)
             p = ref_index.vac2air(b * (z + 1) / 10.0) * 10.0
@@ -487,10 +436,7 @@ for line in catalog:
     for g in range(len(positions)):
         wave = lines_found[g]
         thision = atoms["atom_id"].get(str(wave))
-        #thision = atom_id[wave]
-        print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
-        print(wobs, positions[g])
         # gen narrow bands
         f = 4  # narrow band width
         d = 10
@@ -506,9 +452,6 @@ for line in catalog:
 
     waven_high = np.arange(spec.wave.get_crval(), spec.wave.get_crval() + spec.wave.get_step() * spec.wave.shape,
                            spec.wave.get_step() / 10.0)
-    print("xxx")
-    print(forfit_t)
-    print("xxx")
 
     ax1.step(waven, data1, where="mid", color="blue")
     ax1.set_xticks(np.arange(crval, crmax, 200))
@@ -543,26 +486,18 @@ for line in catalog:
     height2a = 1
     oiifound = False
 
-    #positions1 = []
-    #for atom in atoms["atom_id"]:
-     #   positions1.append(atom)
-      #  print("Hallo", atom)
-    #positions1.sort()
 
     for h in range(min(len(positions), max_lines_shown)):
         ax3 = plt.subplot2grid((rows, columns), (2, h))
 
-        #plt.title("%s" % (atoms["atom_id"].get(str(lines_found[h]))), fontsize=10)
-        plt.title("%s" % (atom_id[lines_found[h]]),fontsize=10)
+        plt.title("%s" % (atoms["atom_id"].get(str(lines_found[h]))), fontsize=10)
         wave = lines_found[h]
         # remember Oiii ratio
 
         #  oxy1=
         #thision = atom_id[wave]
         thision = atoms["atom_id"].get(str(wave))
-        print(thision)
         wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
-        print(wobs, positions[h])
         ax3.axvline(x=wobs, color="r", linestyle="--")
 
         ax3.plot(waven, data1, linestyle="-", drawstyle="steps-mid")
@@ -570,9 +505,7 @@ for line in catalog:
         fakewav = np.arange(wobs - 5, wobs + 5, 0.1)
 
         if atoms["atom_id"].get(atoms["atom_id"].get(str(lines_found[h]))) == r"H$\alpha$": hain = True
-        #if atom_id[lines_found[h]] == r"H$\alpha$": hain = True
         if atoms["atom_id"].get(atoms["atom_id"].get(str(lines_found[h]))) == r"H$\beta$": hbin = True
-        #if atom_id[lines_found[h]] == r"H$\beta$": hbin = True
         dl = 15.0
         lim_low = max(crval, wobs - dl)
         lim_high = min(wobs + dl, crmax)
@@ -642,7 +575,7 @@ for line in catalog:
             left="off",
             labelleft="off")  # labels along the bottom edge are off
 
-    bigpic = plt.subplot2grid((rows, 10), (0, 8), colspan=4, rowspan=2)
+    bigpic = plt.subplot2grid((rows, 12), (0, 9), rowspan=2, colspan=4)
     bigpic.imshow(plane, vmax=1000, interpolation="none", cmap="jet")
     bigpic.plot(px, py,  "*", color="#FF00DD", ms=15)
 
@@ -727,10 +660,8 @@ for line in catalog:
     plt.gca().invert_yaxis()
     plt.title("no. lines")
 
-    print(px, py)
     npx = px - aw + b
     npy = py - aw + a
-    print(npx, npy)
 
     file = "%04d_%04d_%d_f%d_fig%04d.pdf" % (quality, run_id, mark, found, i)
     plt.savefig(os.path.join(project_path_config.DATA_PATH_PDF, file), format="pdf")

@@ -62,7 +62,7 @@ run:
 
 	@if [ ! -d "venv" ]; then \
 		echo "Setting up environment..."; \
-		python3.8 -m venv venv; \
+		python3 -m venv venv; \
 	fi
 
 	@. venv/bin/activate; pip install -r requirements.txt > /dev/null
