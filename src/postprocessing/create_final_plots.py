@@ -13,8 +13,8 @@ import ref_index
 import struct
 import project_path_config
 
-mpl.use("TkAgg")
-
+mpl.use("Agg")
+logging.disable(logging.CRITICAL - 2)
 cosmo = astropy.cosmology.FlatLambdaCDM(H0=70, Om0=0.3)
 
 # MW23 these are positions in Angstrom (wavelength) where one might expect absorption in Galaxies! Iron, Magnesium etc.
@@ -665,4 +665,5 @@ for line in catalog:
 
     file = "%04d_%04d_%d_f%d_fig%04d.pdf" % (quality, run_id, mark, found, i)
     plt.savefig(os.path.join(project_path_config.DATA_PATH_PDF, file), format="pdf")
+    plt.close()
     i += 1
