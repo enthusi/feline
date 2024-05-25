@@ -5,6 +5,7 @@ import sys
 import astropy.cosmology
 import astropy.io.fits
 import astropy.wcs
+import logging
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mpdaf
