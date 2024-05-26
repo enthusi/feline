@@ -24,10 +24,10 @@ LDFLAGS += $(SDL2_LIBS)
 # Define the SDLavailable macro for use in your source code
 CFLAGS += -D SDLavailable=$(SDLavailable)
 
-#CUBELINK := "martinwendt.de/cube.fits"
-#CUBENAME := "cube.fits"
-CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-CUBENAME := "DATACUBE_UDF-10.fits"
+CUBELINK := "martinwendt.de/cube.fits"
+CUBENAME := "cube.fits"
+#CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+#CUBENAME := "DATACUBE_UDF-10.fits"
 
 ZLOW="0"
 ZHIGH="1.9"
@@ -103,7 +103,7 @@ run:
 	cd src/postprocessing || exit ; \
 	python detect_objects.py s2n_v250.fits ; \
 	python create_final_plots.py $(CUBEFILENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
-	python create_pdf.py
+	# python create_pdf.py
 
 
 clean:

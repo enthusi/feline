@@ -146,11 +146,6 @@ if __name__ == "__main__":
     # Remove the axis
     plt.axis('off')
 
-    # Save the figure to a PDF file
-    plt.savefig(project_path_config.DATA_PATH_PDF + "/0000_0000_0_f0_fig9999.pdf", format='pdf', bbox_inches='tight')
-
-    # Close the figure to free up memory
-    plt.close()
 
     # Save the image using imageio.imwrite
     imageio.imsave("image.png", plane_uint8)
@@ -208,6 +203,12 @@ if __name__ == "__main__":
         ra, dec = pix_to_world(coord, (x, y))
         catalog.append("%d %d %d %1.6f %d %d %d" % (run_id, int(y), int(x), z_i, q_i, u_i, t_i) + "\t%.6f %.6f" % (ra, dec) + " " + ' '.join(print_lines(t_i, z_i)))
         run_id += 1
+
+    plt.plot(ay, ax, "*", color="#FFFF00",  ms=15)
+    plt.savefig(project_path_config.DATA_PATH_PDF + "/9999_9999_9_f9_fig9999.pdf", format='pdf', bbox_inches='tight')
+
+    # Close the figure to free up memory
+    plt.close()
 
     catalog = sort_catalog(catalog)
     write_to_file(catalog)
