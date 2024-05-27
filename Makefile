@@ -46,16 +46,16 @@ CORES := $(shell nproc)
 all: $(TARGET)                                   
 
 $(TARGET): $(SOURCE)
+
 	$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
 
 
 run:
-	@echo $(CUBEFILE)
-	@echo "Downloading Cube File..."
+
 	@if [ -f $(CUBENAME) ]; then \
 		echo "File exists";\
 	else\
-		echo "File does not exist";\
+		echo "Downloading Cube File...";\
 		wget --no-check-certificate $(CUBELINK) ;\
 	fi
 
@@ -65,51 +65,50 @@ run:
 	fi
 
 	@. venv/bin/activate; pip install --prefer-binary -r requirements.txt > /dev/null
-	export PYTHONWARNING="ignore"
+	@export PYTHONWARNING="ignore"
 
-	@echo "Starting preprocessing..."
+	@echo "Starting preprocessing of the cubefile..."
 	@echo ""
-	@echo "Create med_filt.fits..."
+	@echo "apply median filter to 'flat' out the data (emission lines remain)..."
 	@. venv/bin/activate && \
 	python src/preprocessing/median-filter-cube.py $(CUBEFILE) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
 	@echo ""
-	@echo "Create spatial_cc.fits..."
+	@echo "filter the data cube with a 'typical line' template in spatial dimension first..."
 	@. venv/bin/activate && \
 	python src/preprocessing/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=$(CORES) --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite > /dev/null
-	@echo "Create spectral_cc.fits..."
+	@echo "filter the data cube with a 'typical line' template in spectral dimension..."
 	@. venv/bin/activate && \
 	python src/preprocessing/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=$(CORES) --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite > /dev/null
-	@echo "Create s2n_v250.fits..."
+	@echo "construct a signal-to-noise cube..."
 	@. venv/bin/activate && \
 	python src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1 > /dev/null
 
 	@echo "deleting tmp files..."
-	rm data/processed/spatial_cc.fits
-	rm data/processed/spectral_cc.fits
-	cp $(CUBEFILE) data/raw/
+	@rm data/processed/spatial_cc.fits
+	@rm data/processed/spectral_cc.fits
+	@ln -s $(CUBEFILE) data/raw/
 
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
 	cd src/preprocessing ; \
 	python combination.py $(CUBEFILENAME) s2n_v250.fits
-	echo "Starting FELINE..."
+	@echo "Starting FELINE..."
 
-	$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
+	@$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
 	./feline.bin $(ZLOW) $(ZHIGH) $(MAX_MATCH) $(IGNORE_BELOW)
 
 	@echo "Starting Postprocessing and creating PDF..."
-	# Detect objects and plot results
 	@. venv/bin/activate ; \
 	cd src/postprocessing || exit ; \
 	python detect_objects.py s2n_v250.fits ; \
 	python create_final_plots.py $(CUBEFILENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
-	# python create_pdf.py
+	python create_pdf.py
 
 
 clean:
 
 	rm -f $(TARGET)
-	find data/raw ! -name '.gitkeep' -type f -delete
+	find data/raw ! -name '.gitkeep' -type f,l -delete
 	find data/processed ! -name '.gitkeep' -type f -delete
 	rm -f *.bmp *.raw
 	find src/postprocessing -type f \( -name '*.txt' -o -name '*.fits' -o -name '*.png' -o -name '*.log' -o ! -name "*.*" \) -delete

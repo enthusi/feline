@@ -91,7 +91,7 @@ print(inputfile+': Reading Noise (HDU:'+\
                  str(noiseHDU)+') ...')
 noise = hdu[noiseHDU].data
 
-if ~variance_switch:
+if not variance_switch:
     print(inputfile+': Calculating sigma from variance...')
     noise = np.sqrt(noise)
 
