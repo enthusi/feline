@@ -8,6 +8,7 @@ import astropy.wcs
 import logging
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as path_effects
 import mpdaf
 import numpy as np
 import ref_index
@@ -630,9 +631,12 @@ if __name__ == "__main__":
                 left="off",
                 labelleft="off")  # labels along the bottom edge are off
 
-        bigpic = plt.subplot2grid((rows, 12), (0, 9), rowspan=2, colspan=4)
+        bigpic = plt.subplot2grid((rows, 12), (0, 9), rowspan=2,
+                                  colspan=4)
         bigpic.imshow(plane, vmax=1000, interpolation="none", cmap="jet")
-        bigpic.plot(px, py, "*", color="#FFFF00", ms=15)
+        bigpic.plot(px, py, "*", color="#FFFF00", ms=15,
+                    path_effects=[path_effects.withStroke(
+                        linewidth=3, foreground='black')])
 
         aw = 20
         aw = int(min(aw, px, py))
@@ -725,7 +729,8 @@ if __name__ == "__main__":
         spic = plt.subplot2grid((rows, columns), (3, 9))
         testarea = redshift[int(py) - aw:int(py) + aw,
                             int(px) - aw:int(px) + aw]
-
+        plt.xlim(aw - 10, aw + 10)
+        plt.ylim(aw - 10, aw + 10)
         plt.imshow(testarea, interpolation="none", cmap="jet")
         plt.tick_params(axis="both", which="both", right=True,
                         top=True, left=True, bottom=True,

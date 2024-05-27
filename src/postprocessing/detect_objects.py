@@ -6,6 +6,7 @@ import astropy.wcs
 import imageio
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as path_effects
 import numpy as np
 import scipy
 import scipy.ndimage
@@ -204,7 +205,9 @@ if __name__ == "__main__":
         catalog.append("%d %d %d %1.6f %d %d %d" % (run_id, int(y), int(x), z_i, q_i, u_i, t_i) + "\t%.6f %.6f" % (ra, dec) + " " + ' '.join(print_lines(t_i, z_i)))
         run_id += 1
 
-    plt.plot(ay, ax, "*", color="#FFFF00",  ms=15)
+    plt.plot(ay, ax, "*", color="#FFFF00",  ms=15,
+             path_effects=[path_effects.withStroke(
+                        linewidth=3, foreground='black')])
     plt.savefig(project_path_config.DATA_PATH_PDF + "/9999_9999_9_f9_fig9999.pdf", format='pdf', bbox_inches='tight')
 
     # Close the figure to free up memory
