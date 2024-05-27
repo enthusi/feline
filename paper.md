@@ -4,24 +4,21 @@ tags:
   - astronomy
   - ...
 authors:
-  - name: Author with ORCID
+  - name: Martin Wendt
     orcid: 0000-0000-0000-0000
     equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
+    affiliation: 1 # (Multiple affiliations must be quoted)
+  - name: Oskar Fjonn Soth
+    orcid: 0009-0004-1200-9130
     equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
     affiliation: 2
-  - name: Author without ORCID
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: 3
-  - given-names: Jon
-    dropping-particle: van
-    surname: Doehoven
-    affiliation: 3
+  - name: Marvin Henschel
+    equal-contrib: true
+    affiliation: 2
 affiliations:
  - name: Jon Doe, Jr. Fellow, Jon Doe University, USA
    index: 1
-date: 13 August 2017
+date: 27 Mai 2024
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
