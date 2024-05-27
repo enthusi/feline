@@ -1,12 +1,14 @@
 import os
 import struct
 import sys
+
 import mpdaf
 
 try:
     import project_path_config
-except:
+except Exception as e:
     import feline.src.postprocessing.project_path_config as project_path_config
+
 
 def load_data(file, ext):
     """
@@ -26,11 +28,15 @@ def create_masking_plot():
     """
     Create a masking plot and write it to a file.
 
-    The function takes no parameters. It uses the filename from the command line arguments,
-    loads the data and statistic from the file, creates a signal-to-noise image, and writes it to 'image00.fits'.
+    The function takes no parameters.
+    It uses the filename from the command line arguments,
+    loads the data and statistic from the file,
+    creates a signal-to-noise image, and writes it to 'image00.fits'.
     """
     filename_first_argument = sys.argv[1]
-    file = os.path.join(project_path_config.DATA_PATH_RAW, filename_first_argument)
+    file = os.path.join(
+        project_path_config.DATA_PATH_RAW,
+        filename_first_argument)
     data = load_data(file, 1)
     statistic = load_data(file, 2)
     snimage = data.copy()
@@ -69,21 +75,32 @@ def process_cube_data(cube_data, dy, dx, file_path):
 
 
 if __name__ == "__main__":
-
     create_masking_plot()
 
     filename_second_argument = sys.argv[2]
-    processed_file = os.path.join(project_path_config.DATA_PATH_PROCESSED, filename_second_argument)
+    processed_file = os.path.join(
+        project_path_config.DATA_PATH_PROCESSED,
+        filename_second_argument)
 
     cube_from_processed_file = mpdaf.obj.Cube(processed_file, ext=1)
-    cube_dimensions_z, cube_dimensions_y, cube_dimensions_x = cube_from_processed_file.shape
+    cube_dimensions_z, cube_dimensions_y, cube_dimensions_x = (
+        cube_from_processed_file.shape)
     wavelength_at_reference_pixel = cube_from_processed_file.wave.get_crval()
 
-    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), cube_dimensions_z)
-    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), cube_dimensions_y)
-    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"), cube_dimensions_x)
-    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"),
+    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED,
+                               "raw_reordered_s2ncube.dat"),
+                  cube_dimensions_z)
+    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED,
+                               "raw_reordered_s2ncube.dat"),
+                  cube_dimensions_y)
+    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED,
+                               "raw_reordered_s2ncube.dat"),
+                  cube_dimensions_x)
+    write_to_file(os.path.join(project_path_config.DATA_PATH_PROCESSED,
+                               "raw_reordered_s2ncube.dat"),
                   wavelength_at_reference_pixel)
 
-    process_cube_data(cube_from_processed_file.data, cube_dimensions_y, cube_dimensions_x,
-                      os.path.join(project_path_config.DATA_PATH_PROCESSED, "raw_reordered_s2ncube.dat"))
+    process_cube_data(cube_from_processed_file.data, cube_dimensions_y,
+                      cube_dimensions_x,
+                      os.path.join(project_path_config.DATA_PATH_PROCESSED,
+                                   "raw_reordered_s2ncube.dat"))
