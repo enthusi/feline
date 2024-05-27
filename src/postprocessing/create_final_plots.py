@@ -291,7 +291,7 @@ if __name__ == "__main__":
     try:
         colors = mpl.colormaps['winter']
     except Exception as e:
-        colors = cm.get_cmap("winter")
+        colors = mpl.cm.get_cmap("winter")
     colors._init()
 
     i = 0
