@@ -17,6 +17,19 @@ import project_path_config
 
 
 def scale_params(redshift):
+    """
+    Compute the plate scale at a given redshift.
+
+    The plate scale is the distance in kiloparsecs (kpc) that corresponds to
+    an angular size of one arcminute at the given redshift. This function
+    uses the cosmology model defined in the global variable `cosmo`.
+
+    Args:
+        redshift (float): The redshift at which to compute the plate scale.
+
+    Returns:
+        float: The plate scale at the given redshift, in kpc per arcsec.
+    """
     ps = cosmo.kpc_proper_per_arcmin(redshift).value / 60.0
     return ps
 

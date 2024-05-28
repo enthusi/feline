@@ -24,10 +24,10 @@ LDFLAGS += $(SDL2_LIBS)
 # Define the SDLavailable macro for use in your source code
 CFLAGS += -D SDLavailable=$(SDLavailable)
 
-CUBELINK := "martinwendt.de/cube.fits"
-CUBENAME := "cube.fits"
-#CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-#CUBENAME := "DATACUBE_UDF-10.fits"
+#CUBELINK := "martinwendt.de/cube.fits"
+#CUBENAME := "cube.fits"
+CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+CUBENAME := "DATACUBE_UDF-10.fits"
 
 ZLOW="0"
 ZHIGH="1.9"
