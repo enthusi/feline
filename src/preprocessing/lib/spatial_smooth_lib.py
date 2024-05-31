@@ -2,7 +2,7 @@
 # AUTHOR: Edmund Christian Herenz
 # DESCR.: Library of functions for spatial convolution of integral
 #         field specttroscopy datacube layers.  Part of LSDCat.
-#         
+#
 # LICENSE: BSD 3-Clause License // https://opensource.org/licenses/BSD-3-Clause
 #
 # If you make use of this code in your research please cite:
@@ -11,15 +11,15 @@
 # - Herenz, E. 2023, AN, e606
 #   https://doi.org/10.1002/asna.20220091
 
-import warnings
-import sys
-import multiprocessing
 import math as m
-import pylab as p
+import multiprocessing
+import warnings
+
 import numpy as np
+import pylab as p
 from scipy import signal
 
-warnings.simplefilter("ignore", np.ComplexWarning) 
+warnings.simplefilter("ignore", np.ComplexWarning)
 
 #  macOS since Sierra uses "spawn"
 try:
@@ -27,7 +27,8 @@ try:
 except RuntimeError:
     pass
 
-def spatial_filter_parts(kernel,data,method='normal'):
+
+def spatial_filter_parts(kernel, data, method='normal'):
     """
     filtered_data = filter_parts(kernel,data)
 
@@ -42,21 +43,28 @@ def spatial_filter_parts(kernel,data,method='normal'):
     length = data.shape[0]
     for i in range(length):
         if method == 'normal':
-            filtered_data[i,:,:] = signal.convolve2d(data[i,:,:],kernel[i],
-                                                     mode='same',
-                                                     boundary='fill',
-                                                     fillvalue=0)
+            filtered_data[i, :, :] = signal.convolve2d(
+                data[i, :, :],
+                kernel[i],
+                mode='same',
+                boundary='fill',
+                fillvalue=0)
         elif method == 'fft':
-            filtered_data[i,:,:] = signal.fftconvolve(data[i,:,:],kernel[i],
-                                                     mode='same')
+            filtered_data[i, :, :] = signal.fftconvolve(
+                data[i, :, :],
+                kernel[i],
+                mode='same')
         # TODO: try using astropy.convolution.convolve_fft
         # http://docs.astropy.org/en/stable/api/astropy.convolution.convolve_fft.html#astropy.convolution.convolve_fft
-            
-    return filtered_data    
+
+    return filtered_data
+
+
 filter_parts = spatial_filter_parts
 
-def spatial_filter_parallel(kernel,cube,num_threads,selMask=False,mask=[],
-                            filename='testdata',method='normal'):
+
+def spatial_filter_parallel(kernel, cube, num_threads, selMask=False, mask=[],
+                            filename='testdata', method='normal'):
     """
     filtered_data = filter_parallel(kernel,data,num_threads,selMask,mask=[])
     Parallizes the filter_parts function by splitting up the
@@ -69,22 +77,22 @@ def spatial_filter_parallel(kernel,cube,num_threads,selMask=False,mask=[],
 
     # start all the workers....
     for j in range(num_threads):
-        part_fac = int(length/num_threads)  # int(x) == int(m.floor(x))
-        start = j*part_fac
-        end = (j+1)*part_fac
-        if j+1 == num_threads:
-            end = length+1 # so also the last layer gets convolved!
+        part_fac = int(length / num_threads)  # int(x) == int(m.floor(x))
+        start = j * part_fac
+        end = (j + 1) * part_fac
+        if j + 1 == num_threads:
+            end = length + 1  # so also the last layer gets convolved!
 
         if filename is not None:
-            print(str(filename)+': Thread '+str(j+1)+\
-                  ': Working on wavelength layers from #'+str(start+1)+\
-                  ' to #'+str(end))
+            print(str(filename) + ': Thread ' + str(j + 1) +
+                  ': Working on wavelength layers from #' + str(start + 1) +
+                  ' to #' + str(end))
 
-        cube_part = cube[start:end,:,:]
+        cube_part = cube[start:end, :, :]
         kernel_part = kernel[start:end]
         async_results.append(pool.apply_async(filter_parts,
-                                        args=(kernel_part,
-                                              cube_part,method)))
+                                              args=(kernel_part,
+                                                    cube_part, method)))
 
     pool.close()
     result = []
@@ -94,20 +102,23 @@ def spatial_filter_parallel(kernel,cube,num_threads,selMask=False,mask=[],
     pool.join()
     del cube
     filtered = p.concatenate(result)
-    if selMask == True and mask != []: # we dont apply the mask to the variance
-        print(str(filename)+\
-                  ': Applying mask to filtered data...')
+    # we dont apply the mask to the variance
+    if selMask is True and mask != []:
+        print(str(filename) +
+              ': Applying mask to filtered data...')
         filtered *= mask
-    del result  
-    
+    del result
+
     return filtered
+
 
 # allow for shorthand
 filter_parallel = spatial_filter_parallel
 
+
 def prepArray_fixed(size):
     """x,y,x0,y0 = prepArray_fixed(size)
-    
+
     Similar to numpy.meshrgrid, but for a 2D square array of size
     'size'.  If an even size is provided its made odd to have a well
     defined centre.  Returns x,y - coordinate arrays (see
@@ -117,9 +128,9 @@ def prepArray_fixed(size):
     if size % 2 == 0:
         size += 1
     x = p.arange(0, size, 1, dtype=float)
-    y = x[:,p.newaxis]
-    x0 = y0 = size // 2 # origin of coordinate system (int division)
-    return x,y,x0,y0
+    y = x[:, p.newaxis]
+    x0 = y0 = size // 2  # origin of coordinate system (int division)
+    return x, y, x0, y0
 
 
 def prepArray(trunc_constant, width_parameter):
@@ -130,29 +141,30 @@ def prepArray(trunc_constant, width_parameter):
 
     width_parameter ... width parameter of the filter window
                         (eg. sigma for Gaussian or R for Moffat)
-    trunc_constant ... determines the size of the window, 
+    trunc_constant ... determines the size of the window,
                        actial size will be trunc_constant*width_parameter + 1
 
-    returns x,y,x0,y0 
+    returns x,y,x0,y0
     x,y -> axes , x0,y0 -> origin
     """
-    R = float(width_parameter); C = float(trunc_constant)
+    R = float(width_parameter)
+    C = float(trunc_constant)
     # C defines where filter windows is truncated (i.e. dimension of the array)
     # filter_window == 0 <=> r > trunc_constant*width_parameter + 1
     # width_parameter = sigma for Gaussian - fwhm for Moffat
-    M = C*R + 1
-    size = int(m.ceil(2*M))
+    M = C * R + 1
+    size = int(m.ceil(2 * M))
     return prepArray_fixed(size)  # x,y,x0,y0
 
-    
+
 ####
 # FILTER WINDOWS
 ####
 
-def makeMoffat(R,beta=3.5,trunc_constant=4, size=0):
+def makeMoffat(R, beta=3.5, trunc_constant=4, size=0):
     """
     M = makeMoffat(R, beta=3.5, trunc_constant=4, size=0)
-    
+
     Makes a two-dimensional circular Moffat (Moffat, 1969 - A&A
     3:455-461) window for filtering (using FWHM & beta as input)
 
@@ -160,27 +172,29 @@ def makeMoffat(R,beta=3.5,trunc_constant=4, size=0):
     trunc_constant ... since only lim_(r->inf) M = 0, the Moffat
                        needs to be truncated at a certain radius
                        this is done at trunc_constant*fwhm + 1
-    size ... set trunc_constant=0 and size>0 to define a fixed size of the output arrays
+    size ... set trunc_constant=0 and size>0 to define a fixed size
+     of the output arrays
     """
-    
+
     R = float(R)
     beta = float(beta)
-    FWHM = 2*m.sqrt(2**(1/beta)-1)*R
+    FWHM = 2 * m.sqrt(2 ** (1 / beta) - 1) * R
 
     if trunc_constant > 0:
         # array is truncated at trunc_constant*FWHM + 1
-        x,y,x0,y0 = prepArray(trunc_constant, FWHM)
+        x, y, x0, y0 = prepArray(trunc_constant, FWHM)
     elif size >= 0:
         # array is truncated at a fixed size
-        x,y,x0,y0 = prepArray_fixed(size)
+        x, y, x0, y0 = prepArray_fixed(size)
 
     # Calcluate the Moffat profile; note that sampling effects are
     # neglected.
-    norm = (beta - 1) / (m.pi * m.pow(R,2))
-    M = (1 + ( (x-x0)**2+(y-y0)**2 )/m.pow(R,2) )**(-beta)
+    norm = (beta - 1) / (m.pi * m.pow(R, 2))
+    M = (1 + ((x - x0) ** 2 + (y - y0) ** 2) / m.pow(R, 2)) ** (-beta)
     M *= norm
 
-    return M    
+    return M
+
 
 def makeMoffat_FWHM(FWHM, beta=3.5, trunc_constant=4, size=0):
     """
@@ -194,13 +208,13 @@ def makeMoffat_FWHM(FWHM, beta=3.5, trunc_constant=4, size=0):
     """
     FWHM = float(FWHM)
     beta = float(beta)
-    R = FWHM/(2*m.sqrt(2**(1/beta)-1))
+    R = FWHM / (2 * m.sqrt(2 ** (1 / beta) - 1))
     M = makeMoffat(R, beta=beta, trunc_constant=trunc_constant, size=size)
     return M
 
 
-def makeGaussian_sigma(sigma,trunc_constant=4):
-    """ 
+def makeGaussian_sigma(sigma, trunc_constant=4):
+    """
     G = makeGaussian(sigma,trunc_constant=4)
 
     Makes a two-dimensional gaussian window for filtering
@@ -211,54 +225,60 @@ def makeGaussian_sigma(sigma,trunc_constant=4):
                      i.e. G == 0 for all values > trunc_constant * sigma + 1
     """
     sigma = float(sigma)
-    x,y,x0,y0 = prepArray(trunc_constant,sigma)
+    x, y, x0, y0 = prepArray(trunc_constant, sigma)
 
     # calculation of the gaussian:
-    norm = 1./((2*m.pi)*m.pow(sigma,2))
-    G =  np.exp( -(( x - x0 )**2 + ( y - y0 )**2) / ( 2*sigma**2 ))
+    norm = 1. / ((2 * m.pi) * m.pow(sigma, 2))
+    G = np.exp(-((x - x0) ** 2 + (y - y0) ** 2) / (2 * sigma ** 2))
     G *= norm
 
     return G
 
-def makeGaussian_noncirc(sigma_x,sigma_y,theta_deg,trunc_constant=4):
+
+def makeGaussian_noncirc(sigma_x, sigma_y, theta_deg, trunc_constant=4):
     """
     sigma_x, sigma_y in pixel
     theta_deg in degree
     (currently not used in lsdcat)
     """
     sigma_max = np.max([sigma_x, sigma_y])
-    x,y,x0,y0 = prepArray(trunc_constant, sigma_max)
+    x, y, x0, y0 = prepArray(trunc_constant, sigma_max)
     theta = m.radians(theta_deg)
-    a = m.cos(theta)**2/(2*sigma_x**2) + m.sin(theta)**2/(2*sigma_y**2)
-    b = m.sin(2*theta)/(2*sigma_x**2) - m.sin(theta)/(2*sigma_y**2)
-    c = m.sin(theta)**2/(2*sigma_x**2) + m.cos(theta)**2/(2*sigma_y**2)
-    G = np.exp(-a*(x-x0)**2 - b*(x-x0)*(y-y0) - c*(y-y0)**2)
+    a = (m.cos(theta) ** 2 / (2 * sigma_x ** 2) + m.sin(theta) ** 2 /
+         (2 * sigma_y ** 2))
+    b = (m.sin(2 * theta) / (2 * sigma_x ** 2) - m.sin(theta) /
+         (2 * sigma_y ** 2))
+    c = (m.sin(theta) ** 2 / (2 * sigma_x ** 2) + m.cos(theta) ** 2 /
+         (2 * sigma_y ** 2))
+    G = np.exp(-a * (x - x0) ** 2 - b * (x - x0) * (y - y0) - c *
+               (y - y0) ** 2)
     norm = np.sum(G)
     G /= norm
     return G
 
 
-def makeGaussian_FWHM(fwhm,trunc_constant=4):
+def makeGaussian_FWHM(fwhm, trunc_constant=4):
     """
     G = makeGaussian_FWHM(FWHM,trunc_constant=4)
 
     see help(makeGaussian_sigma)
     here the FWHM instead of sigma is given as the width parameter
     """
-    sigma = fwhm / ( 2*m.sqrt(2*m.log(2)) )
+    sigma = fwhm / (2 * m.sqrt(2 * m.log(2)))
     G = makeGaussian_sigma(sigma,
                            trunc_constant=trunc_constant)
     return G
 
-def comp_sigma_poly(lbda,p):
-    """ 
+
+def comp_sigma_poly(lbda, p):
+    """
     sigma = comp_sigma_poly(lbda,p)
 
     Compute array of PSF widths (1sigma) as a function of wavelength.
 
     In:
     ---
-    lbda ... 1D array of wavelengths 
+    lbda ... 1D array of wavelengths
     p ... Polynomial coefficents. The polynomial evaluates to the
           PSF FWHM over the wavelengths in lbda.
 
@@ -273,15 +293,15 @@ def comp_sigma_poly(lbda,p):
     p[0]*x**(N-1) + p[1]*x**(N-2) + ... + p[N-2]*x + p[N-1].
 
     """
-    
-    fwhm = np.polyval(p,lbda)
+
+    fwhm = np.polyval(p, lbda)
     assert ~np.any(fwhm <= 0), 'FWHM <= 0... Check polynomial coefficients!'
-    sigma = fwhm / (2*np.sqrt(2*np.log(2)))
-    
+    sigma = fwhm / (2 * np.sqrt(2 * np.log(2)))
+
     return sigma
 
 
-def makeGaussians_sigmas(sigmas,trunc_constant):
+def makeGaussians_sigmas(sigmas, trunc_constant):
     """
     gaussians = makeGaussians_sigmas(sigmas,trunc_constant)
 
@@ -294,17 +314,19 @@ def makeGaussians_sigmas(sigmas,trunc_constant):
                                             trunc_constant=trunc_constant))
     return gaussians
 
-def makeGaussians_fwhms(fwhms,trunc_constant):
+
+def makeGaussians_fwhms(fwhms, trunc_constant):
     """
     see help(makeGaussians_sigmas) -> here with FWHM as input parameter
     ... (not used at the moment - just for reference) ...
     """
     sigmas = []
     for fwhm in fwhms:
-        sigma = float(fwhm)/(2*np.sqrt(2*np.log(2)))
+        sigma = float(fwhm) / (2 * np.sqrt(2 * np.log(2)))
         sigmas.append(sigma)
-    gaussians = makeGaussians_sigmas(sigmas,trunc_constant)
+    gaussians = makeGaussians_sigmas(sigmas, trunc_constant)
     return gaussians
+
 
 def makeMoffats_fwhms(fwhms, betas, trunc_constant, size):
     """
@@ -321,9 +343,10 @@ def makeMoffats_fwhms(fwhms, betas, trunc_constant, size):
                                beta=beta,
                                trunc_constant=trunc_constant,
                                size=size)
-               for fwhm,beta in zip(fwhms, betas)]
-    return moffats   
-        
+               for fwhm, beta in zip(fwhms, betas)]
+    return moffats
+
+
 def makeGaussians_poly(xax, p, pix_scale=0.2, trunc_constant=4, classic=True):
     """
     gaussians = makeGaussians_poly(xax,p,
@@ -333,25 +356,32 @@ def makeGaussians_poly(xax, p, pix_scale=0.2, trunc_constant=4, classic=True):
         (note: the polynomial describes the FWHM - NOT the sigmas)
     pix_scale & trunc_constant - see help(makeGaussian)
     """
-    sigmas = comp_sigma_poly(xax,p)
-    sigmas /=  pix_scale
+    sigmas = comp_sigma_poly(xax, p)
+    sigmas /= pix_scale
     gaussians = makeGaussians_sigmas(sigmas, trunc_constant)
     if not classic:
         # 10.5281/zenodo.6471630, Eq. 4, right hand side; but there ^2
         # missing in denominator (typo)
-        gaussians = [gaussian / np.sqrt(np.sum(gaussian**2))
+        gaussians = [gaussian / np.sqrt(np.sum(gaussian ** 2))
                      for gaussian in gaussians]
-    
+
     return gaussians
 
-def makeMoffats_poly(xax, p, b, pix_scale=0.2, trunc_constant=4, size=0, classic=True):
+
+def makeMoffats_poly(xax,
+                     p,
+                     b,
+                     pix_scale=0.2,
+                     trunc_constant=4,
+                     size=0,
+                     classic=True):
     """
     moffats = makeMoffats_poly(xax,p,betas,
                      pix_scale=0.2,trunc_constant=4)
 
-    xax -- 1D array containing the wavelengths of all slices in the 
+    xax -- 1D array containing the wavelengths of all slices in the
            MUSE cube
-    p   -- array containing the coefficients of the polynomial 
+    p   -- array containing the coefficients of the polynomial
            (in arcsec)
            (note: the polynomial describes the FWHM - NOT the sigmas)
     b - array containing the coefficients of the polynomial for beta
@@ -365,11 +395,10 @@ def makeMoffats_poly(xax, p, b, pix_scale=0.2, trunc_constant=4, size=0, classic
     moffats = makeMoffats_fwhms(fwhms, betas, trunc_constant, size)
     if not classic:
         # see note in makeGaussians_poly
-        moffats = [moffat / np.sqrt(np.sum(moffat**2))
+        moffats = [moffat / np.sqrt(np.sum(moffat ** 2))
                    for moffat in moffats]
-        
+
     return moffats
-        
 
 # DUMP OF POTENTIALLY (HOPEFULLY) UNUSED STUFF BELOW
 
@@ -378,7 +407,8 @@ def makeMoffats_poly(xax, p, b, pix_scale=0.2, trunc_constant=4, size=0, classic
 # # description of the formulas used can be found on the MUSE Wiki
 # # https://musewiki.aip.de/fsf-model (original source still missing TODO)
 # def comp_fwhm(lbda, seeing, l0=22, am=1.0):
-#   """ return seeing FWHM values - for the a ground layer turbulence seeing modell
+#   """ return seeing FWHM values -
+#   for the a ground layer turbulence seeing model
 #   lbda: array of wavelengths in nm
 #   seeing; dimm seeing FWHM at 500 nm and at zenith in arcsec
 #   l0: turbulence outerscale length (m)
@@ -414,10 +444,11 @@ def makeMoffats_poly(xax, p, b, pix_scale=0.2, trunc_constant=4, size=0, classic
 #     dimm_seeing - dimm seeing FWHM in arcsec
 #     air_mass - 1/cos(z), where z is the zenith distance of observation
 #     scale_length - wavefront outer scale length [m], 22m typical for Paranal
-#     (function is using a ground layer turbulence modell, taken from the 
-#     MUSE Wiki: https://musewiki.aip.de/fsf-model ) 
+#     (function is using a ground layer turbulence modell, taken from the
+#     MUSE Wiki: https://musewiki.aip.de/fsf-model )
 
-#     returns list of Gaussians <gaussians> filter windows, with FWHMs calulated
+#     returns list of Gaussians <gaussians> filter windows,
+#     with FWHMs calulated
 #     with the ground layer turbulence modell
 #     """
 #     #  calculate sigmas in arcsecond (1D array)
@@ -438,19 +469,18 @@ def makeMoffats_poly(xax, p, b, pix_scale=0.2, trunc_constant=4, size=0, classic
 
 #     same as makeGaussians_glt - for complete description see
 #     help(makeGaussians_glt - here with moffat profiles).
-#     betas ... either a float or a list with the beta value(s) 
+#     betas ... either a float or a list with the beta value(s)
 
 #     returns list of Moffats <gaussians> filter windows, with FWHMs calulated
 #     with the ground layer turbulence modell.
 #     """
 #     assert type(betas) == type(list()) or type(betas) == type(float())
-    
+
 #     # calcualte fwhms using the ground layer turbulence modell
 #     fwhms = comp_fwhm(xax,dimm_seeing,
 #                       l0=scale_length,am=air_mass)
 #     # transform fwhms to pix scale
 #     fwhms /= pix_scale
-    
+
 #     moffats = makeMoffats_fwhms(fwhms,betas,trunc_constant)
 #     return moffats
-    

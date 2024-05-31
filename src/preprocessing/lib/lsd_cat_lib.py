@@ -9,32 +9,33 @@
 # - Herenz, E. 2023, AN, e606
 #   https://doi.org/10.1002/asna.20220091
 
-
-version = 2.0
-def get_version(version=version):
-    return version
-
-import sys
-import string
 import math as m
+import string
+import sys
 import warnings
 from datetime import datetime
 
 import numpy as np
-
 # scipy > 1.8 deprecates measurement namespace (ugly hack)
 import scipy
-sp_ver = scipy.__version__.split('.')
-if int(sp_ver[0]) == 1 and int(sp_ver[1]) < 8:
-    from scipy.ndimage import measurements
-elif (int(sp_ver[0]) == 1 and int(sp_ver[1]) >= 8) or (int(sp_ver[0]) > 1):
-    import scipy.ndimage as measurements
-
 
 from astropy.wcs import WCS
 from astropy.io import fits
 from astropy.io.fits import Column
 from astropy.io.fits.verify import VerifyWarning
+
+version = 2.0
+
+
+def get_version(version=version):
+    return version
+
+
+sp_ver = scipy.__version__.split('.')
+if int(sp_ver[0]) == 1 and int(sp_ver[1]) < 8:
+    from scipy.ndimage import measurements
+elif (int(sp_ver[0]) == 1 and int(sp_ver[1]) >= 8) or (int(sp_ver[0]) > 1):
+    import scipy.ndimage as measurements
 
 global numpy_version
 global numpy_major_version
@@ -53,95 +54,94 @@ else:
     def count_nonzero(array):
         return np.sum(array != 0)
 
-    
-            
 # default_out_line_form = dictionary for formating output lines of
 # catalog & names of variables for lsd_cat_search.py
-# w.r.t. names in the configuration string 
+# w.r.t. names in the configuration string
 # key = Name as in --tabvalues and column name in output catalog
 # value = tuple
 # tuple[0] = formatter string (in Python's Format Specification Mini-Language)
 # tuple[1] = variable name
 # tuple[3] = unit
 # tuple[4] = FITS format key
-#            (L = boolean, D = double precision float, E = single precision float,
+#            (L = boolean, D = double precision float,
+#            E = single precision float,
 #             I = 16 bit integer)
-default_out_line_form = {'I':               ('%8d','running_ids','','I'),
-                         'ID':              ('%8d','ids','','K'),
-                         'X_PEAK_SN':       ('%10.1f','x_sn_max','','E'),
-                         'Y_PEAK_SN':       ('%10.1f','y_sn_max','','E'),
-                         'Z_PEAK_SN':       ('%10.1f','z_sn_max','','E'),
-                         'RA_PEAK_SN':      ('%12.5f','ra_sn_max','deg','D'),
-                         'DEC_PEAK_SN':     ('%12.5f','dec_sn_max','deg','D'),
-                         'LAMBDA_PEAK_SN':  ('%10.2f','lambda_sn_max','Angstrom','D'),
-                         'NPIX':            ('%6d','npix','','I'),
-                         'DETSN_MAX':       ('%12.6f','det_sn_max','','D'),
-                         'BORDER':          ('%6d','border_bit','','L')}            
-
+default_out_line_form = {'I': ('%8d', 'running_ids', '', 'I'),
+                         'ID': ('%8d', 'ids', '', 'K'),
+                         'X_PEAK_SN': ('%10.1f', 'x_sn_max', '', 'E'),
+                         'Y_PEAK_SN': ('%10.1f', 'y_sn_max', '', 'E'),
+                         'Z_PEAK_SN': ('%10.1f', 'z_sn_max', '', 'E'),
+                         'RA_PEAK_SN': ('%12.5f', 'ra_sn_max', 'deg', 'D'),
+                         'DEC_PEAK_SN': ('%12.5f', 'dec_sn_max', 'deg', 'D'),
+                         'LAMBDA_PEAK_SN': ('%10.2f', 'lambda_sn_max',
+                                            'Angstrom', 'D'),
+                         'NPIX': ('%6d', 'npix', '', 'I'),
+                         'DETSN_MAX': ('%12.6f', 'det_sn_max', '', 'D'),
+                         'BORDER': ('%6d', 'border_bit', '', 'L')}
 
 # default_measure_out_line_form - as above, but for lsd_cat_measure.py
 flux_unit_str = '10**(-20)*erg/s/cm**2'  # TODO: automatically create this...
 default_measure_out_line_form = \
-    {# no dependence on flux-filtered cube:
-        'X_SN':            ('%10.2f','x_sn_com','','D'),
-        'Y_SN':            ('%10.2f','y_sn_com','','D'),
-        'Z_SN':            ('%10.2f','z_sn_com','','D'),
-        'RA_SN':           ('%12.6f','ra_sn_com','deg','D'),
-        'DEC_SN':          ('%12.6f','dec_sn_com','deg','D'),
-        'LAMBDA_SN':       ('%10.2f','lambda_sn','Angstrom','D'),
-        'X_FLUX':          ('%10.2f','x_flux_com','','D'),
-        'Y_FLUX':          ('%10.2f','y_flux_com','','D'),
-        'Z_FLUX':          ('%10.2f','z_flux_com','','D'),
-        'RA_FLUX':         ('%12.6f','ra_flux_com','deg','D'),
-        'DEC_FLUX':        ('%12.6f','dec_flux_com','deg','D'),
-        'LAMBDA_FLUX':     ('%10.2f','lambda_flux_com','Angstrom','D'),                 
-        'Z_NB_MIN':        ('%10.2f','z_mins','','D'),
-        'LAMBDA_NB_MIN':   ('%10.2f','lambda_mins','Angstrom','D'),
-        'Z_NB_MAX':        ('%10.2f','z_maxs','','D'),
-        'LAMBDA_NB_MAX':   ('%10.2f','lambda_maxs','Angstrom','D'),
-        'Z_DIFF_FLAG':     ('%6d','z_diff_flag','','L'),
-     # direct dependence on flux-filtered cube (measurements
-     # performed on this cube - 3D weighted coordinates):
-        'X_SFLUX':         ('%10.2f','x_sflux_com','','D'),
-        'Y_SFLUX':         ('%10.2f','y_sflux_com','','D'),
-        'Z_SFLUX':         ('%10.2f','z_sflux_com','','D'),
-        'RA_SFLUX':        ('%12.6f','ra_sflux_com','deg','D'),
-        'DEC_SFLUX':       ('%12.6f','dec_sflux_com','deg','D'),
-        'LAMBDA_SFLUX':    ('%10.2f','lambda_sflux_com','Angstrom','D'),
-     # direct dependence on flux-filtered cube (measurments
-     # performed on narrow-bands extracted from this cube)
-        'RKRON':           ('%10.2f','r_krons','','D'),
-        'SIGMA_ISO':       ('%10.2f','sigma_isos','','D'),
-        'X_1MOM':          ('%10.2f','x_1moms','','D'),
-        'Y_1MOM':          ('%10.2f','y_1moms','','D'),
-        'RA_1MOM':         ('%12.6f','ra_1moms','deg','D'),
-        'DEC_1MOM':        ('%12.6f','dec_1moms','deg','D'),
-        'X_2MOM':          ('%10.2f','x_2moms','','D'),
-        'Y_2MOM':          ('%10.2f','y_2moms','','D'),
-        'XY_2MOM':         ('%10.2f','xy_2moms','','D'),
-        'RKRON_FLAG':      ('%6d','r_kron_flag','','L'),
-     # indirect dependence, as measurements require R_KRON
-        'F_KRON':          ('%10.2f','f_krons',flux_unit_str,'D'),
-        'F_2KRON':         ('%10.2f','f_2krons',flux_unit_str,'D'),
-        'F_3KRON':         ('%10.2f','f_3krons',flux_unit_str,'D'),
-        'F_4KRON':         ('%10.2f','f_4krons',flux_unit_str,'D'),                 
-        'F_KRON_ERR':      ('%10.2f','f_krons_err',flux_unit_str,'D'),
-        'F_2KRON_ERR':     ('%10.2f','f_2krons_err',flux_unit_str,'D'),
-        'F_3KRON_ERR':     ('%10.2f','f_3krons_err',flux_unit_str,'D'),
-        'F_4KRON_ERR':     ('%10.2f','f_4krons_err',flux_unit_str,'D')
+    {  # no dependence on flux-filtered cube:
+        'X_SN': ('%10.2f', 'x_sn_com', '', 'D'),
+        'Y_SN': ('%10.2f', 'y_sn_com', '', 'D'),
+        'Z_SN': ('%10.2f', 'z_sn_com', '', 'D'),
+        'RA_SN': ('%12.6f', 'ra_sn_com', 'deg', 'D'),
+        'DEC_SN': ('%12.6f', 'dec_sn_com', 'deg', 'D'),
+        'LAMBDA_SN': ('%10.2f', 'lambda_sn', 'Angstrom', 'D'),
+        'X_FLUX': ('%10.2f', 'x_flux_com', '', 'D'),
+        'Y_FLUX': ('%10.2f', 'y_flux_com', '', 'D'),
+        'Z_FLUX': ('%10.2f', 'z_flux_com', '', 'D'),
+        'RA_FLUX': ('%12.6f', 'ra_flux_com', 'deg', 'D'),
+        'DEC_FLUX': ('%12.6f', 'dec_flux_com', 'deg', 'D'),
+        'LAMBDA_FLUX': ('%10.2f', 'lambda_flux_com', 'Angstrom', 'D'),
+        'Z_NB_MIN': ('%10.2f', 'z_mins', '', 'D'),
+        'LAMBDA_NB_MIN': ('%10.2f', 'lambda_mins', 'Angstrom', 'D'),
+        'Z_NB_MAX': ('%10.2f', 'z_maxs', '', 'D'),
+        'LAMBDA_NB_MAX': ('%10.2f', 'lambda_maxs', 'Angstrom', 'D'),
+        'Z_DIFF_FLAG': ('%6d', 'z_diff_flag', '', 'L'),
+        # direct dependence on flux-filtered cube (measurements
+        # performed on this cube - 3D weighted coordinates):
+        'X_SFLUX': ('%10.2f', 'x_sflux_com', '', 'D'),
+        'Y_SFLUX': ('%10.2f', 'y_sflux_com', '', 'D'),
+        'Z_SFLUX': ('%10.2f', 'z_sflux_com', '', 'D'),
+        'RA_SFLUX': ('%12.6f', 'ra_sflux_com', 'deg', 'D'),
+        'DEC_SFLUX': ('%12.6f', 'dec_sflux_com', 'deg', 'D'),
+        'LAMBDA_SFLUX': ('%10.2f', 'lambda_sflux_com', 'Angstrom', 'D'),
+        # direct dependence on flux-filtered cube (measurments
+        # performed on narrow-bands extracted from this cube)
+        'RKRON': ('%10.2f', 'r_krons', '', 'D'),
+        'SIGMA_ISO': ('%10.2f', 'sigma_isos', '', 'D'),
+        'X_1MOM': ('%10.2f', 'x_1moms', '', 'D'),
+        'Y_1MOM': ('%10.2f', 'y_1moms', '', 'D'),
+        'RA_1MOM': ('%12.6f', 'ra_1moms', 'deg', 'D'),
+        'DEC_1MOM': ('%12.6f', 'dec_1moms', 'deg', 'D'),
+        'X_2MOM': ('%10.2f', 'x_2moms', '', 'D'),
+        'Y_2MOM': ('%10.2f', 'y_2moms', '', 'D'),
+        'XY_2MOM': ('%10.2f', 'xy_2moms', '', 'D'),
+        'RKRON_FLAG': ('%6d', 'r_kron_flag', '', 'L'),
+        # indirect dependence, as measurements require R_KRON
+        'F_KRON': ('%10.2f', 'f_krons', flux_unit_str, 'D'),
+        'F_2KRON': ('%10.2f', 'f_2krons', flux_unit_str, 'D'),
+        'F_3KRON': ('%10.2f', 'f_3krons', flux_unit_str, 'D'),
+        'F_4KRON': ('%10.2f', 'f_4krons', flux_unit_str, 'D'),
+        'F_KRON_ERR': ('%10.2f', 'f_krons_err', flux_unit_str, 'D'),
+        'F_2KRON_ERR': ('%10.2f', 'f_2krons_err', flux_unit_str, 'D'),
+        'F_3KRON_ERR': ('%10.2f', 'f_3krons_err', flux_unit_str, 'D'),
+        'F_4KRON_ERR': ('%10.2f', 'f_4krons_err', flux_unit_str, 'D')
     }
 
-    
+
 def tabvalue_test(tabvalues, out_line_form=default_out_line_form):
     for key in tabvalues:
         try:
             test = out_line_form[key]
         except KeyError:
-            print('ERROR: TABVALUE KEY ' + key + ' NOT RECOGNIZED!' + \
+            print('ERROR: TABVALUE KEY ' + key + ' NOT RECOGNIZED!' +
                   ' ABORTING!')
             sys.exit(2)
 
-            
+
 def fits_cat_name(ascii_cat_name):
     ac = ascii_cat_name.split('.')
     fits_cat_name = ''
@@ -149,9 +149,9 @@ def fits_cat_name(ascii_cat_name):
         # there could be multiple . in filename
         fits_cat_name += ac_i + '.'
     return fits_cat_name + 'fits'
-            
 
-def gen_line_string(tabvalues,  variables,
+
+def gen_line_string(tabvalues, variables,
                     out_line_form=default_out_line_form, index_sort=None,
                     coordinate_list=['X_PEAK_SN', 'Y_PEAK_SN', 'Z_PEAK_SN'],
                     zeroidx=False):
@@ -167,13 +167,13 @@ def gen_line_string(tabvalues,  variables,
 
     > line_string, var_list, unit_list, fits_format_list = \
                            gen_line_string(['ID','X_SN','Y_SN','Z_SN'], vars())
-    > print(line_string) 
+    > print(line_string)
       '%8d %10.2f %10.2f %10.2f'
-    > var_list == [ids,x_sn_com,y_sn_com,z_sn_com] 
+    > var_list == [ids,x_sn_com,y_sn_com,z_sn_com]
       True  (if those vars are in scope)
 
     """
-    
+
     line_string = ''
     var_list = []
     unit_list = []
@@ -184,7 +184,8 @@ def gen_line_string(tabvalues,  variables,
         entry_format = out_line_form[entry][3]
         line_string += out_line_form[entry][0] + ' '
         if entry in coordinate_list and ~zeroidx:
-            # internally we work with 0-indexed array indicies, but when writing
+            # internally we work with 0-indexed array indicies,
+            # but when writing
             # the catalogue we usually want 1-indexed coordinates
             var_list.append(variables[out_line_form[entry][1]] + 1.)
         else:
@@ -192,13 +193,13 @@ def gen_line_string(tabvalues,  variables,
         unit_list.append(entry_unit)
         fits_format_list.append(entry_format)
 
-        if type(index_sort) != type(None):
+        if not isinstance(index_sort, type(None)):
             var_list[-1] = var_list[-1][index_sort]
 
-    line_string += '\n'  # end of line 
+    line_string += '\n'  # end of line
 
     return line_string, var_list, unit_list, fits_format_list
-            
+
 
 def ascii_catalog_header(primary_header,
                          inputfile, shdu, nhdu, threshold, num_dets,
@@ -206,9 +207,9 @@ def ascii_catalog_header(primary_header,
                          out_line_form):
     output = []
     # general information about creation of catalogue
-    output.append('# Catalog of detections in '+inputfile+' \n')
-    if nhdu == None:
-        output.append('# S/N HDU = '+str(shdu)+' \n')
+    output.append('# Catalog of detections in ' + inputfile + ' \n')
+    if nhdu is None:
+        output.append('# S/N HDU = ' + str(shdu) + ' \n')
     else:
         output.append('# Matched filtered data HDU: ' + str(shnd) +
                       ' \n')
@@ -216,7 +217,7 @@ def ascii_catalog_header(primary_header,
 
     output.append('# Threshold: ' + str(threshold) + ' \n')
     output.append('# Detections: ' + str(num_dets) + ' \n')
-    output.append('# Spatial grouping radius: ' + str(group_radius) + 
+    output.append('# Spatial grouping radius: ' + str(group_radius) +
                   ' arcsec \n')
     output.append('# Generated: ' + str(datetime.now())[:-7] + ' \n')
     output.append('# Tool: lsd_cat_search.py - version ' +
@@ -226,29 +227,29 @@ def ascii_catalog_header(primary_header,
 
     # TODO: information from the input FITS file primary header
     # to output
-    
+
     # description of columns
     for entry in enumerate(tabvalues):
         if out_line_form[entry[1]][2] == '':
-            output.append('#\t '+ str(entry[0] + 1)+': '+entry[1] +
+            output.append('#\t ' + str(entry[0] + 1) + ': ' + entry[1] +
                           '\n')
         else:
-            output.append('#\t '+str(entry[0] + 1)+': '+entry[1] +
-                          ' ['+out_line_form[entry[1]][2]+'] \n')
-    
+            output.append('#\t ' + str(entry[0] + 1) + ': ' + entry[1] +
+                          ' [' + out_line_form[entry[1]][2] + '] \n')
+
     return output
 
 
 def ascii_catalog_lines(ids, var_list, line_string):
     output = []
 
-    for l in range(len(ids)):
+    for i in range(len(ids)):
         var_tuple_list = []
         for j in range(len(var_list)):
-            var_tuple_list.append(var_list[j][l])
+            var_tuple_list.append(var_list[j][i])
 
         var_tuple = tuple(var_tuple_list)
-        output.append(line_string %(var_tuple))
+        output.append(line_string % var_tuple)
 
     return output
 
@@ -262,18 +263,17 @@ def write_ascii_cat(output_filename, lines):
 
 def make_fits_cat(primary_header,
                   tabvalues, var_list, unit_list, fits_format_list):
-
     warnings.simplefilter('ignore', category=VerifyWarning)
 
     column_list = []
-    for tabvalue,var,unit,entry_format in zip(tabvalues,
-                                          var_list,unit_list,
-                                          fits_format_list):
+    for tabvalue, var, unit, entry_format in zip(tabvalues,
+                                                 var_list, unit_list,
+                                                 fits_format_list):
         column_list.append(Column(name=tabvalue,
                                   unit=unit,
                                   array=var,
                                   format=entry_format))
- 
+
     # copy lsdcat related header entries to primary header of output
     # catalogue fits table
     primary_out_header = fits.PrimaryHDU().header
@@ -281,7 +281,7 @@ def make_fits_cat(primary_header,
         for key in primary_header['LSD*'].keys():
             primary_out_header[key] = primary_header[key]
     except KeyError:
-        pass  
+        pass
 
     try:
         for histitem in primary_header['HISTORY']:
@@ -295,32 +295,30 @@ def make_fits_cat(primary_header,
     return fits.HDUList(hdus=[primary_hdu, bin_table_hdu])
 
 
-
-
 def wavel(header, naxis=3, cdel_key='CD3_3'):
-   """xax = wavel(header,naxis=3,cdel_key='CD3_3')
+    """xax = wavel(header,naxis=3,cdel_key='CD3_3')
 
-   header - a pyfits header object containing naxis, crval, crpix &
-              crdel values needed for creation of wavelength grid
-              array
-   naxis - the wavelength axis (used to determine CRVALn, NAXISn &
-             CRPIXn values)
-   cdel_key - the key word that contains the wavelength increment
-              array
+    header - a pyfits header object containing naxis, crval, crpix &
+               crdel values needed for creation of wavelength grid
+               array
+    naxis - the wavelength axis (used to determine CRVALn, NAXISn &
+              CRPIXn values)
+    cdel_key - the key word that contains the wavelength increment
+               array
 
-   """
+    """
 
-   nax = naxis
+    nax = naxis
 
-   naxis = header['NAXIS'+str(nax)]
-   crval = header['CRVAL'+str(nax)]
-   crpix = header['CRPIX'+str(nax)]
-   crdel = header[cdel_key]
+    naxis = header['NAXIS' + str(nax)]
+    crval = header['CRVAL' + str(nax)]
+    crpix = header['CRPIX' + str(nax)]
+    crdel = header[cdel_key]
 
-   xax = crval + (np.arange(naxis) - (crpix - 1))*crdel
+    xax = crval + (np.arange(naxis) - (crpix - 1)) * crdel
 
-   return xax
-   
+    return xax
+
 
 def wavel_auto(header):
     # normally the CD3_3 keyword should have been identified
@@ -328,7 +326,7 @@ def wavel_auto(header):
     # - in this case we try CDELT 3 - if this fails we crash
     try:
         return wavel(header)
-    except:
+    except Exception as e:
         try:
             return wavel(header, cdel_key='CDELT3')
         except KeyError:
@@ -344,8 +342,8 @@ def group_spatial(x, y, z, ids, radius, spaxscale=0.2):
     they are close to each other.)
     """
     for x_i, y_i in zip(x, y):
-        distances = (x_i - x)**2 + (y_i - y)**2
-        select = distances <= (radius / spaxscale)**2
+        distances = (x_i - x) ** 2 + (y_i - y) ** 2
+        select = distances <= (radius / spaxscale) ** 2
         # detections within search radius all obtain the smallest id
         # of a detection within the radius
         ids[select] = np.min(ids[select])
@@ -360,30 +358,30 @@ def group_spatial(x, y, z, ids, radius, spaxscale=0.2):
     # (secondary criterion)
     sort_array = np.zeros((len(ids),),
                           dtype=[('ids', ids.dtype),
-                                 ('z', z.dtype)]) 
+                                 ('z', z.dtype)])
     sort_array['ids'] = new_ids
     sort_array['z'] = z
     index_sort = np.argsort(sort_array, order=('ids', 'z'))
 
-    return new_ids, index_sort    
+    return new_ids, index_sort
 
 
 def calc_border_flag(border_dist, expmap, x, y):
     no_exps_map = expmap == 0  # this defines our border
 
     indices_y, indices_x = np.indices(expmap.shape)
-        
+
     # full mask contains how many pixel:
-    full_sum = m.pi * border_dist**2
+    full_sum = m.pi * border_dist ** 2
     full_sum = int(m.floor(full_sum))
 
     # now checking if these pixels are overlapping with border for
     # each object
     border_bit = []
-    for x_i, y_i in zip(x ,y):
+    for x_i, y_i in zip(x, y):
         X = indices_x - x_i
         Y = indices_y - y_i
-        pixrad =  np.sqrt(X**2 + Y**2)
+        pixrad = np.sqrt(X ** 2 + Y ** 2)
         pixrad_sel = pixrad <= border_dist
         mask_check = pixrad_sel.astype(int) - no_exps_map.astype(int)
         mask_check = mask_check == 1
@@ -395,16 +393,16 @@ def calc_border_flag(border_dist, expmap, x, y):
             # detection OK
             border_bit.append(0)
 
-    border_bit = np.asarray(border_bit) 
-    #num_border = np.sum(border_bit)
+    border_bit = np.asarray(border_bit)
+    # num_border = np.sum(border_bit)
     return border_bit
 
 
-def pixelrad_from_cen(layer,x_cen,y_cen):
+def pixelrad_from_cen(layer, x_cen, y_cen):
     """
     radii_to_cen = pixelrad_from_cen(image,x_cen,y_cen)
 
-    Returns an array shaped like layer, with radial distances 
+    Returns an array shaped like layer, with radial distances
     from x_cen, y_cen in pixel coordinates.
 
     In:
@@ -418,12 +416,12 @@ def pixelrad_from_cen(layer,x_cen,y_cen):
 
     """
 
-    indices_y,indices_x = np.indices(layer.shape)  #  reverse axis-order!
+    indices_y, indices_x = np.indices(layer.shape)  # reverse axis-order!
 
     X = indices_x - x_cen
     Y = indices_y - y_cen
 
-    radii_to_cen = np.sqrt(X**2+Y**2) 
+    radii_to_cen = np.sqrt(X ** 2 + Y ** 2)
 
     return radii_to_cen
 
@@ -437,41 +435,43 @@ def center_of_mass_weighted(weight_cube, label_cube, memory_friendly=False):
 
     weight_cube
     labelcube = scipy.ndimage.measurements.label(sn_cube > thresh)[0]
-    
-    memory_friendly = True -> perform same calculation slower 
-                              but more memory friendly (scales with noutput. of objs)
-                              
+
+    memory_friendly = True -> perform same calculation slower
+                              but more memory friendly
+                              (scales with noutput. of objs)
     """
 
     # TODO: CURRENTLY THIS ROUTINE USES THE
-    # SCIPY.MEASURMENTS.CENTER_OF_MASS ROUTINE - WHICH IS SLOW AND NOT VERY MEMORY EFFICIENT...
+    # SCIPY.MEASURMENTS.CENTER_OF_MASS ROUTINE -
+    # WHICH IS SLOW AND NOT VERY MEMORY EFFICIENT...
     # -> RECODE IN PURE NUMPY USING THE LABEL CUBE AND THE OBJECT SLICES
 
-    assert label_cube.max() > 0 # TODO: does not work with no
-                                # detections -- FIX!
+    assert label_cube.max() > 0  # TODO: does not work with no
+    # detections -- FIX!
     assert weight_cube.shape == label_cube.shape
 
     max_label = label_cube.max()
-    ids = np.asarray(range(1,max_label+1))
-    
-    if memory_friendly == False:
+    ids = np.asarray(range(1, max_label + 1))
+
+    if memory_friendly is False:
         # using scipy.measurements center_of_mass routine for the calculation
         # - howver, it sucks quite some memory and is also not very fast
-        center_of_masses = measurements.center_of_mass(weight_cube,
-                                                       labels=label_cube,
-                                                       index=range(1,max_label+1))
+        center_of_masses = measurements.center_of_mass(
+            weight_cube,
+            labels=label_cube,
+            index=range(1, max_label + 1))
         # measurements returns a list of tuples (@X?!=wtf)
-        center_of_masses = np.asarray(center_of_masses)[:,::-1]
-        x_com = center_of_masses[:,0]
-        y_com = center_of_masses[:,1]
-        z_com = center_of_masses[:,2]
+        center_of_masses = np.asarray(center_of_masses)[:, ::-1]
+        x_com = center_of_masses[:, 0]
+        y_com = center_of_masses[:, 1]
+        z_com = center_of_masses[:, 2]
 
     else:
         # iterate over objects - slower, but more memory efficient
         x_com = np.empty(max_label)
         y_com = np.empty(max_label)
         z_com = np.empty(max_label)
-        for label in range(1,max_label+1):
+        for label in range(1, max_label + 1):
             center_of_mass = measurements.center_of_mass(weight_cube,
                                                          labels=label_cube,
                                                          index=label)
@@ -480,10 +480,10 @@ def center_of_mass_weighted(weight_cube, label_cube, memory_friendly=False):
             y_com[label - 1] = center_of_mass[1]
             z_com[label - 1] = center_of_mass[0]
 
-    return ids,x_com,y_com,z_com
+    return ids, x_com, y_com, z_com
 
 
-def center_of_mass_binary(label_cube,memory_friendly=False):
+def center_of_mass_binary(label_cube, memory_friendly=False):
     """
     Return center of mass of detection clusters (unweighted)
     ids,x,y,z = center_of_mass_binary(labelcube,memory_friendly=False)
@@ -492,43 +492,43 @@ def center_of_mass_binary(label_cube,memory_friendly=False):
     """
     com_un = center_of_mass_weighted(np.ones_like(label_cube),
                                      label_cube,
-                                     memory_friendly = memory_friendly)
+                                     memory_friendly=memory_friendly)
     return com_un
 
 
-def calc_npix(label_cube,objects=None):
+def calc_npix(label_cube, objects=None):
     """
     ids,npix = calc_npix(label_cube,objects=None)
 
     In:
     ---
-    label_cube ... thresholded, labeled cube from 
+    label_cube ... thresholded, labeled cube from
                    scipy.measurements.label
-    objects    ... a list of slices - one for the extent of each 
-                   labeled object (output of 
+    objects    ... a list of slices - one for the extent of each
+                   labeled object (output of
                    scipy.measurments.find_objects(label_cube)
-                   (optional - if not supplied, will be created 
+                   (optional - if not supplied, will be created
                    on the fly, which might need some time)
 
     Out:
     ----
-    ids        ... 1D numpy array with object ids 
-    npix       ... 1D numpy array containging numbers of voxles 
+    ids        ... 1D numpy array with object ids
+    npix       ... 1D numpy array containging numbers of voxles
                    belonging to detection
                    (i.e. ids[x] has npix[x] voxels)
     """
     max_label = label_cube.max()
 
-    ids = range(1,max_label+1)
-    if objects == None:
-        objects = measurements.find_objects(label_cube) 
+    ids = range(1, max_label + 1)
+    if objects is None:
+        objects = measurements.find_objects(label_cube)
 
     npix = [count_nonzero(label_cube[obj_seg]) for obj_seg in objects]
 
-    return np.asarray(ids),np.asarray(npix)
+    return np.asarray(ids), np.asarray(npix)
 
 
-def calc_max(in_cube,label_cube,objects=None,windowed=False):
+def calc_max(in_cube, label_cube, objects=None, windowed=False):
     """
     maxima = calc_max(in_cube,label_cube=None,objects=None)
 
@@ -536,12 +536,13 @@ def calc_max(in_cube,label_cube,objects=None,windowed=False):
 
     In:
     ---
-    in_cube    ... cube - flux or detection significances (or something similar)
+    in_cube    ... cube - flux or detection significances
+     (or something similar)
     label_cube ... cube with labeled detection clusters -
                    output of thresholding performed with
                    scipy.measurments.label
-    objects    ... a list of slices - one for the extent of each 
-                   labeled object (output of 
+    objects    ... a list of slices - one for the extent of each
+                   labeled object (output of
                    scipy.measurments.find_objects(label_cube)
                    (optional - if not supplied, will be created on the
                    fly, which needs some time)
@@ -550,42 +551,41 @@ def calc_max(in_cube,label_cube,objects=None,windowed=False):
 
     Out:
     ----
-    maxima ... numpy.array of maximum values within detection clusters of in_cube
+    maxima ... numpy.array of maximum values within
+     detection clusters of in_cube
 
     """
 
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
-    if windowed == False:
+    if windowed is False:
         maxima = [np.max(in_cube[obj_seg]) for obj_seg in objects]
     else:
         maxima = [np.max(in_cube[obj_seg][obj_select]) for
-                         obj_seg,obj_select in \
-                             zip(objects, [np.nonzero(label_cube[obj_seg]) for
-                                           obj_seg in objects])]
-        
+                  obj_seg, obj_select in
+                  zip(objects, [np.nonzero(label_cube[obj_seg]) for
+                                obj_seg in objects])]
 
     return np.asarray(maxima)
-
 
 
 def calc_min(in_cube, label_cube, objects=None, windowed=False):
     """
     minima = calc_det_sn_min(in_cube, label_cube, objects=None, windowed=False)
-    
+
     same as calc_max -> but returns minima
     """
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
-    if windowed == False:
+    if windowed is False:
         minima = [np.min(in_cube[obj_seg]) for obj_seg in objects]
     else:
         minima = [np.min(in_cube[obj_seg][obj_select]) for
-                         obj_seg,obj_select in \
-                             zip(objects, [np.nonzero(label_cube[obj_seg]) for
-                                           obj_seg in objects])]
+                  obj_seg, obj_select in
+                  zip(objects, [np.nonzero(label_cube[obj_seg]) for
+                                obj_seg in objects])]
 
     return np.asarray(minima)
 
@@ -596,24 +596,23 @@ def calc_median(in_cube, label_cube, objects=None, windowed=False):
 
     same as calc_max -> but returns median values in the detection clusters
     """
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
-    if windowed == False:
+    if windowed is False:
         medians = [np.median(in_cube[obj_seg]) for obj_seg in objects]
     else:
         medians = [np.median(in_cube[obj_seg][obj_select]) for
-                   obj_seg,obj_select in \
-                       zip(objects, [np.nonzero(label_cube[obj_seg]) for
-                                     obj_seg in objects])]
-        
-        
+                   obj_seg, obj_select in
+                   zip(objects, [np.nonzero(label_cube[obj_seg]) for
+                                 obj_seg in objects])]
+
     return np.asarray(medians)
 
 
-def calc_stat(in_cube,label_cube,objects=None,windowed=False):
+def calc_stat(in_cube, label_cube, objects=None, windowed=False):
     """
-    mean, stdev = calc_stat(in_cube, label_cube, objects=None) 
+    mean, stdev = calc_stat(in_cube, label_cube, objects=None)
 
     Calculate mean & std.-deviation of in_cube for detection.
 
@@ -621,64 +620,67 @@ def calc_stat(in_cube,label_cube,objects=None,windowed=False):
 
     Note: A tuple of 2 np.ndarrays is returned.
     """
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
-    if windowed == False:
+    if windowed is False:
         stat_seg = [[np.mean(in_cube[obj_seg]),
                      np.std(in_cube[obj_seg])] for obj_seg in objects]
     else:
         stat_seg = [[np.mean(in_cube[obj_seg][obj_select]),
                      np.std(in_cube[obj_seg][obj_select])] for
-                    obj_seg,obj_select in \
-                        zip(objects,
-                            [np.nonzero(label_cube[obj_seg]) for
-                             obj_seg in objects])]
+                    obj_seg, obj_select in
+                    zip(objects,
+                        [np.nonzero(label_cube[obj_seg]) for
+                         obj_seg in objects])]
 
     stat_seg = np.asarray(stat_seg)
- 
-    mean_seg = stat_seg[:,0]
-    std_dev_seg = stat_seg[:,1]
 
-    return mean_seg,std_dev_seg
+    mean_seg = stat_seg[:, 0]
+    std_dev_seg = stat_seg[:, 1]
+
+    return mean_seg, std_dev_seg
 
 
-def calc_npmax(in_cube, label_cube, peaks, pc=0.9, objects=None, windowed=False):
+def calc_npmax(in_cube,
+               label_cube,
+               peaks,
+               pc=0.9,
+               objects=None,
+               windowed=False):
     """
     npmax = calc_npmax(in_cube, label_cube, peaks, pc=0.9,
                        objects=None, windowed=False)
 
     Calculate number of voxels that are above pc*peak within a detection.
     """
-    assert pc > 0. and pc < 1.
+    assert 0. < pc < 1.
 
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
     assert len(objects) == len(peaks)
 
-    if windowed == False:
-        npmax = [count_nonzero(in_cube[obj_seg] > pc*peak) for
+    if windowed is False:
+        npmax = [count_nonzero(in_cube[obj_seg] > pc * peak) for
                  obj_seg, peak in zip(objects, peaks)]
     else:
-        npmax = [count_nonzero(in_cube[obj_seg][obj_select] > pc*peak) for
-                 obj_seg, obj_select, peak in zip(objects,
-                                                  [np.nonzero(label_cube[obj_seg])
-                                                   for obj_seg in objects],
-                                                  peaks)]
+        npmax = [count_nonzero(in_cube[obj_seg][obj_select] > pc * peak) for
+                 obj_seg, obj_select, peak in zip(
+                objects,
+                [np.nonzero(label_cube[obj_seg]) for
+                 obj_seg in objects], peaks)]
 
     return np.asarray(npmax)
 
 
-    
-
-def calc_sum_pepi(signal_cube,label_cube,objects=None):
+def calc_sum_pepi(signal_cube, label_cube, objects=None):
     """
     sums = calc_sum_pepi(signal_cube,label_cube)
     Sum values in minimal parallelepipeds in <signal_cube> definded around
-    the object segments from <label_cube>. 
+    the object segments from <label_cube>.
     """
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
     sums = [np.sum(signal_cube[obj_seg]) for obj_seg in objects]
     return np.asarray(sums)
@@ -688,23 +690,23 @@ def calc_sum_seg(cube, label_cube, objects=None):
     """
     sum_seg = calc_sum_seg(det_sn_cube,label_cube,objects=None)
     calculate sum in the segments of the labels
-    give a scipy.ndimage.measurements.find_objects output of label_cube 
+    give a scipy.ndimage.measurements.find_objects output of label_cube
     if at hand (otherwise it will be created)
     """
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
     # nowlistening: DFTF (feat. DRS) by Need for Mirrors ;-)
     sum_seg = [np.sum(cube[obj_seg][obj_select]) for
-               obj_seg,obj_select in \
-                   zip(objects, [np.nonzero(label_cube[obj_seg]) for
-                                 obj_seg in objects])]
+               obj_seg, obj_select in
+               zip(objects, [np.nonzero(label_cube[obj_seg]) for
+                             obj_seg in objects])]
     # :-) ^^ list-comprehension in a list-comprehension ^^ ;-)
 
     return np.asarray(sum_seg)
 
 
-def calc_flux_in_aper(cube,x_cen,y_cen,z_cen,width,apradius,delta_lambda,
+def calc_flux_in_aper(cube, x_cen, y_cen, z_cen, width, apradius, delta_lambda,
                       varcube=None):
     """flux(,vari)
     =
@@ -726,61 +728,65 @@ def calc_flux_in_aper(cube,x_cen,y_cen,z_cen,width,apradius,delta_lambda,
     Out:
     ----
     flux ... flux within aperture [erg/s/cm^2]
-    vari ... propagated variance within aper [erg/s/cm^2]**2 (only if varcube != None)
+    vari ... propagated variance within aper [erg/s/cm^2]**2
+     (only if varcube is not None)
 
     """
-    
-    r_pix = pixelrad_from_cen(cube[0,:,:],x_cen,y_cen)
+
+    r_pix = pixelrad_from_cen(cube[0, :, :], x_cen, y_cen)
     app_sel = r_pix <= apradius
 
-    narrow_band_cube = cube[z_cen - width/2.:z_cen + width/2.,
-                            :,:]  
+    narrow_band_cube = cube[z_cen - width / 2.:z_cen + width / 2.,
+                            :, :]
     narrow_band_image = np.sum(narrow_band_cube, axis=0)
     narrow_band_image *= delta_lambda  # erg/s/cm^2/A -> erg/s/cm^2
 
     flux = np.sum(narrow_band_image[app_sel])
-    
-    if varcube == None:
+
+    if varcube is None:
         return flux
     else:
         assert varcube.shape == cube.shape
-        narrow_band_varcube = varcube[z_cen - width/2.:z_cen + width/2.,
-                                      :,:]
-        narrow_band_varimage = np.sum(narrow_band_varcube,axis=0)
-        narrow_band_varimage *= delta_lambda**2
+        narrow_band_varcube = varcube[z_cen - width / 2.:z_cen + width / 2.,
+                                      :, :]
+        narrow_band_varimage = np.sum(narrow_band_varcube, axis=0)
+        narrow_band_varimage *= delta_lambda ** 2
         variance = np.sum(narrow_band_varimage[app_sel])
-        return flux,variance
-    
-  
+        return flux, variance
 
-def calc_borders(label_cube,objects=None):
+
+def calc_borders(label_cube, objects=None):
     """
-    x_min,x_max,y_min,y_max,z_min,z_max 
-    = 
+    x_min,x_max,y_min,y_max,z_min,z_max
+    =
     calc_borders(signal_cube,label_cube,objects=None)
 
     Calculates the corners of the minimum cube that contains a
     detection.
     """
 
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
     coords = np.asarray([[obj_seg[0].start, obj_seg[0].stop,
                           obj_seg[1].start, obj_seg[1].stop,
-                          obj_seg[2].start, obj_seg[2].stop] for obj_seg in objects])
+                          obj_seg[2].start, obj_seg[2].stop] for
+                         obj_seg in objects])
 
-    x_min = coords[:,4] ; y_min = coords[:,2] ; z_min = coords[:,0]
-    x_max = coords[:,5] ; y_max = coords[:,3] ; z_max = coords[:,1]
+    x_min = coords[:, 4]
+    y_min = coords[:, 2]
+    z_min = coords[:, 0]
+    x_max = coords[:, 5]
+    y_max = coords[:, 3]
+    z_max = coords[:, 1]
 
-    return x_min,x_max,y_min,y_max,z_min,z_max
-
+    return x_min, x_max, y_min, y_max, z_min, z_max
 
 
 def calc_maxima(cube, label_cube, objects=None):
     """
     maxima, max_x_coords, max_y_coords, max_z_coords
-     =  
+     =
     calc_extrema(cube, label_cube,objects=None)
 
     Calculate extrema of detections in label_cube in cube.
@@ -789,12 +795,12 @@ def calc_maxima(cube, label_cube, objects=None):
     ---
 
     cube       ... cross-correlated S/N cube or flux cube
-    label_cube ... thresholded, labeled cube from 
+    label_cube ... thresholded, labeled cube from
                    scipy.measurements.label
-    objects    ... a list of slices - one for the extent of each 
-                   labeled object (output of 
+    objects    ... a list of slices - one for the extent of each
+                   labeled object (output of
                    scipy.measurments.find_objects(label_cube)
-                   (optional - if not supplied, will be created 
+                   (optional - if not supplied, will be created
                    on the fly, which might need some time)
 
     Out:
@@ -813,7 +819,7 @@ def calc_maxima(cube, label_cube, objects=None):
     memory unefficent!
 
     """
-    if objects == None:
+    if objects is None:
         objects = measurements.find_objects(label_cube)
 
     maxima = calc_max(cube, label_cube, objects)
@@ -821,32 +827,31 @@ def calc_maxima(cube, label_cube, objects=None):
 
     # borders of the subcubes bounding the detections
     x_min, x_max, y_min, y_max, z_min, z_max = \
-                                    calc_borders(label_cube, objects)
+        calc_borders(label_cube, objects)
 
     # maximum positions in the individual detection segments
     max_pos = np.asarray([np.unravel_index(cube[obj_seg].argmax(),
                                            cube[obj_seg].shape)
                           for obj_seg in objects])
-    max_z_seg = max_pos[:,0]
-    max_y_seg = max_pos[:,1]
-    max_x_seg = max_pos[:,2]
+    max_z_seg = max_pos[:, 0]
+    max_y_seg = max_pos[:, 1]
+    max_x_seg = max_pos[:, 2]
 
     # transforming maximum positions to the coordinate system of the
     # full cube
-    max_z_coords = z_min + max_z_seg 
+    max_z_coords = z_min + max_z_seg
     max_y_coords = y_min + max_y_seg
-    max_x_coords = x_min + max_x_seg 
+    max_x_coords = x_min + max_x_seg
 
     return maxima, max_x_coords, max_y_coords, max_z_coords
-
-
 
 
 def calc_weighted(x_min, x_max, y_min, y_max, z_min, z_max, cube,
                   thresh_ana=None, weigh_cube=None):
     """
     x_w, y_w, z_w = calc_weighted(x_min, x_max, y_min, y_max, z_min,
-                                  z_max, cube, thresh_ana=None, weigh_cube=None)
+                                  z_max, cube, thresh_ana=None,
+                                   weigh_cube=None)
 
     Descr.:
     -------
@@ -859,8 +864,9 @@ def calc_weighted(x_min, x_max, y_min, y_max, z_min, z_max, cube,
                                           calculation will be performed
     cube ... the sn_cube
     thresh_ana=None ... analysis threshold
-    weigh_cube=None ... cube on which weighted coordinates 
-                        above analysis threshold will be calculated (None means that cube is used.)
+    weigh_cube=None ... cube on which weighted coordinates
+                        above analysis threshold will be
+                        calculated (None means that cube is used.)
 
     Out:
     ----
@@ -868,9 +874,11 @@ def calc_weighted(x_min, x_max, y_min, y_max, z_min, z_max, cube,
                       in the cube coordinate system
     """
 
-    x_w = [] ; y_w = [] ; z_w = []
-    for x_min_i, y_min_i, z_min_i, x_max_i, y_max_i, z_max_i in \
-        zip(x_min, y_min, z_min, x_max, y_max, z_max):
+    x_w = []
+    y_w = []
+    z_w = []
+    for x_min_i, y_min_i, z_min_i, x_max_i, y_max_i, z_max_i in zip(
+            x_min, y_min, z_min, x_max, y_max, z_max):
         # cut out subcube
         subcube = cube[int(z_min_i):int(z_max_i),
                        int(y_min_i):int(y_max_i),
@@ -881,7 +889,7 @@ def calc_weighted(x_min, x_max, y_min, y_max, z_min, z_max, cube,
                                        int(y_min_i):int(y_max_i),
                                        int(x_min_i):int(x_max_i)]
 
-        if thresh_ana == None:
+        if thresh_ana is None:
             if weigh_cube is None:
                 com = measurements.center_of_mass(subcube)
             else:
@@ -894,7 +902,7 @@ def calc_weighted(x_min, x_max, y_min, y_max, z_min, z_max, cube,
             else:
                 weigh_subcube[subcube < thresh_ana] = 0
                 com = measurements.center_of_mass(weigh_subcube)
-            
+
         x_com, y_com, z_com = np.asarray(com)[::-1]
         # translate back to original coordinate system
         x_w.append(x_com + x_min_i)
@@ -926,23 +934,25 @@ def calc_max_win(x_min, x_max, y_min, y_max, z_min, z_max, cube):
                                in the cube coordinate-system
     """
 
-    x_peak = [] ; y_peak = [] ; z_peak = []
-    for x_min_i, y_min_i, z_min_i, x_max_i, y_max_i, z_max_i in \
-    zip(x_min, y_min, z_min, x_max, y_max, z_max):
+    x_peak = []
+    y_peak = []
+    z_peak = []
+    for x_min_i, y_min_i, z_min_i, x_max_i, y_max_i, z_max_i in zip(
+            x_min, y_min, z_min, x_max, y_max, z_max):
         subcube = cube[z_min_i:z_max_i,
                        y_min_i:y_max_i,
                        x_min_i:x_max_i]
 
         peak_pos_i = np.unravel_index(subcube.argmax(), subcube.shape)
-        
+
         z_peak.append(peak_pos_i[0] + z_min_i)
         y_peak.append(peak_pos_i[1] + y_min_i)
         x_peak.append(peak_pos_i[2] + x_min_i)
-        
-    return  np.asarray(x_peak), np.asarray(y_peak), np.asarray(z_peak)
 
-        
-def sn_2dmom(x_i,y_i,z_i,sn_cube,thresh_ana=3.0):
+    return np.asarray(x_peak), np.asarray(y_peak), np.asarray(z_peak)
+
+
+def sn_2dmom(x_i, y_i, z_i, sn_cube, thresh_ana=3.0):
     """
     x_1mom,y_1mom,x_2mom,y_2mom,xy_2mom = \
        sn_2dmom(x_i,y_i,z_i,sn_cube,flux_cube,thresh_ana=3.0,
@@ -950,7 +960,7 @@ def sn_2dmom(x_i,y_i,z_i,sn_cube,thresh_ana=3.0):
 
     Descr.:
     -------
-    Calculate central moments in 2D for a detection. Preferably using 
+    Calculate central moments in 2D for a detection. Preferably using
     the layer of the SN-Peak of this detection (z_i).
 
     In:
@@ -960,19 +970,19 @@ def sn_2dmom(x_i,y_i,z_i,sn_cube,thresh_ana=3.0):
 
     Out:
     ----
-    x_1mom,y_1mom,x_2mom,y_2mom,xy_2mom 
+    x_1mom,y_1mom,x_2mom,y_2mom,xy_2mom
        ... first and second central moments calculated in the layer
            where the SN peak
 
     """
-        
+
     # 2D thresholding on peak layer with analysis threshold
-    sn_peak_layer = sn_cube[z_i,:,:]
+    sn_peak_layer = sn_cube[z_i, :, :]
     sn_peak_logical = sn_peak_layer > thresh_ana
     sn_peak_label, sn_num_peaks = measurements.label(sn_peak_logical)
 
     # selecting the object corresponding to the inital detection
-    obj_label = sn_peak_label[y_i,x_i]  # this is our guy...
+    obj_label = sn_peak_label[y_i, x_i]  # this is our guy...
     obj_isophotal_mask = sn_peak_label == obj_label
     obj_isophotal_vals = obj_isophotal_mask * sn_peak_layer
 
@@ -981,23 +991,24 @@ def sn_2dmom(x_i,y_i,z_i,sn_cube,thresh_ana=3.0):
     sn_peak_objects = measurements.find_objects(sn_peak_label,
                                                 max_label=obj_label)
 
-    indices_y,indices_x = np.indices(obj_isophotal_vals.shape)
+    indices_y, indices_x = np.indices(obj_isophotal_vals.shape)
 
     # FIRST & SECOND IMAGE MOMENTS OF "ISOPHOTAL" SELECTED REGION
-    x_1mom = np.sum(obj_isophotal_vals * indices_x) / \
-             np.sum(obj_isophotal_vals)
-    y_1mom = np.sum(obj_isophotal_vals * indices_y) /  \
-             np.sum(obj_isophotal_vals)
-    x_2mom = np.sum(obj_isophotal_vals * indices_x**2) / \
-             np.sum(obj_isophotal_vals) - x_1mom**2
-    y_2mom = np.sum(obj_isophotal_vals * indices_y**2) / \
-             np.sum(obj_isophotal_vals) - y_1mom**2
-    xy_2mom = np.sum(obj_isophotal_vals * indices_x * indices_y) / \
-              np.sum(obj_isophotal_vals) - x_1mom * y_1mom
+    x_1mom = np.sum(
+        obj_isophotal_vals * indices_x) / np.sum(obj_isophotal_vals)
+    y_1mom = np.sum(
+        obj_isophotal_vals * indices_y) / np.sum(obj_isophotal_vals)
+    x_2mom = (np.sum(
+        obj_isophotal_vals * indices_x ** 2) / np.sum(obj_isophotal_vals) -
+              x_1mom ** 2)
+    y_2mom = (np.sum(
+        obj_isophotal_vals * indices_y ** 2) / np.sum(obj_isophotal_vals) -
+              y_1mom ** 2)
+    xy_2mom = (np.sum(
+        obj_isophotal_vals * indices_x * indices_y) /
+               np.sum(obj_isophotal_vals) - x_1mom * y_1mom)
 
-
-    return x_1mom,y_1mom,x_2mom,y_2mom,xy_2mom
-
+    return x_1mom, y_1mom, x_2mom, y_2mom, xy_2mom
 
 
 def sn_2dmoms(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
@@ -1009,15 +1020,19 @@ def sn_2dmoms(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
     sigma_isos.
 
     """
-    x_1moms = [] ; y_1moms = [] ;  x_2moms = [] ;  y_2moms = []
-    xy_2moms = [] ;  sigma_isos = []
+    x_1moms = []
+    y_1moms = []
+    x_2moms = []
+    y_2moms = []
+    xy_2moms = []
+    sigma_isos = []
 
     for x_peak_sns_i, y_peak_sns_i, z_peak_sns_i in zip(x_peak_sns,
                                                         y_peak_sns,
                                                         z_peak_sns):
         x_1mom_i, y_1mom_i, x_2mom_i, y_2mom_i, xy_2mom_i = \
             sn_2dmom(x_peak_sns_i, y_peak_sns_i, z_peak_sns_i,
-                      sn_cube,thresh_ana=thresh_ana)
+                     sn_cube, thresh_ana=thresh_ana)
         sigma_iso_i = sigma_iso_circ(x_2mom_i, y_2mom_i)
 
         x_1moms.append(x_1mom_i)
@@ -1027,12 +1042,11 @@ def sn_2dmoms(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
         xy_2moms.append(xy_2mom_i)
         sigma_isos.append(sigma_iso_i)
 
-    return np.asarray(x_1moms), np.asarray(y_1moms), np.asarray(x_2moms),\
+    return np.asarray(x_1moms), np.asarray(y_1moms), np.asarray(x_2moms), \
         np.asarray(y_2moms), np.asarray(xy_2moms), np.asarray(sigma_isos)
 
 
-
-def subcube_border_cuts(x_i,y_i,z_i, cube, ws=20):
+def subcube_border_cuts(x_i, y_i, z_i, cube, ws=20):
     """
     xwin_min, xwin_max, ywin_min, ywin_max, zwin_min, zwin_max = \
          subcube_border_cuts(x_i,y_i,z_i, cube)
@@ -1069,7 +1083,7 @@ def subcube_border_cuts(x_i,y_i,z_i, cube, ws=20):
         int(zwin_min), int(zwin_max)
 
 
-def cube_3dcom(x_i,y_i,z_i,sn_cube,thresh_ana=3.0,ws=20,
+def cube_3dcom(x_i, y_i, z_i, sn_cube, thresh_ana=3.0, ws=20,
                anacube=None):
     """x_com, y_com, z_com = \
     cube_3dcom(x_i,y_i,z_i,sncube,thresh_ana=3.0,ws=20,
@@ -1105,29 +1119,29 @@ def cube_3dcom(x_i,y_i,z_i,sn_cube,thresh_ana=3.0,ws=20,
     """
 
     xwin_min, xwin_max, ywin_min, ywin_max, zwin_min, zwin_max = \
-                    subcube_border_cuts(x_i, y_i, z_i, sn_cube, ws=ws)
-        
+        subcube_border_cuts(x_i, y_i, z_i, sn_cube, ws=ws)
+
     subcube = sn_cube[zwin_min:zwin_max,
-                     ywin_min:ywin_max,xwin_min:xwin_max]
-    
+                      ywin_min:ywin_max, xwin_min:xwin_max]
+
     subcube_logical = subcube > thresh_ana
     subcube_logical_labels, subcube_num_det = \
-                                measurements.label(subcube_logical)
+        measurements.label(subcube_logical)
 
     obj_label = subcube_logical_labels[z_i - zwin_min,
                                        y_i - ywin_min,
                                        x_i - xwin_min]
 
-    if anacube == None:
+    if anacube is None:
         anasubcube = subcube
     else:
         anasubcube = anacube[zwin_min:zwin_max,
-                             ywin_min:ywin_max,xwin_min:xwin_max]
-    
-    z_sub_com,y_sub_com,x_sub_com = \
-            measurements.center_of_mass(anasubcube,
-                                        labels=subcube_logical_labels,
-                                        index=obj_label)
+                             ywin_min:ywin_max, xwin_min:xwin_max]
+
+    z_sub_com, y_sub_com, x_sub_com = \
+        measurements.center_of_mass(anasubcube,
+                                    labels=subcube_logical_labels,
+                                    index=obj_label)
 
     z_com = z_sub_com + zwin_min
     y_com = y_sub_com + ywin_min
@@ -1137,7 +1151,7 @@ def cube_3dcom(x_i,y_i,z_i,sn_cube,thresh_ana=3.0,ws=20,
 
 
 def cube_3dcoms(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
-                thresh_ana=3.0,anacube=None):
+                thresh_ana=3.0, anacube=None):
     """
     x_coms,y_coms,z_coms = \
            cube_3dcoms(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
@@ -1145,12 +1159,14 @@ def cube_3dcoms(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
 
     see cube_3dcom for doc, here for arrays of peak coordinates
     """
-    x_coms = [] ; y_coms = [] ; z_coms = []
+    x_coms = []
+    y_coms = []
+    z_coms = []
 
     for x_i, y_i, z_i in zip(x_peak_sns, y_peak_sns, z_peak_sns):
         x_com_i, y_com_i, z_com_i = \
-                cube_3dcom(x_i, y_i, z_i, sn_cube,
-                           thresh_ana=thresh_ana,anacube=anacube)
+            cube_3dcom(x_i, y_i, z_i, sn_cube,
+                       thresh_ana=thresh_ana, anacube=anacube)
         x_coms.append(x_com_i)
         y_coms.append(y_com_i)
         z_coms.append(z_com_i)
@@ -1158,104 +1174,107 @@ def cube_3dcoms(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
     return np.asarray(x_coms), np.asarray(y_coms), np.asarray(z_coms)
 
 
-def sn_ana_flux(x_i,y_i,z_i, sn_cube, flux_cube, thresh_ana,
-                varcube=None,ws=20):
+def sn_ana_flux(x_i, y_i, z_i, sn_cube, flux_cube, thresh_ana,
+                varcube=None, ws=20):
     """
-    flux(,vari) = sn_ana_flux(x_i,y_i,z_i, sn_cube, flux_cube, thresh_ana, ws=20)
+    flux(,vari) = sn_ana_flux(x_i,y_i,z_i, sn_cube,
+     flux_cube, thresh_ana, ws=20)
 
     Summation of flux in analysis cluster above a certain SN threshold.
 
     In:
     ---
     x_i,y_i,z_i ... peak SN coordinate of a detection
-    sn_cube ... S/N cube 
-    flux_cube ... flux cube 
+    sn_cube ... S/N cube
+    flux_cube ... flux cube
     var_cube ... variance cube
     thresh_ana ... analysis threshold to define analysis cluster via S/N cube
-    varcube (optional) ... variance cube - if provided propagated variance will be
+    varcube (optional) ... variance cube - if provided propagated
+     variance will be
                            calculated
     ws ... +/- size of the window of the subcubes where analysis is performed
-               (20 should be enough, i.e. a 40x40x40 cube centered on the emission line, 
-               but for large objects (nearby galaxies or extended LyA) a bigger
+               (20 should be enough, i.e. a 40x40x40 cube centered
+                on the emission line,
+               but for large objects (nearby galaxies or extended LyA)
+                a bigger
                ws should be choosen)
 
     Out:
     ----
     flux ... sum of flux values in analysis cluster
-    vari (only if variance cube is provided) ... propagated variance for flux 
+    vari (only if variance cube is provided) ... propagated variance for flux
 
     """
     xwin_min, xwin_max, ywin_min, ywin_max, zwin_min, zwin_max = \
-                    subcube_border_cuts(x_i, y_i, z_i, sn_cube, ws=ws)
+        subcube_border_cuts(x_i, y_i, z_i, sn_cube, ws=ws)
 
-   
-    flux_subcube = flux_cube[zwin_min:zwin_max,ywin_min:ywin_max,
+    flux_subcube = flux_cube[zwin_min:zwin_max, ywin_min:ywin_max,
                              xwin_min:xwin_max]
-        
-    sn_subcube = sn_cube[zwin_min:zwin_max,ywin_min:ywin_max,
+
+    sn_subcube = sn_cube[zwin_min:zwin_max, ywin_min:ywin_max,
                          xwin_min:xwin_max]
 
-    if varcube != None:
+    if varcube is not None:
         assert varcube.shape == flux_cube.shape
-        varsubcube = varcube[zwin_min:zwin_max,ywin_min:ywin_max,
+        varsubcube = varcube[zwin_min:zwin_max, ywin_min:ywin_max,
                              xwin_min:xwin_max]
 
     # get all voxels for object at x_i,y_i,z_i where sn > thresh_ana
     subcube_logical = sn_subcube > thresh_ana
     subcube_logical_labels, subcube_num_det = \
-                                    measurements.label(subcube_logical)
+        measurements.label(subcube_logical)
     obj_label = subcube_logical_labels[z_i - zwin_min,
                                        y_i - ywin_min,
                                        x_i - xwin_min]
     select_cube = subcube_logical_labels == obj_label
 
-    sel_im = p.sum(select_cube,axis=0)
+    sel_im = p.sum(select_cube, axis=0)
 
     flux_vals = flux_subcube[select_cube]
     flux = p.sum(flux_vals)
 
-    if varcube != None:
+    if varcube is not None:
         vari_vals = varsubcube[select]
         vari = p.sum(vari_vals)
         return flux, vari
 
     else:
         return flux
-    
-    
+
+
 def sn_ana_fluxes(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube, flux_cube,
-                  varcube=None,thresh_ana=3.0,ws=20.):
-    """fluxes(,variances) 
+                  varcube=None, thresh_ana=3.0, ws=20.):
+    """fluxes(,variances)
     =
     sn_ana_fluxes(x_peak_sns, y_peak_sns, z_peak_sns, sn_cube,
     flux_cube, varcube=None,thresh_ana=3.0,ws=20.)
 
-    
+
     Same as sn_ana_flux - but for arrays of (x,y,z)_peak_sns.
     """
     fluxes = []
-    if varcube != None:
+    if varcube is not None:
         variances = []
-    
+
     for x_i, y_i, z_i in zip(x_peak_sns, y_peak_sns, z_peak_sns):
-        if varcube != None:
-            flux_i, vari_i = sn_ana_flux(x_i,y_i,z_i,
+        if varcube is not None:
+            flux_i, vari_i = sn_ana_flux(x_i, y_i, z_i,
                                          sn_cube, flux_cube, thresh_ana,
                                          varcube=varcube, ws=ws)
             fluxes.append(flux_i)
             variances.append(vari_i)
         else:
-            flux_i = sn_ana_flux(x_i,y_i,z_i, sn_cube, flux_cube, thresh_ana,
+            flux_i = sn_ana_flux(x_i, y_i, z_i, sn_cube, flux_cube, thresh_ana,
                                  varcube=None, ws=ws)
             fluxes.append(flux_i)
 
-    if varcube != None:
+    if varcube is not None:
         return p.asarray(fluxes), p.asarray(variances)
     else:
         return p.asarray(fluxes)
 
 
-def sigma_iso_circ(x_2mom,y_2mom):
+def sigma_iso_circ(x_2mom, y_2mom):
     """ sigma_iso = sigma_iso_circ(x_2mom,y_2mom):
 
     In:
@@ -1264,23 +1283,23 @@ def sigma_iso_circ(x_2mom,y_2mom):
 
     Out:
     ----
-    sigma_iso ... sqrt of 2nd central moment assuming circular 
+    sigma_iso ... sqrt of 2nd central moment assuming circular
                   symmetry
                   (std. deviation for a 2D circular Gaussian
                   distribution)
 
     """
 
-    vari_iso = (x_2mom + y_2mom)/2.
-    sigma_iso = np.sqrt( vari_iso )
+    vari_iso = (x_2mom + y_2mom) / 2.
+    sigma_iso = np.sqrt(vari_iso)
 
     return sigma_iso
 
 
-def ellipse_parameters(x_2mom,y_2mom,xy_2mom):
+def ellipse_parameters(x_2mom, y_2mom, xy_2mom):
     """a,b,theta,elong,ellip  = ellipse_parameters(x2_mom,y_2mom,xy_2mom):
 
-    Calculation of ellipse parameters from 2D 2nd central moments: 
+    Calculation of ellipse parameters from 2D 2nd central moments:
 
     a ... major axis, b .... minor axis, elong ... elongation, ellip
     ... ellipticity
@@ -1297,33 +1316,33 @@ def ellipse_parameters(x_2mom,y_2mom,xy_2mom):
                               (theta in degrees)
 
     """
-    
-    vari_iso = (x_2mom + y_2mom)/2.
 
-    aa = vari_iso + np.sqrt( vari_iso + xy_2mom**2 )
-    bb = vari_iso - np.sqrt( vari_iso + xy_2mom**2 )
+    vari_iso = (x_2mom + y_2mom) / 2.
+
+    aa = vari_iso + np.sqrt(vari_iso + xy_2mom ** 2)
+    bb = vari_iso - np.sqrt(vari_iso + xy_2mom ** 2)
     a = np.sqrt(aa)
     b = np.sqrt(bb)
 
     theta = np.arctan(2 * (xy_2mom / (x_2mom - y_2mom)))
 
-    # [-pi/2,pi/2[ ambiguty of arctan requires to 
+    # [-pi/2,pi/2[ ambiguty of arctan requires to
     # theta needs to have the same sign as xy_2mom!
     # (arctan(-x) = - arctan(x))
     theta[np.sign(theta) != np.sign(xy_2mom)] *= -1  # I HOPE THIS IS CORRECT
-    
+
     theta_deg = np.degrees(theta)
 
     elongation = a / b
-    ellipticity = 1 - 1./elongation
+    ellipticity = 1 - 1. / elongation
 
     return a, b, theta_deg, elongation, ellipticity
 
 
-def calc_lambda(z_coords,header):
+def calc_lambda(z_coords, header):
     """
     lambdas = calc_lambda(z_coords,header)
-    
+
     Calculates wavelengths for z-coordinates of datacube.
 
     header ... header of a datacube
@@ -1332,22 +1351,24 @@ def calc_lambda(z_coords,header):
     """
     # assert type(header) == type(fits.header.Header())
     assert header['NAXIS'] == 3
-    crpix = header['CRPIX3']; crval = header['CRVAL3']
+    crpix = header['CRPIX3']
+    crval = header['CRVAL3']
     try:
         crdelt = header['CD3_3']
     except KeyError:
         try:
             crdelt = header['CDELT3']
         except KeyError:
-            print('ERROR - INCOMPATIBLE FITS HEADER FOR WAVELENGTH CALCULATION!')
+            print('ERROR - INCOMPATIBLE FITS HEADER'
+                  ' FOR WAVELENGTH CALCULATION!')
             sys.exit(2)
-            
-    lambdas = (z_coords-(crpix-1))*crdelt + crval
+
+    lambdas = (z_coords - (crpix - 1)) * crdelt + crval
 
     return lambdas
 
 
-def pix_to_radec(x_coords, y_coords, header): 
+def pix_to_radec(x_coords, y_coords, header):
     """
     ra_coords, dec_coords = pix_to_radec(x_coords, y_coords, header)
 
@@ -1362,19 +1383,19 @@ def pix_to_radec(x_coords, y_coords, header):
     Out:
     ----
     ra,dec ... RAs & DECs corresponding to x_coords & y_coords
-    
+
     """
-	
-    try :               #Possible to have input of a single x and y
-                        #value pair
-        size=len(x_coords)
+
+    try:  # Possible to have input of a single x and y
+        # value pair
+        size = len(x_coords)
     except TypeError:
-        size=1
+        size = 1
 
-    #Create wcs obj
-    wcs_obj=WCS(header)
+    # Create wcs obj
+    wcs_obj = WCS(header)
 
-    #Convert to (ra,dec)
+    # Convert to (ra,dec)
     try:
         # this works only if header is from a 2D image
         (radec) = wcs_obj.wcs_pix2world(x_coords, y_coords, 0)
@@ -1382,29 +1403,28 @@ def pix_to_radec(x_coords, y_coords, header):
         # this is needed if header is from a cube
         (radec) = wcs_obj.wcs_pix2world(x_coords, y_coords, np.zeros(size), 0)
 
-    if size !=1:
-        return(radec[0],radec[1]) #radec is an array of 2 arrays : an
-                                  #array containg all RAs, and an array
-                                  #containing all DECs
+    if size != 1:
+        return (radec[0], radec[1])  # radec is an array of 2 arrays : an
+        # array containg all RAs, and an array
+        # containing all DECs
     else:
-        return([radec[0][0]],[radec[1][0]]) #If only one x,y pair, we
-                                        #still write to a list to
-                                        #prevent type errors
+        return ([radec[0][0]], [radec[1][0]])  # If only one x,y pair, we
+        # still write to a list to
+        # prevent type errors
 
 
 def gen_tempfilename(suffix='.fits', chars=6):
     """
-    Generate temporary filename 'XXXXXXX.suffix', where 
+    Generate temporary filename 'XXXXXXX.suffix', where
     XXXXXX are <chars> (default: 6) random charchaters.
     """
     assert type(suffix) == str
     assert type(chars) == int
 
-    tempfilename = ''.join(np.random.choice(list(string.ascii_uppercase + \
-                                                 string.digits),size=chars))
+    tempfilename = ''.join(np.random.choice(list(string.ascii_uppercase +
+                                                 string.digits), size=chars))
     tempfilename += suffix
     return tempfilename
-
 
 # UNUSED FUNCTIONS
 
@@ -1412,19 +1432,19 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #     """
 #     calc_spikeyi(in_cube, label_cube, objects=None, windowed=False, r=0.5):
 
-#     TODO: DOCUMENT 
+#     TODO: DOCUMENT
 #     """
 
 #     if objects == None:
 #         objects = measurements.find_objects(label_cube)
-    
+
 #     # sort (reverse) & flatten detections flux values
 #     if windowed == False:
-#         sorted_flattened = [np.sort(in_cube[obj_seg],axis=None)[::-1] 
+#         sorted_flattened = [np.sort(in_cube[obj_seg],axis=None)[::-1]
 #                             for obj_seg in objects]
 #     else:
 #         sorted_flattened = [np.sort(in_cube[obj_seg][obj_select],
-#                                     axis=None)[::-1] 
+#                                     axis=None)[::-1]
 #                             for obj_seg,obj_select in
 #                             zip(objects,
 #                                 [np.nonzero(label_cube[obj_seg]) for
@@ -1434,7 +1454,8 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #     summed = [np.sum(vals) for vals in sorted_flattened]
 
 #     # sorted cummulative sum
-#     cum_sum_sort = [np.cumsum(sorted_flat) for sorted_flat in sorted_flattened]
+#     cum_sum_sort = [np.cumsum(sorted_flat) for sorted_flat
+#     in sorted_flattened]
 
 #     # normed cum_sum
 #     cum_sum_normed = [cum_sum/summ for summ,cum_sum in zip(summed,
@@ -1445,13 +1466,13 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #               for cum_sum_norm in cum_sum_normed]
 
 #     # upper and lower bounds around critical r
-#     r_up = [cum_sum_norm[i] if i > 1 else cum_sum_norm[1] 
+#     r_up = [cum_sum_norm[i] if i > 1 else cum_sum_norm[1]
 #             for i,cum_sum_norm in zip(i_gt_r,cum_sum_normed) ]
-#     r_down = [cum_sum_norm[i-1] if i-1 > 0 else cum_sum_norm[0] 
+#     r_down = [cum_sum_norm[i-1] if i-1 > 0 else cum_sum_norm[0]
 #               for i,cum_sum_norm in zip(i_gt_r,cum_sum_normed)]
 
 #     # linear interpolation
-#     i_dash = [ (r-r_down_i)/(r_up_i-r_down_i) for r_up_i,r_down_i 
+#     i_dash = [ (r-r_down_i)/(r_up_i-r_down_i) for r_up_i,r_down_i
 #                in zip(r_up, r_down) ]
 
 #     # final spikyness ---> small = spikey ... larger = flat
@@ -1459,7 +1480,6 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #                zip(i_dash,i_gt_r)]
 
 #     return np.asarray(spikeyi)
-
 
 
 # def calc_char_rad(signal_cube,
@@ -1483,24 +1503,27 @@ def gen_tempfilename(suffix='.fits', chars=6):
 
 #     x_cen,y_cen,z_cen - central coordinates of the detections
 #     x_min,x_min,x_max,y_min,y_max,z_min,z_max - corner coordinates (arrays)
-#          of the minimum parallelepipeds that contain a detection 
+#          of the minimum parallelepipeds that contain a detection
 
 #     max_mult - by default the radius of the sphere in which the
 #                caracteristic radius will be determined is the maximum extend
 #                of the parallelepid - this can be altered by multiplication
 #                with this factor (default: 1. - i.e. original length)
-#     char_method - quantity to be calculated: 
+#     char_method - quantity to be calculated:
 #                   'char' => characteristic radius
 #                   'com'  => compactness
 
 #     Out:
 #     ---
-#     char_rads - characteristic radii / or compactness 
+#     char_rads - characteristic radii / or compactness
 #                 of the detections in signal cube
-#     char_rads_flag - the number of edges affecting the integration volume 
-#                      + the number of strange things happening during the calculation
-#                     (in general: the higher, the less trustworthy is the output -
-#                     its safe to trust those char_rads with char_rads_flag == 0)
+#     char_rads_flag - the number of edges affecting the integration volume
+#                      + the number of strange things happening during
+#                      the calculation
+#                     (in general: the higher, the less trustworthy is
+#                     the output -
+#                     its safe to trust those char_rads with
+#                     char_rads_flag == 0)
 #     """
 #     assert char_method == 'char' or char_method == 'com'
 #     assert np.all(len(x_min) == len(x_max) == len(x_cen) == \
@@ -1508,7 +1531,7 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #                   len(z_min) == len(z_max) == len(z_cen))
 
 #     num_dets = len(x_min)  # number of detections
-#     char_rads_flag = np.zeros(num_dets,dtype=int)  # flag values 
+#     char_rads_flag = np.zeros(num_dets,dtype=int)  # flag values
 #     z_cube_max,y_cube_max,x_cube_max = signal_cube.shape
 
 #     coordinate_tripel_list = [[x_min,x_max,x_cen],
@@ -1526,15 +1549,15 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #             err_select = np.logical_or(err_select_1,err_select_2)
 
 #             char_rads_flag[err_select] += 1
-            
+
 #     # upper limit of integration (r_up in Eq.(3) of Infante1987 - here
 #     # r_max)
 #     r_max = np.sqrt(  (x_max - x_min)**2 \
 #                     + (y_max - y_min)**2 \
 #                     + (z_max - z_min)**2 )
 
-#     r_max *= max_mult / 2. 
-  
+#     r_max *= max_mult / 2.
+
 #     # Calculations of r_char will be performd on subcubes.  These are
 #     # centered on each objects (x_cen,y_cen,z_cen). Boundaries of the
 #     # subcubes are tangent planes, that are parallel to the coordinate
@@ -1561,7 +1584,7 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #         max_sel = axes_max >= ax_max_coord
 #         axes_max[max_sel] = ax_max_coord
 #         char_rads_flag += max_sel.astype(np.int8)
-        
+
 #     # Center coordinates need also to be changed with respect to the
 #     # new subcube boundaries.
 #     subcube_center_list = [z_cen - z_subcube_min,
@@ -1577,7 +1600,7 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #                 [z_subcube_max,y_subcube_max,x_subcube_max]):
 #         assert np.all(subcube_center_coordinate <= max_coordinate)
 
-    
+
 #     # calculate the characterstic radius by integrating over r_max
 #     # sphere for every subcube:
 #     char_rads = np.zeros(num_dets,dtype=float)
@@ -1600,12 +1623,13 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #             # Eq. 3 - Infante 1987
 #             r_eff_nom = np.sum(subcube_cut * r_max_sphere)  # nominator
 #             r_eff_denom = np.sum(subcube_cut)  # denominator
-#             r_eff = r_eff_nom / r_eff_denom  
+#             r_eff = r_eff_nom / r_eff_denom
 #         elif char_method == 'com':
 #             # Eq. 4 - Infante 1987
 #             r_eff_denom = np.sum(subcube_cut * (r_max_sphere**2)**(-1))
 #             r_eff_nom = np.sum(subcube_cut)
-#             if r_eff_nom < 0:  # integration might produce negative values - we discard those
+#             if r_eff_nom < 0:  # integration might produce negative
+#             values - we discard those
 #                 r_eff = -999.
 #                 char_rads_flag[i] += 1
 #             elif r_eff_denom < 0:
@@ -1613,7 +1637,7 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #                 char_rads_flag[i] += 1
 #             else:
 #                 r_eff = m.sqrt(r_eff_nom / r_eff_denom)
-            
+
 #         # now - to be sure - also throw away NaNs
 #         if r_eff != r_eff:
 #             # only nans do not equal themselves
@@ -1621,7 +1645,7 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #             char_rads_flag[i] += 1
 
 #         char_rads[i] = r_eff
-        
+
 #     assert len(char_rads) == len(char_rads_flag)
 #     return char_rads, char_rads_flag
 
@@ -1671,9 +1695,10 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #     """
 #     # ATTENTION - THIS ROUTINE SUCKS BIGTIME!
 
-#     # TODO: measurements.extrema is slow on big cubes--- different solution?!    
+#     # TODO: measurements.extrema is slow on big cubes--- different solution?!
 #     # already outsourced det & det_sn_min if requested alone..
-#     # I THINK I CAN DO SOMETHING SIMILAR ... find_objects -> list comprehension magic
+#     # I THINK I CAN DO SOMETHING SIMILAR ... find_objects -> list
+#     comprehension magic
 
 #     max_label = label_cube.max()
 
@@ -1690,7 +1715,7 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #             y = det_coords[:,1]; y_sn_min = det_sn_min_coords[:,1]
 #             z = det_coords[:,2]; z_sn_min = det_sn_min_coords[:,2]
 
-#     else: 
+#     else:
 #         # above call measurements.extrema with index=xrange...  call
 #         # sucks a lot of memory and is slow .. iterating over
 #         # the objects seems to be more memory friendly ...
@@ -1709,7 +1734,7 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #             det_sn_min[label - 1] = sn_extremum[0]
 #             det[label - 1] = sn_extremum[1]
 #             det_sn_min_coord = np.asarray(sn_extremum[2],dtype=int)[::-1]
-#             det_coord = np.asarray(sn_extremum[3],dtype=int)[::-1]            
+#             det_coord = np.asarray(sn_extremum[3],dtype=int)[::-1]
 #             x[label - 1]  = det_coord[0]
 #             y[label - 1]  = det_coord[1]
 #             z[label - 1]  = det_coord[2]
@@ -1731,7 +1756,8 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #     calc_flux_in_aper_ellip(cube,x_cen,y_cen,z_cen,a,b,theta,r_kron,delta_lambda,
 #                             varcube=None)
 
-#     Summation of flux values in elliptical apperture defined via a, b, theta, r_kron.
+#     Summation of flux values in elliptical apperture defined
+#     via a, b, theta, r_kron.
 
 #     In:
 #     ---
@@ -1739,16 +1765,14 @@ def gen_tempfilename(suffix='.fits', chars=6):
 #     x_peak_sns,y_peak_sns,z_peak_sns ... peak SN coordinates of detections
 #     a_array ... major axes of ellipses
 #     b_array ... minor axes of ellipses
-#     thetas ... position angle of ellipses (counterlockwise from north to east)
-    
+#     thetas ... position angle of ellipses
+#     (counterlockwise from north to east)
+
 
 #     varcube (optional) ... variance cube
 
-    
+
 #     """
 
 #     # thetas are in degrees, so convert to radians:
 #     thetas = p.radians(thetas)
-
-    
-
