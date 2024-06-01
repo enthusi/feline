@@ -1,11 +1,11 @@
-title: 'Gala: A Python package for galactic dynamics'
+title: 'FELINE: A something...'
 tags:
   - Python
   - astronomy
   - ...
 authors:
   - name: Martin Wendt
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0001-5020-9994
     equal-contrib: true
     affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Oskar Fjonn Soth
@@ -16,9 +16,11 @@ authors:
     equal-contrib: true
     affiliation: 2
 affiliations:
- - name: Jon Doe, Jr. Fellow, Jon Doe University, USA
+ - name: Institute of Physics and Astronomy, University of Potsdam, 14476 Potsdam, Germany
    index: 1
-date: 27 Mai 2024
+ - name: Institute of Computer Science and Computational Science, University of Potsdam, 14476 Potsdam, Germany
+   index: 2
+date: 01 June 2024
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
