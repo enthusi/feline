@@ -1,10 +1,8 @@
 # test/test_detect_objects.py
 import sys
-
 import numpy as np
 
-from feline.src.postprocessing.detect_objects import gauss2d
-from feline.src.postprocessing.detect_objects import twoD_Gaussian
+from postprocessing.detect_objects import gauss2d, twoD_Gaussian
 
 
 def test_gauss2d():
