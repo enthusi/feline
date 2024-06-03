@@ -6,7 +6,7 @@ import mpdaf
 import numpy as np
 
 
-from preprocessing.combination import load_data, create_masking_plot, write_to_file, process_cube_data
+from combination import load_data, create_masking_plot, write_to_file, process_cube_data
 
 
 def test_load_data_returns_correct_sum():
