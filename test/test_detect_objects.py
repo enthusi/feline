@@ -2,7 +2,7 @@
 import sys
 import numpy as np
 
-from postprocessing.detect_objects import gauss2d, twoD_Gaussian
+from detect_objects import gauss2d, twoD_Gaussian
 
 
 def test_gauss2d():
