@@ -26,6 +26,17 @@ except ImportError as e:
 
 
 def world_to_pix(coord, rad):
+    """
+        Description:
+            Put description here ...
+
+        Args:
+            coord: ...
+            rad: ...
+
+        Returns:
+            x, y: ...
+    """
     radarray = np.array([[rad[0], rad[1], 0]], np.float_)
     world = coord.wcs_world2pix(radarray, 0)
     x = world[0][0]
@@ -34,6 +45,17 @@ def world_to_pix(coord, rad):
 
 
 def pix_to_world(coord, pix):
+    """
+        Description:
+            Put description here ...
+
+        Args:
+            coord: ...
+            pix: ...
+
+        Returns:
+            ra, dec: ...
+    """
     pixarray = np.array([[pix[0], pix[1], 0]], np.float_)
     world = coord.wcs_pix2world(pixarray, 0)
     ra = world[0][0]
@@ -42,6 +64,22 @@ def pix_to_world(coord, pix):
 
 
 def gauss2d(xy, amp, x0, y0, a, b, c):
+    """
+        Description:
+            Put description here ...
+
+        Args:
+            xy: ...
+            amp: ...
+            x0: ...
+            y0: ...
+            a: ...
+            b: ...
+            c: ...
+
+        Returns:
+            amp * np.exp(-inner): ...
+    """
     x, y = xy
     inner = a * (x - x0) ** 2
     inner += 2 * b * (x - x0) ** 2 * (y - y0) ** 2
@@ -51,6 +89,23 @@ def gauss2d(xy, amp, x0, y0, a, b, c):
 
 def twoD_Gaussian(changeme, amplitude, xo, yo, sigma_x,
                   sigma_y, theta, offset):
+    """
+        Description:
+            Put description here ...
+
+        Args:
+            changeme: ...
+            amplitude: ...
+            xo: ...
+            yo: ...
+            sigma_x: ...
+            sigma_y: ...
+            theta: ...
+            offset: ...
+
+        Returns:
+            g.ravel(): ...
+    """
     (x, y) = changeme
     xo = float(xo)
     yo = float(yo)
@@ -74,6 +129,18 @@ def twoD_Gaussian(changeme, amplitude, xo, yo, sigma_x,
 
 
 def print_lines(toggle, z):
+    """
+        Description:
+            This function returns the lines of the catalog for the given
+            toggle and redshift.
+
+        Args:
+            toggle: Integer value representing the toggle.
+            z: Float value representing the redshift.
+
+        Returns:
+            lines: List of strings containing the lines of the catalog.
+    """
     lines = []
     for k in range(len(atoms["atoms"])):
         # is k in the template?
@@ -93,6 +160,17 @@ def print_lines(toggle, z):
 
 
 def sort_catalog(catalog_lines):
+    """
+        Description:
+            This function sorts the catalog based on the 5th value in
+            descending order.
+
+        Args:
+            catalog_lines: List of strings containing the catalog data.
+
+        Returns:
+            sorted_catalog: List of strings containing sorted catalog data.
+    """
     # Separate lines starting with '#' and lines not starting with '#'
     hash_lines = [line for line in
                   catalog_lines if line.startswith('#')]
@@ -110,6 +188,17 @@ def sort_catalog(catalog_lines):
 
 
 def write_to_file(catalog_list):
+    """
+        Description:
+            This function writes the sorted catalog to a file named
+            'sorted_catalog.txt'.
+
+        Args:
+            catalog_list: List of strings containing the catalog data.
+
+        Returns:
+            None
+    """
     with open('sorted_catalog.txt', 'w') as file:
         for line1 in catalog_list:
             file.write(line1 + '\n')

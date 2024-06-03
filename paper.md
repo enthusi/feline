@@ -1,3 +1,4 @@
+---
 title: 'FELINE: A something...'
 tags:
   - Python
@@ -8,13 +9,14 @@ authors:
     orcid: 0000-0001-5020-9994
     equal-contrib: true
     affiliation: 1 # (Multiple affiliations must be quoted)
+  - name: Marvin Henschel
+    equal-contrib: true
+    affiliation: 2
   - name: Oskar Fjonn Soth
     orcid: 0009-0004-1200-9130
     equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
     affiliation: 2
-  - name: Marvin Henschel
-    equal-contrib: true
-    affiliation: 2
+
 affiliations:
  - name: Institute of Physics and Astronomy, University of Potsdam, 14476 Potsdam, Germany
    index: 1
@@ -69,3 +71,4 @@ Figure sizes can be customized by adding an optional second parameter:
 We acknowledge contributions from Jon Doe, Jonas Doe, and Doe Jon, and support from Jonas Donas during the genesis of this project.
 
 # References
+

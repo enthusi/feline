@@ -18,11 +18,13 @@ import project_path_config
 
 def scale_params(redshift):
     """
-    Compute the plate scale at a given redshift.
+    Description:
+        Compute the plate scale at a given redshift.
 
-    The plate scale is the distance in kiloparsecs (kpc) that corresponds to
-    an angular size of one arcminute at the given redshift. This function
-    uses the cosmology model defined in the global variable `cosmo`.
+        The plate scale is the distance in kiloparsecs (kpc)
+        that corresponds to an angular size of one arcminute
+        at the given redshift. This function uses the cosmology model
+        defined in the global variable `cosmo`.
 
     Args:
         redshift (float): The redshift at which to compute the plate scale.
@@ -39,6 +41,20 @@ def scale_params(redshift):
 # then:
 
 def get_impact(QSO_X, QSO_Y, px, py, z):
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            QSO_X (float): ...
+            QSO_Y (float): ...
+            px (float): ...
+            py (float): ...
+            z (float): ...
+
+        Returns:
+            float: ...
+        """
     theta = math.sqrt((QSO_X - px) ** 2 + (QSO_Y - py) ** 2) * 0.2
     scale = scale_params(z)
     # print theta,scale, theta*scale, b
@@ -48,6 +64,17 @@ def get_impact(QSO_X, QSO_Y, px, py, z):
 # MW23 it is ageneral annoyance to convert pixel positions in an
 # image to world coordinates (WCS) given as two angles on the sky (ra, dec)
 def pix_to_world(coord, pix):
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            coord (astropy.wcs.WCS): ...
+            pix (tuple): ...
+
+        Returns:
+            tuple: ...
+    """
 
     pixarray = np.array([[pix[0], pix[1], 0]], np.float_)
     world = coord.wcs_pix2world(pixarray, 0)
@@ -57,7 +84,17 @@ def pix_to_world(coord, pix):
 
 
 def world_to_pix(coord, rad):
-    # print pix
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            coord (astropy.wcs.WCS): ...
+            rad (tuple): ...
+
+        Returns:
+            tuple: ...
+    """
 
     radarray = np.array([[rad[0], rad[1], 0]], np.float_)
     # print pixarray
@@ -70,6 +107,16 @@ def world_to_pix(coord, rad):
 # MW23 a single model ist just an integer number,
 # here the set bit's are essentially counted
 def get_num_lines(toggle):
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            toggle (int): ...
+
+        Returns:
+            int: ...
+    """
     lines = 0
     for k in range(len(atoms)):
         if toggle & 0x1 == 0:
@@ -84,6 +131,19 @@ def get_num_lines(toggle):
 
 
 def gauss_function(x, a, x0, sigma):
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            x (float): ...
+            a (float): ...
+            x0 (float): ...
+            sigma (float): ...
+
+        Returns:
+            float: ...
+    """
     return a * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
 
 
@@ -91,6 +151,17 @@ def gauss_function(x, a, x0, sigma):
 # this is now a "proper" galaxy model with
 # a Gaussian function for each detected emission
 def galaxy(w, *p):
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            w (float): ...
+            p (tuple): ...
+
+        Returns:
+            float: ...
+    """
     global forfit_t, atoms
     z = p[0]
     sigma = p[1]
@@ -121,6 +192,21 @@ def galaxy(w, *p):
 # MW23 the fitting function for a
 # galaxy model within reasonable parameter ranges
 def fit_template(t, z, f, w, sigma_array, scipy):
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            t (float): ...
+            z (float): ...
+            f (float): ...
+            w (float): ...
+            sigma_array (list): ...
+            scipy (module?): ...
+
+        Returns:
+            tuple: ...
+    """
     global forfit_t, forfit_w
     forfit_t = t
     forfit_w = w
@@ -166,6 +252,13 @@ def fit_template(t, z, f, w, sigma_array, scipy):
 
 
 def correct_pos():
+    """
+        Description:
+            Put Description here ...
+
+        Returns:
+            None
+    """
     global px, py, npx, npy
     # use_new_pos = check.lines[0][0].get_visible()
     if use_new_pos > 0:
@@ -175,6 +268,18 @@ def correct_pos():
 
 
 def correctlimit(ax, x, y):
+    """
+        Description:
+            Put Description here ...
+
+        Args:
+            ax (object): ...
+            x (list): ...
+            y (list): ...
+
+        Returns:
+            None
+    """
     # ax: axes object handle
     #  x: data for entire x-axes
     #  y: data for entire y-axes

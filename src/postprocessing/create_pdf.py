@@ -5,6 +5,17 @@ import datetime
 
 
 def create_pdf_file():
+    """
+        Description:
+            This function creates a PDF file by merging all single PDF files
+            in the data folder.
+
+        Args:
+            None
+
+        Returns:
+            None
+    """
     merger = pypdf.PdfWriter()
     files_in_directory = os.listdir(project_path_config.DATA_PATH_PDF)
     files_in_directory.sort(reverse=True)
@@ -25,6 +36,16 @@ def create_pdf_file():
 
 
 def remove_pdf_files():
+    """
+        Description:
+            This function deletes all single PDF files in the data folder.
+
+        Args:
+            None
+
+        Returns:
+            None
+    """
     pdf_file_list = os.listdir(project_path_config.DATA_PATH_PDF)
     for pdf_file in range(len(pdf_file_list)):
         if "fig" in pdf_file_list[pdf_file]:
