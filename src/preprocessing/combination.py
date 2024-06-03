@@ -4,10 +4,8 @@ import sys
 
 import mpdaf
 
-try:
-    import project_path_config
-except Exception as e:
-    import feline.src.postprocessing.project_path_config as project_path_config
+import project_path_config
+
 
 
 def load_data(file, ext):
