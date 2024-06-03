@@ -6,10 +6,7 @@ import mpdaf
 import numpy as np
 
 
-from feline.src.postprocessing.combination import load_data
-from feline.src.postprocessing.combination import create_masking_plot
-from feline.src.postprocessing.combination import write_to_file
-from feline.src.postprocessing.combination import process_cube_data
+from postprocessing.combination import load_data, create_masking_plot, write_to_file, process_cube_data
 
 
 def test_load_data_returns_correct_sum():
