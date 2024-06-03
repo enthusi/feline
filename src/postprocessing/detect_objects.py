@@ -14,10 +14,9 @@ import skimage
 import skimage.feature
 import struct
 
-try:
-    import project_path_config
-except ImportError as e:
-    import feline.src.postprocessing.project_path_config
+
+import project_path_config
+
 
 try:
     mpl.use("TkAgg")
