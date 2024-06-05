@@ -10,27 +10,31 @@ import project_path_config
 
 def load_data(file, ext):
     """
-    Load data from a file.
+    Descrption:
+        Load data from a file.
 
-    Parameters:
-    file (str): The file path.
-    ext (int): The extension number.
+    Args:
+        file (str): The file path.
+        ext (int): The extension number.
 
     Returns:
-    mpdaf.obj.Cube: The sum of the cube data along the specified axis.
+        mpdaf.obj.Cube: The sum of the cube data along the specified axis.
     """
     return mpdaf.obj.Cube(file, ext=ext).sum(axis=0)
 
 
 def create_masking_plot():
     """
-    Create a masking plot and write it to a file.
+    Description:
+        Create a masking plot and write it to a file.
 
-    The function takes no parameters.
-    It uses the filename from the command line arguments,
-    loads the data and statistic from the file,
-    creates a signal-to-noise image, and writes it to 'image00.fits'.
-    """
+        The function takes no parameters.
+        It uses the filename from the command line arguments,
+        loads the data and statistic from the file,
+        creates a signal-to-noise image, and writes it to 'image00.fits'.
+    Returns:
+        None
+      """
     filename_first_argument = sys.argv[1]
     file = os.path.join(
         project_path_config.DATA_PATH_RAW,
@@ -44,11 +48,14 @@ def create_masking_plot():
 
 def write_to_file(file_path, data):
     """
-    Function to write data to a file
+    Description:
+        Function to write data to a file
 
-    Parameters:
-    file_path (str): Path to the file
-    data (float): Data to be written to the file
+    Args:
+        file_path (str): Path to the file
+        data (float): Data to be written to the file
+    Returns:
+        None
     """
     with open(file_path, "ab") as fout:
         fout.write(struct.pack("f", data))
@@ -56,13 +63,16 @@ def write_to_file(file_path, data):
 
 def process_cube_data(cube_data, dy, dx, file_path):
     """
-    Function to process cube data and write it to a file
+    Description:
+        Function to process cube data and write it to a file
 
-    Parameters:
-    cube_data (numpy array): The cube data to be processed
-    dy (int): The y dimension of the cube data
-    dx (int): The x dimension of the cube data
-    file_path (str): Path to the file where the processed data will be written
+    Args:
+        cube_data (numpy array): The cube data to be processed
+        dy (int): The y dimension of the cube data
+        dx (int): The x dimension of the cube data
+        file_path (str): Path to the file where the processed data will be written
+    Returns:
+        None
     """
     with open(file_path, "ab") as fout:
         for y in range(dy):
