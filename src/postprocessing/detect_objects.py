@@ -24,17 +24,17 @@ except ImportError as e:
     mpl.use("Agg")
 
 
-def world_to_pix(coord, rad):
+def world_to_pix(coord: astropy.wcs.WCS, rad: tuple) -> tuple:
     """
         Description:
             Put description here ...
 
         Args:
-            coord: ...
-            rad: ...
+            coord (astropy.wcs.WCS): ...
+            rad (tuple): ...
 
         Returns:
-            x, y: ...
+            x, y (tuple): ...
     """
     radarray = np.array([[rad[0], rad[1], 0]], np.float_)
     world = coord.wcs_world2pix(radarray, 0)
@@ -43,17 +43,17 @@ def world_to_pix(coord, rad):
     return x, y
 
 
-def pix_to_world(coord, pix):
+def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     """
         Description:
             Put description here ...
 
         Args:
-            coord: ...
-            pix: ...
+            coord (astropy.wcs.WCS): ...
+            pix (tuple): ...
 
         Returns:
-            ra, dec: ...
+            ra, dec (tuple): ...
     """
     pixarray = np.array([[pix[0], pix[1], 0]], np.float_)
     world = coord.wcs_pix2world(pixarray, 0)
@@ -62,7 +62,7 @@ def pix_to_world(coord, pix):
     return ra, dec
 
 
-def gauss2d(xy, amp, x0, y0, a, b, c):
+def gauss2d(xy: tuple, amp: float, x0: float, y0: float, a: float, b: float, c: float) -> float:
     """
         Description:
             Put description here ...
@@ -86,8 +86,8 @@ def gauss2d(xy, amp, x0, y0, a, b, c):
     return amp * np.exp(-inner)
 
 
-def twoD_Gaussian(changeme, amplitude, xo, yo, sigma_x,
-                  sigma_y, theta, offset):
+def twoD_Gaussian(changeme: tuple, amplitude: float, xo: float, yo: float, sigma_x: float,
+                  sigma_y: float, theta: float, offset: float) -> float:
     """
         Description:
             Put description here ...
@@ -127,7 +127,7 @@ def twoD_Gaussian(changeme, amplitude, xo, yo, sigma_x,
     return g.ravel()
 
 
-def print_lines(toggle, z):
+def print_lines(toggle: int, z: float) -> list:
     """
         Description:
             This function returns the lines of the catalog for the given
@@ -158,7 +158,7 @@ def print_lines(toggle, z):
     return lines
 
 
-def sort_catalog(catalog_lines):
+def sort_catalog(catalog_lines: list) -> list:
     """
         Description:
             This function sorts the catalog based on the 5th value in
@@ -186,7 +186,7 @@ def sort_catalog(catalog_lines):
     return sorted_catalog
 
 
-def write_to_file(catalog_list):
+def write_to_file(catalog_list: list) -> None:
     """
         Description:
             This function writes the sorted catalog to a file named

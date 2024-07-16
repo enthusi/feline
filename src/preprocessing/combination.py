@@ -1,14 +1,13 @@
 import os
 import struct
 import sys
-
+import numpy as np
 import mpdaf
 
 import project_path_config
 
 
-
-def load_data(file, ext):
+def load_data(file: str, ext: int) -> mpdaf.obj.Cube:
     """
     Descrption:
         Load data from a file.
@@ -23,7 +22,7 @@ def load_data(file, ext):
     return mpdaf.obj.Cube(file, ext=ext).sum(axis=0)
 
 
-def create_masking_plot():
+def create_masking_plot() -> None:
     """
     Description:
         Create a masking plot and write it to a file.
@@ -46,7 +45,7 @@ def create_masking_plot():
     snimage.write(project_path_config.DATA_PATH_PROCESSED + '/image00.fits')
 
 
-def write_to_file(file_path, data):
+def write_to_file(file_path: str, data: float) -> None:
     """
     Description:
         Function to write data to a file
@@ -61,13 +60,13 @@ def write_to_file(file_path, data):
         fout.write(struct.pack("f", data))
 
 
-def process_cube_data(cube_data, dy, dx, file_path):
+def process_cube_data(cube_data: np.ndarray, dy: int, dx: int, file_path: str) -> None:
     """
     Description:
         Function to process cube data and write it to a file
 
     Args:
-        cube_data (numpy array): The cube data to be processed
+        cube_data (np.ndarray): The cube data to be processed
         dy (int): The y dimension of the cube data
         dx (int): The x dimension of the cube data
         file_path (str): Path to the file where the processed data will be written

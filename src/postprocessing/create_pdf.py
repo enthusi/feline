@@ -4,7 +4,7 @@ import project_path_config
 import datetime
 
 
-def create_pdf_file():
+def create_pdf_file() -> None:
     """
         Description:
             This function creates a PDF file by merging all single PDF files
@@ -35,7 +35,7 @@ def create_pdf_file():
     print("\033[92m All single PDF files successfully merged! \033[0m")
 
 
-def remove_pdf_files():
+def remove_pdf_files() -> None:
     """
         Description:
             This function deletes all single PDF files in the data folder.

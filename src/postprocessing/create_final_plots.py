@@ -16,7 +16,7 @@ import struct
 import project_path_config
 
 
-def scale_params(redshift):
+def scale_params(redshift: float) -> float:
     """
     Description:
         Compute the plate scale at a given redshift.
@@ -40,7 +40,7 @@ def scale_params(redshift):
 # to convert arcsec to kpc
 # then:
 
-def get_impact(QSO_X, QSO_Y, px, py, z):
+def get_impact(QSO_X: float, QSO_Y: float, px: float, py: float, z: float) -> float:
     """
         Description:
             Put Description here ...
@@ -63,7 +63,7 @@ def get_impact(QSO_X, QSO_Y, px, py, z):
 
 # MW23 it is ageneral annoyance to convert pixel positions in an
 # image to world coordinates (WCS) given as two angles on the sky (ra, dec)
-def pix_to_world(coord, pix):
+def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     """
         Description:
             Put Description here ...
@@ -76,14 +76,14 @@ def pix_to_world(coord, pix):
             tuple: ...
     """
 
-    pixarray = np.array([[pix[0], pix[1], 0]], np.float_)
+    pixarray = np.array([[pix[0], pix[1], 0]], np.float64)
     world = coord.wcs_pix2world(pixarray, 0)
     ra = world[0][0]
     dec = world[0][1]
     return ra, dec
 
 
-def world_to_pix(coord, rad):
+def world_to_pix(coord: astropy.wcs.WCS, rad: tuple) -> tuple:
     """
         Description:
             Put Description here ...
@@ -106,7 +106,7 @@ def world_to_pix(coord, rad):
 
 # MW23 a single model ist just an integer number,
 # here the set bit's are essentially counted
-def get_num_lines(toggle):
+def get_num_lines(toggle: int) -> int:
     """
         Description:
             Put Description here ...
@@ -130,7 +130,7 @@ def get_num_lines(toggle):
     return lines
 
 
-def gauss_function(x, a, x0, sigma):
+def gauss_function(x: float, a: float, x0: float, sigma: float) -> float:
     """
         Description:
             Put Description here ...
@@ -150,7 +150,7 @@ def gauss_function(x, a, x0, sigma):
 # MW23 used for the red fit to ALL lines at once
 # this is now a "proper" galaxy model with
 # a Gaussian function for each detected emission
-def galaxy(w, *p):
+def galaxy(w: float, *p: float) -> float:
     """
         Description:
             Put Description here ...
@@ -191,7 +191,7 @@ def galaxy(w, *p):
 
 # MW23 the fitting function for a
 # galaxy model within reasonable parameter ranges
-def fit_template(t, z, f, w, sigma_array, scipy):
+def fit_template(t: float, z: float, f: float, w: float, sigma_array: list) -> tuple:
     """
         Description:
             Put Description here ...
@@ -202,7 +202,6 @@ def fit_template(t, z, f, w, sigma_array, scipy):
             f (float): ...
             w (float): ...
             sigma_array (list): ...
-            scipy (module?): ...
 
         Returns:
             tuple: ...
@@ -251,7 +250,7 @@ def fit_template(t, z, f, w, sigma_array, scipy):
     return new_z, perr, popt
 
 
-def correct_pos():
+def correct_pos() -> None:
     """
         Description:
             Put Description here ...
@@ -267,7 +266,7 @@ def correct_pos():
         ra, dec = pix_to_world(coord, (px, py))
 
 
-def correctlimit(ax, x, y):
+def correctlimit(ax: object, x: list, y: list) -> None:
     """
         Description:
             Put Description here ...
