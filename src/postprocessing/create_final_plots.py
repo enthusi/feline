@@ -2,6 +2,8 @@ import json
 import math
 import os
 import sys
+import types
+
 import astropy.cosmology
 import astropy.io.fits
 import astropy.wcs
@@ -191,7 +193,7 @@ def galaxy(w: float, *p: float) -> float:
 
 # MW23 the fitting function for a
 # galaxy model within reasonable parameter ranges
-def fit_template(t: float, z: float, f: float, w: float, sigma_array: list) -> tuple:
+def fit_template(t: float, z: float, f: float, w: float, sigma_array: list, scipy: types.ModuleType) -> tuple:
     """
         Description:
             Put Description here ...
@@ -202,6 +204,7 @@ def fit_template(t: float, z: float, f: float, w: float, sigma_array: list) -> t
             f (float): ...
             w (float): ...
             sigma_array (list): ...
+            scipy (types.ModuleType): ...
 
         Returns:
             tuple: ...
