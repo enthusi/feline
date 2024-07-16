@@ -32,7 +32,7 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
-Feline combines a fully parallelized galaxy line template matching with the matched filter approach for individual emission features of LSDcat `[@HerenzE_17a]`.
+Feline combines a fully parallelized galaxy line template matching with the matched filter approach for individual emission features of LSDcat [@HerenzE_17a].
 For the 3D matched filtering, the complete data cube is first median filtered to remove all continuum sources, and then cross-correlated with a template of an isolated
 emission feature in two spatial and one spectral dimension. We assumed a simple Gaussian with a FWHM of 250 km/s for the line profile and a PSF based on the given seeing in the data cube. 
 ￼
