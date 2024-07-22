@@ -1,32 +1,18 @@
-import json
 import math
-import os
-import sys
 import types
 
-import astropy.cosmology
-import astropy.io.fits
-import astropy.wcs
-import logging
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import matplotlib.patheffects as path_effects
-import mpdaf
 import numpy as np
 import ref_index
-import struct
-import project_path_config
 
 
 def scale_params(redshift: float) -> float:
     """
-    Description:
-        Compute the plate scale at a given redshift.
+    Compute the plate scale at a given redshift.
 
-        The plate scale is the distance in kiloparsecs (kpc)
-        that corresponds to an angular size of one arcminute
-        at the given redshift. This function uses the cosmology model
-        defined in the global variable `cosmo`.
+    The plate scale is the distance in kiloparsecs (kpc)
+    that corresponds to an angular size of one arcminute
+    at the given redshift. This function uses the cosmology model
+    defined in the global variable `cosmo`.
 
     Args:
         redshift (float): The redshift at which to compute the plate scale.
@@ -41,22 +27,25 @@ def scale_params(redshift: float) -> float:
 # that function gives you the plate scale at the redshift of the galaxy
 # to convert arcsec to kpc
 # then:
-
-def get_impact(QSO_X: float, QSO_Y: float, px: float, py: float, z: float) -> float:
+def get_impact(QSO_X: float, QSO_Y: float, px: float, py: float,
+               z: float) -> float:
     """
-        Description:
-            Put Description here ...
+    Calculates the impact parameter, which is the projected distance
+    between a quasar (QSO) and a galaxy in kiloparsecs (kpc), at the
+    redshift of the galaxy.
 
-        Args:
-            QSO_X (float): ...
-            QSO_Y (float): ...
-            px (float): ...
-            py (float): ...
-            z (float): ...
+    Args:
+        QSO_X (float): The x-coordinate of the quasar in arcseconds.
+        QSO_Y (float): The y-coordinate of the quasar in arcseconds.
+        px (float): The x-coordinate of the galaxy in arcseconds.
+        py (float): The y-coordinate of the galaxy in arcseconds.
+        z (float): The redshift of the galaxy.
 
-        Returns:
-            float: ...
-        """
+    Returns:
+        float: The impact parameter in kpc.
+    """
+
+
     theta = math.sqrt((QSO_X - px) ** 2 + (QSO_Y - py) ** 2) * 0.2
     scale = scale_params(z)
     # print theta,scale, theta*scale, b
@@ -67,15 +56,14 @@ def get_impact(QSO_X: float, QSO_Y: float, px: float, py: float, z: float) -> fl
 # image to world coordinates (WCS) given as two angles on the sky (ra, dec)
 def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     """
-        Description:
-            Put Description here ...
+    Converts world coordinates (RA, Dec) to pixel coordinates.
 
-        Args:
-            coord (astropy.wcs.WCS): ...
-            pix (tuple): ...
+    Args:
+        coord (astropy.wcs.WCS): WCS object for coordinate transformation.
+        rad (tuple): World coordinates (RA, Dec) to convert.
 
-        Returns:
-            tuple: ...
+    Returns:
+        tuple: Pixel coordinates corresponding to the given world coordinates.
     """
 
     pixarray = np.array([[pix[0], pix[1], 0]], np.float64)
@@ -87,15 +75,19 @@ def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
 
 def world_to_pix(coord: astropy.wcs.WCS, rad: tuple) -> tuple:
     """
-        Description:
-            Put Description here ...
+    Converts world coordinates (Right Ascension and Declination) to
+    pixel coordinates.
 
-        Args:
-            coord (astropy.wcs.WCS): ...
-            rad (tuple): ...
+    Args:
+        coord (astropy.wcs.WCS): The World Coordinate System (WCS) object that
+                                 defines the transformation between
+                                 world coordinates and pixel coordinates.
+        rad (tuple): A tuple of world coordinates
+                     (Right Ascension, Declination) to convert.
 
-        Returns:
-            tuple: ...
+    Returns:
+        tuple: A tuple of pixel coordinates (x, y) corresponding to the given
+               world coordinates.
     """
 
     radarray = np.array([[rad[0], rad[1], 0]], np.float_)
@@ -110,14 +102,19 @@ def world_to_pix(coord: astropy.wcs.WCS, rad: tuple) -> tuple:
 # here the set bit's are essentially counted
 def get_num_lines(toggle: int) -> int:
     """
-        Description:
-            Put Description here ...
+    Counts the number of active lines (set bits) in the binary
+    representation of the input integer. This can be used to determine
+    the number of emission lines considered in a given model by
+    examining the bits set in the model's integer representation.
 
-        Args:
-            toggle (int): ...
+    Args:
+        toggle (int): An integer where each bit represents the presence
+                      (1) or absence (0) of a specific emission line in
+                      the model.
 
-        Returns:
-            int: ...
+    Returns:
+        int: The count of active emission lines represented by the set bits
+             in the input integer.
     """
     lines = 0
     for k in range(len(atoms)):
@@ -134,17 +131,16 @@ def get_num_lines(toggle: int) -> int:
 
 def gauss_function(x: float, a: float, x0: float, sigma: float) -> float:
     """
-        Description:
-            Put Description here ...
+    Computes the value of a Gaussian function with given parameters.
 
-        Args:
-            x (float): ...
-            a (float): ...
-            x0 (float): ...
-            sigma (float): ...
+    Args:
+        x (float): The input value at which to evaluate the function.
+        a (float): The amplitude of the Gaussian curve.
+        x0 (float): The mean (center) of the Gaussian curve.
+        sigma (float): The standard deviation of the Gaussian curve.
 
-        Returns:
-            float: ...
+    Returns:
+        float: The value of the Gaussian function at x.
     """
     return a * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
 
@@ -152,17 +148,29 @@ def gauss_function(x: float, a: float, x0: float, sigma: float) -> float:
 # MW23 used for the red fit to ALL lines at once
 # this is now a "proper" galaxy model with
 # a Gaussian function for each detected emission
-def galaxy(w: float, *p: float) -> float:
+def galaxy(w: float, *p: int) -> np.ndarray:
     """
-        Description:
-            Put Description here ...
 
-        Args:
-            w (float): ...
-            p (tuple): ...
+    Generates a model galaxy spectrum by summing Gaussian profiles for each
+    emission line. This function takes a wavelength array and parameters
+    for each emission line, including the redshift, line width (sigma),
+    and amplitude for each line, to construct a synthetic
+    galaxy spectrum. The emission lines are modeled as Gaussian functions.
 
-        Returns:
-            float: ...
+    Args:
+        w (float): An array of wavelengths at which to evaluate the
+                   galaxy model.
+        p (tuple): A tuple containing parameters for the galaxy model.
+                   The first element is the redshift (z), the second is
+                   the common line width (sigma) for all lines, followed by
+                   the amplitude of each emission line. The number of
+                   amplitudes provided should match the number of emission
+                   lines being modeled.
+
+    Returns:
+        np.ndarray: An array representing the synthetic galaxy spectrum at the
+                    wavelengths specified by `w`. This array has the same
+                    shape as `w`.
     """
     global forfit_t, atoms
     z = p[0]
@@ -193,22 +201,36 @@ def galaxy(w: float, *p: float) -> float:
 
 # MW23 the fitting function for a
 # galaxy model within reasonable parameter ranges
-def fit_template(t: float, z: float, f: float, w: float, sigma_array: list, scipy: types.ModuleType) -> tuple:
+def fit_template(t: float, z: float, f: float, w: float, sigma_array: list,
+                 scipy: types.ModuleType) -> tuple:
     """
-        Description:
-            Put Description here ...
+    Fits a spectral template to observed galaxy data using non-linear least
+    squares optimization to find the best-fitting parameters.
 
-        Args:
-            t (float): ...
-            z (float): ...
-            f (float): ...
-            w (float): ...
-            sigma_array (list): ...
-            scipy (types.ModuleType): ...
+    This function aims to adjust the redshift (z) and the amplitudes of
+    emission lines to match the observed galaxy spectrum as closely as
+    possible to a model galaxy spectrum. The model spectrum is generated by
+    summing Gaussian profiles for each emission line specified in the
+    `sigma_array`.
 
-        Returns:
-            tuple: ...
+    Args:
+        t (float): Template identifier or parameter, used to select or
+                   generate the model galaxy spectrum.
+        z (float): Initial guess for the galaxy's redshift.
+        f (float): Observed flux values of the galaxy spectrum.
+        w (float): Wavelength values corresponding to the observed fluxes.
+        sigma_array (list): List of standard deviations (sigma) for the
+                            Gaussian profiles of each emission line in the
+                            model.
+        scipy (types.ModuleType): The scipy module, used for optimization
+                                  routines.
+
+    Returns:
+        tuple: Contains the optimized redshift, the error estimate for the
+               redshift, and an array of optimized line amplitudes for the
+               model.
     """
+
     global forfit_t, forfit_w
     forfit_t = t
     forfit_w = w
@@ -255,11 +277,13 @@ def fit_template(t: float, z: float, f: float, w: float, sigma_array: list, scip
 
 def correct_pos() -> None:
     """
-        Description:
-            Put Description here ...
+    Corrects the position of an object based on new positional data. This
+    function updates the global variables `px` and `py` with the new
+    positions `npx` and `npy` if `use_new_pos` is greater than 0. It also
+    converts these pixel positions to world coordinates (RA, Dec).
 
-        Returns:
-            None
+    Returns:
+        None
     """
     global px, py, npx, npy
     # use_new_pos = check.lines[0][0].get_visible()
@@ -271,16 +295,18 @@ def correct_pos() -> None:
 
 def correctlimit(ax: object, x: list, y: list) -> None:
     """
-        Description:
-            Put Description here ...
+    Adjusts the y-axis limits of a plot based on the data visible within the
+    current x-axis limits. This function ensures that the y-axis is scaled to
+    fit the range of y-values that are currently visible, given the x-axis
+    limits, enhancing the plot's readability.
 
-        Args:
-            ax (object): ...
-            x (list): ...
-            y (list): ...
+    Args:
+        ax (object): The matplotlib Axes object to adjust.
+        x (list): The x-coordinates of the data points.
+        y (list): The y-coordinates of the data points.
 
-        Returns:
-            None
+    Returns:
+        None
     """
     # ax: axes object handle
     #  x: data for entire x-axes
@@ -480,7 +506,7 @@ if __name__ == "__main__":
         # around our object (size is +/- dx and dy...)
 
         raw_flux = cube[:, int(py) - ds:int(py) + ds,
-                        int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+                   int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         raw_data = raw_flux.data
         raw_wave = np.arange(raw_flux.wave.get_crval(),
                              raw_flux.wave.get_crval() +
@@ -488,7 +514,7 @@ if __name__ == "__main__":
                              raw_flux.wave.shape,
                              raw_flux.wave.get_step())
         raw_sigma = cubestat[:, int(py) - ds:int(py) + ds,
-                             int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+                    int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         valid_model = True
 
         for k in range(len(atoms["atoms"])):
@@ -557,9 +583,9 @@ if __name__ == "__main__":
 
         # plot actual flux spectrum
         spec = cube[:, int(py) - ds:int(py) + ds,
-                    int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+               int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         original_spec = original_cube[:, int(py) - ds:int(py) + ds,
-                                      int(px) - ds:int(px) + ds].mean(
+                        int(px) - ds:int(px) + ds].mean(
             axis=(1, 2))
         data1 = spec.data
         original_data1 = original_spec.data
@@ -631,7 +657,7 @@ if __name__ == "__main__":
         ax1.set_ylim(bottom, max(data1) * 1.2)
 
         s2nspec = s2ncube[:, int(py) - ds:int(py) + ds,
-                          int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+                  int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         data2 = s2nspec.data
         ax2.step(waven, data2, where="mid")
         ax2.set_xticks(np.arange(crval, crmax, 200))
@@ -769,9 +795,9 @@ if __name__ == "__main__":
         narrows = mpdaf.obj.Image(data=all_ima.data,
                                   wcs=wcs1)[int(py) -
                                             aw // 2:int(py) +
-                                            aw // 2, int(px) -
-                                            aw // 2:int(px) +
-                                            aw // 2]
+                                                    aw // 2, int(px) -
+                                                             aw // 2:int(px) +
+                                                                     aw // 2]
 
         center_area = narrows[aw // 2 - 3:aw // 2 + 3, aw // 2 - 3:aw // 2 + 3]
         center_mean = np.mean(center_area.data)
@@ -789,8 +815,8 @@ if __name__ == "__main__":
 
         # whiteimage plot
         whitezoom = whiteimage[int(py) - aw:int(py) +
-                               aw, int(px) - aw:int(px) +
-                               aw]
+                                            aw, int(px) - aw:int(px) +
+                                                             aw]
         spic = plt.subplot2grid((rows, columns), (3, 7))
 
         center_area = whitezoom[aw - 4:aw + 4, aw - 4:aw + 4]
@@ -820,8 +846,8 @@ if __name__ == "__main__":
         full_plane = mpdaf.obj.Image(data=plane,
                                      wcs=wcs1)[int(py) -
                                                aw:int(py) +
-                                               aw, int(px) -
-                                               aw:int(px) + aw]
+                                                  aw, int(px) -
+                                                      aw:int(px) + aw]
 
         # quality plot
         spic = plt.subplot2grid((rows, columns), (3, 8))
@@ -848,7 +874,7 @@ if __name__ == "__main__":
         # redshift plot
         spic = plt.subplot2grid((rows, columns), (3, 9))
         testarea = redshift[int(py) - aw:int(py) + aw,
-                            int(px) - aw:int(px) + aw]
+                   int(px) - aw:int(px) + aw]
         plt.xlim(aw - 10, aw + 10)
         plt.ylim(aw - 10, aw + 10)
         plt.imshow(testarea, interpolation="none", cmap="jet")
