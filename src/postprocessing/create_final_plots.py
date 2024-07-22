@@ -1,9 +1,20 @@
+import json
 import math
+import os
 import types
-
+import sys
+import astropy.cosmology
+import astropy.io.fits
+import astropy.wcs
+import logging
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.patheffects as path_effects
+import mpdaf
 import numpy as np
 import ref_index
-
+import struct
+import project_path_config
 
 def scale_params(redshift: float) -> float:
     """
