@@ -6,15 +6,14 @@ import datetime
 
 def create_pdf_file() -> None:
     """
-        Description:
-            This function creates a PDF file by merging all single PDF files
-            in the data folder.
+    This function creates a PDF file by merging all single PDF files
+    in the data folder.
 
-        Args:
-            None
+    Args:
+        None
 
-        Returns:
-            None
+    Returns:
+        None
     """
     merger = pypdf.PdfWriter()
     files_in_directory = os.listdir(project_path_config.DATA_PATH_PDF)
@@ -37,14 +36,13 @@ def create_pdf_file() -> None:
 
 def remove_pdf_files() -> None:
     """
-        Description:
-            This function deletes all single PDF files in the data folder.
+    This function deletes all single PDF files in the data folder.
 
-        Args:
-            None
+    Args:
+        None
 
-        Returns:
-            None
+    Returns:
+        None
     """
     pdf_file_list = os.listdir(project_path_config.DATA_PATH_PDF)
     for pdf_file in range(len(pdf_file_list)):

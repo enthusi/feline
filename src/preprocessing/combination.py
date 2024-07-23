@@ -9,8 +9,7 @@ import project_path_config
 
 def load_data(file: str, ext: int) -> mpdaf.obj.Cube:
     """
-    Descrption:
-        Load data from a file.
+    Load data from a file.
 
     Args:
         file (str): The file path.
@@ -24,13 +23,13 @@ def load_data(file: str, ext: int) -> mpdaf.obj.Cube:
 
 def create_masking_plot() -> None:
     """
-    Description:
-        Create a masking plot and write it to a file.
+    Create a masking plot and write it to a file.
 
-        The function takes no parameters.
-        It uses the filename from the command line arguments,
-        loads the data and statistic from the file,
-        creates a signal-to-noise image, and writes it to 'image00.fits'.
+    The function takes no parameters.
+    It uses the filename from the command line arguments,
+    loads the data and statistic from the file,
+    creates a signal-to-noise image, and writes it to 'image00.fits'.
+
     Returns:
         None
       """
@@ -47,8 +46,7 @@ def create_masking_plot() -> None:
 
 def write_to_file(file_path: str, data: float) -> None:
     """
-    Description:
-        Function to write data to a file
+    Function to write data to a file
 
     Args:
         file_path (str): Path to the file
@@ -60,16 +58,17 @@ def write_to_file(file_path: str, data: float) -> None:
         fout.write(struct.pack("f", data))
 
 
-def process_cube_data(cube_data: np.ndarray, dy: int, dx: int, file_path: str) -> None:
+def process_cube_data(cube_data: np.ndarray, dy: int, dx: int,
+                      file_path: str) -> None:
     """
-    Description:
-        Function to process cube data and write it to a file
+    Function to process cube data and write it to a file
 
     Args:
         cube_data (np.ndarray): The cube data to be processed
         dy (int): The y dimension of the cube data
         dx (int): The x dimension of the cube data
-        file_path (str): Path to the file where the processed data will be written
+        file_path (str): Path to the file where the processed data will
+                         be written
     Returns:
         None
     """

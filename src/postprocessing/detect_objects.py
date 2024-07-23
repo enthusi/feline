@@ -26,15 +26,20 @@ except ImportError as e:
 
 def world_to_pix(coord: astropy.wcs.WCS, rad: tuple) -> tuple:
     """
-        Description:
-            Put description here ...
+    Convert world coordinates to pixel coordinates.
 
-        Args:
-            coord (astropy.wcs.WCS): ...
-            rad (tuple): ...
+    Given a set of world coordinates (RA, Dec) and an astropy WCS object,
+    this function calculates the corresponding pixel coordinates in the
+    image.
 
-        Returns:
-            x, y (tuple): ...
+    Args:
+        coord (astropy.wcs.WCS): The World Coordinate System object that
+            defines the transformation between pixel and world coordinates.
+        rad (tuple): A tuple containing the right ascension (RA) and
+            declination (Dec) in degrees.
+
+    Returns:
+        tuple: A tuple containing the x and y pixel coordinates.
     """
     radarray = np.array([[rad[0], rad[1], 0]], np.float_)
     world = coord.wcs_world2pix(radarray, 0)
@@ -45,15 +50,19 @@ def world_to_pix(coord: astropy.wcs.WCS, rad: tuple) -> tuple:
 
 def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     """
-        Description:
-            Put description here ...
+    Convert pixel coordinates to world coordinates.
 
-        Args:
-            coord (astropy.wcs.WCS): ...
-            pix (tuple): ...
+    Given a tuple of pixel coordinates (x, y) and an astropy WCS object,
+    this function calculates the corresponding world coordinates in
+    right ascension (RA) and declination (Dec).
 
-        Returns:
-            ra, dec (tuple): ...
+    Args:
+        coord (astropy.wcs.WCS): The World Coordinate System object that
+            defines the transformation between pixel and world coordinates.
+        pix (tuple): A tuple containing the x and y pixel coordinates.
+
+    Returns:
+        tuple: A tuple containing the RA and Dec in degrees.
     """
     pixarray = np.array([[pix[0], pix[1], 0]], np.float_)
     world = coord.wcs_pix2world(pixarray, 0)
@@ -62,22 +71,25 @@ def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     return ra, dec
 
 
-def gauss2d(xy: tuple, amp: float, x0: float, y0: float, a: float, b: float, c: float) -> float:
+def gauss2d(xy: tuple, amp: float, x0: float, y0: float, a: float, b: float,
+            c: float) -> float:
     """
-        Description:
-            Put description here ...
+    Calculate the value of a 2D Gaussian function.
 
-        Args:
-            xy: ...
-            amp: ...
-            x0: ...
-            y0: ...
-            a: ...
-            b: ...
-            c: ...
+    This function computes the value of a 2D Gaussian with the given
+    parameters at the specified (x, y) coordinates.
 
-        Returns:
-            amp * np.exp(-inner): ...
+    Args:
+        xy (tuple): The (x, y) coordinates where the Gaussian is evaluated.
+        amp (float): The amplitude of the Gaussian.
+        x0 (float): The x-coordinate of the center of the Gaussian.
+        y0 (float): The y-coordinate of the center of the Gaussian.
+        a (float): The coefficient of the squared x term.
+        b (float): The coefficient of the xy term.
+        c (float): The coefficient of the squared y term.
+
+    Returns:
+        float: The value of the 2D Gaussian at the given coordinates.
     """
     x, y = xy
     inner = a * (x - x0) ** 2
@@ -86,24 +98,32 @@ def gauss2d(xy: tuple, amp: float, x0: float, y0: float, a: float, b: float, c: 
     return amp * np.exp(-inner)
 
 
-def twoD_Gaussian(changeme: tuple, amplitude: float, xo: float, yo: float, sigma_x: float,
-                  sigma_y: float, theta: float, offset: float) -> float:
+def twoD_Gaussian(changeme: tuple, amplitude: float, xo: float, yo: float,
+                  sigma_x: float, sigma_y: float, theta: float,
+                  offset: float) -> float:
     """
-        Description:
-            Put description here ...
+    Calculate a 2D Gaussian value at a given point.
 
-        Args:
-            changeme: ...
-            amplitude: ...
-            xo: ...
-            yo: ...
-            sigma_x: ...
-            sigma_y: ...
-            theta: ...
-            offset: ...
+    This function computes the value of a 2D Gaussian function at a specific
+    point. The Gaussian is defined by its amplitude, center (xo, yo), standard
+    deviations along x and y (sigma_x, sigma_y), rotation angle (theta), and
+    an offset.
 
-        Returns:
-            g.ravel(): ...
+    Args:
+        changeme (tuple): The (x, y) coordinates where the Gaussian is
+                          evaluated.
+        amplitude (float): The peak amplitude of the Gaussian.
+        xo (float): The x-coordinate of the center of the Gaussian.
+        yo (float): The y-coordinate of the center of the Gaussian.
+        sigma_x (float): The standard deviation of the Gaussian along
+                         the x-axis.
+        sigma_y (float): The standard deviation of the Gaussian along
+                         the y-axis.
+        theta (float): The rotation angle of the Gaussian in radians.
+        offset (float): The offset value added to the Gaussian.
+
+    Returns:
+        float: The value of the 2D Gaussian function at the given coordinates.
     """
     (x, y) = changeme
     xo = float(xo)
@@ -129,9 +149,8 @@ def twoD_Gaussian(changeme: tuple, amplitude: float, xo: float, yo: float, sigma
 
 def print_lines(toggle: int, z: float) -> list:
     """
-        Description:
-            This function returns the lines of the catalog for the given
-            toggle and redshift.
+        This function returns the lines of the catalog for the given
+        toggle and redshift.
 
         Args:
             toggle: Integer value representing the toggle.
@@ -160,9 +179,8 @@ def print_lines(toggle: int, z: float) -> list:
 
 def sort_catalog(catalog_lines: list) -> list:
     """
-        Description:
-            This function sorts the catalog based on the 5th value in
-            descending order.
+        This function sorts the catalog based on the 5th value in
+        descending order.
 
         Args:
             catalog_lines: List of strings containing the catalog data.
@@ -188,9 +206,8 @@ def sort_catalog(catalog_lines: list) -> list:
 
 def write_to_file(catalog_list: list) -> None:
     """
-        Description:
-            This function writes the sorted catalog to a file named
-            'sorted_catalog.txt'.
+        This function writes the sorted catalog to a file named
+        'sorted_catalog.txt'.
 
         Args:
             catalog_list: List of strings containing the catalog data.

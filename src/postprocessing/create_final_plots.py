@@ -16,6 +16,7 @@ import ref_index
 import struct
 import project_path_config
 
+
 def scale_params(redshift: float) -> float:
     """
     Compute the plate scale at a given redshift.
@@ -55,7 +56,6 @@ def get_impact(QSO_X: float, QSO_Y: float, px: float, py: float,
     Returns:
         float: The impact parameter in kpc.
     """
-
 
     theta = math.sqrt((QSO_X - px) ** 2 + (QSO_Y - py) ** 2) * 0.2
     scale = scale_params(z)
@@ -517,7 +517,7 @@ if __name__ == "__main__":
         # around our object (size is +/- dx and dy...)
 
         raw_flux = cube[:, int(py) - ds:int(py) + ds,
-                   int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+                        int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         raw_data = raw_flux.data
         raw_wave = np.arange(raw_flux.wave.get_crval(),
                              raw_flux.wave.get_crval() +
@@ -525,7 +525,7 @@ if __name__ == "__main__":
                              raw_flux.wave.shape,
                              raw_flux.wave.get_step())
         raw_sigma = cubestat[:, int(py) - ds:int(py) + ds,
-                    int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+                             int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         valid_model = True
 
         for k in range(len(atoms["atoms"])):
@@ -594,9 +594,9 @@ if __name__ == "__main__":
 
         # plot actual flux spectrum
         spec = cube[:, int(py) - ds:int(py) + ds,
-               int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+                    int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         original_spec = original_cube[:, int(py) - ds:int(py) + ds,
-                        int(px) - ds:int(px) + ds].mean(
+                                      int(px) - ds:int(px) + ds].mean(
             axis=(1, 2))
         data1 = spec.data
         original_data1 = original_spec.data
@@ -668,7 +668,7 @@ if __name__ == "__main__":
         ax1.set_ylim(bottom, max(data1) * 1.2)
 
         s2nspec = s2ncube[:, int(py) - ds:int(py) + ds,
-                  int(px) - ds:int(px) + ds].mean(axis=(1, 2))
+                          int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         data2 = s2nspec.data
         ax2.step(waven, data2, where="mid")
         ax2.set_xticks(np.arange(crval, crmax, 200))
@@ -758,7 +758,8 @@ if __name__ == "__main__":
 
         # NEW 2020! plot o2 zoom in with model
         if oiifound:
-            ax4 = plt.subplot2grid((rows, columns), (3, 0), colspan=4)
+            ax4 = plt.subplot2grid((rows, columns),
+                                   (3, 0), colspan=4)
             wobs = ref_index.vac2air(3728.0 * (z + 1) / 10.0) * 10.0
 
             wobs1 = ref_index.vac2air(3727.09 * (z + 1) / 10.0) * 10.0
@@ -806,9 +807,9 @@ if __name__ == "__main__":
         narrows = mpdaf.obj.Image(data=all_ima.data,
                                   wcs=wcs1)[int(py) -
                                             aw // 2:int(py) +
-                                                    aw // 2, int(px) -
-                                                             aw // 2:int(px) +
-                                                                     aw // 2]
+                                            aw // 2, int(px) -
+                                            aw // 2:int(px) +
+                                            aw // 2]
 
         center_area = narrows[aw // 2 - 3:aw // 2 + 3, aw // 2 - 3:aw // 2 + 3]
         center_mean = np.mean(center_area.data)
@@ -826,8 +827,7 @@ if __name__ == "__main__":
 
         # whiteimage plot
         whitezoom = whiteimage[int(py) - aw:int(py) +
-                                            aw, int(px) - aw:int(px) +
-                                                             aw]
+                               aw, int(px) - aw:int(px) + aw]
         spic = plt.subplot2grid((rows, columns), (3, 7))
 
         center_area = whitezoom[aw - 4:aw + 4, aw - 4:aw + 4]
@@ -857,8 +857,8 @@ if __name__ == "__main__":
         full_plane = mpdaf.obj.Image(data=plane,
                                      wcs=wcs1)[int(py) -
                                                aw:int(py) +
-                                                  aw, int(px) -
-                                                      aw:int(px) + aw]
+                                               aw, int(px) -
+                                               aw:int(px) + aw]
 
         # quality plot
         spic = plt.subplot2grid((rows, columns), (3, 8))
@@ -885,7 +885,7 @@ if __name__ == "__main__":
         # redshift plot
         spic = plt.subplot2grid((rows, columns), (3, 9))
         testarea = redshift[int(py) - aw:int(py) + aw,
-                   int(px) - aw:int(px) + aw]
+                            int(px) - aw:int(px) + aw]
         plt.xlim(aw - 10, aw + 10)
         plt.ylim(aw - 10, aw + 10)
         plt.imshow(testarea, interpolation="none", cmap="jet")
