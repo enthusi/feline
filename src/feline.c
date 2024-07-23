@@ -106,12 +106,15 @@ int main(int argc, char *argv[]) {
     temp = malloc(sizeof(float) * 4);
     if ((f = fopen(DATA_PATH_PROCESSED "raw_reordered_s2ncube.dat", "rb")) == NULL) {
         perror("No File found");
+        free(temp);
         return -1;
     }
 
     int num = fread(temp, sizeof(float) * 4, 1, f);
     if (!num) {
         perror("Couldn't read from file");
+        fclose(f);
+        free(temp);
         return -1;
     }
     fclose(f);
@@ -123,22 +126,38 @@ int main(int argc, char *argv[]) {
     float lmin = (float) (temp[3]);
     float lmax = lmin + dz * 1.25;
     printf("%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
-/*
-  if (argc==4)
-  {
-      printf("Loading previously generated file '%s'\n" , argv[3]);
-      FILE *prev_res_i_file;
-      prev_array=malloc(sizeof(float)*dy*dx*layer);
-      prev_res_i_file = fopen(argv[3], "rb");
-      fread(prev_array, (sizeof(float)*dy*dx*layer), 1, prev_res_i_file);
-      previous=1; //set proper flag
-  }
-  */
+
+    if (argc==4){
+        printf("Loading previously generated file '%s'\n" , argv[3]);
+        FILE *prev_res_i_file;
+        prev_array=malloc(sizeof(float)*dy*dx*layer);
+        prev_res_i_file = fopen(argv[3], "rb");
+        if (prev_res_i_file == NULL) {
+            perror("Failed to open file");
+            free(prev_res_i_file);
+            free(temp);
+            free(prev_array); // Ensure to free allocated memory to avoid memory leak
+            return -1; // Or handle the error as appropriate
+        }
+        int r = fread(prev_array, (sizeof(float)*dy*dx*layer), 1, prev_res_i_file);
+        if (!r) {
+            perror("Failed to read from file");
+            fclose(prev_res_i_file);
+            free(prev_res_i_file);
+            free(temp);
+            free(prev_array); // Ensure to free allocated memory to avoid memory leak
+            return -1; // Or handle the error as appropriate
+        }
+        fclose(prev_res_i_file);
+        previous=1; //set proper flag
+    }
 
     printf("Reading in full cube (%.1f MB)... ", (dx * dy * dz * sizeof(float) / 1048576.0));
+    free(temp);
     temp = malloc(sizeof(float) * dz * dy * dx + sizeof(float) * size_header);
     if ((f = fopen(DATA_PATH_PROCESSED "raw_reordered_s2ncube.dat", "rb")) == NULL) {
         perror("No File found");
+        free(temp);
         return -1;
     }
 
@@ -234,7 +253,13 @@ int main(int argc, char *argv[]) {
         int best_used = 0;
         best_template = 0;
         float avoid_z = 0;
-        if (previous > 0) avoid_z = prev_array[y * dx + x + dx * dy * 1]; //+3 for dimensions written to file
+        if (previous > 0) {
+            if (!prev_array) {
+                exit(EXIT_FAILURE); // Or handle the error as appropriate
+            }
+            // Now you can safely access prev_array
+            avoid_z = prev_array[y * dx + x + dx * dy * 1]; // Accessing prev_array after ensuring it's initialized
+        }
         for (template = 1; template < 512; template++) {
             zmin = zlow;
             zmax = zqso;
