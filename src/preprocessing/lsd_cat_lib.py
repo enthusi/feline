@@ -1416,8 +1416,8 @@ def gen_tempfilename(suffix='.fits', chars=6):
     Generate temporary filename 'XXXXXXX.suffix', where
     XXXXXX are <chars> (default: 6) random charchaters.
     """
-    assert type(suffix) == str
-    assert type(chars) == int
+    assert isinstance(suffix, str)
+    assert isinstance(chars, int)
 
     tempfilename = ''.join(np.random.choice(list(string.ascii_uppercase +
                                                  string.digits), size=chars))
