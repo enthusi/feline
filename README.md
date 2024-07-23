@@ -52,7 +52,7 @@ Copy the Cubefile into the data/raw/ directory in the project
 
 Create a virtual environment
 ```bash
-python3.8 -m venv venv
+python3.x -m venv venv (minimum python3 version tested is 3.8)
 ```
 Activate the environment
 ```bash
