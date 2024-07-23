@@ -1,3 +1,37 @@
+"""
+This module, `detect_objects`, is part of an astronomical data analysis
+project. It includes functionalities for converting between world and pixel
+coordinates, calculating 2D Gaussian values, and detecting objects in
+astronomical images.
+
+Functions:
+- world_to_pix: Converts world coordinates (RA, Dec) to pixel coordinates.
+- pix_to_world: Converts pixel coordinates to world coordinates (RA, Dec).
+- gauss2d: Calculates the value of a 2D Gaussian function.
+- twoD_Gaussian: Computes a 2D Gaussian value at a given point.
+- print_lines: Returns catalog lines for a given toggle and redshift.
+- sort_catalog: Sorts the catalog based on a specific value.
+- write_to_file: Writes sorted catalog data to a file.
+
+This module utilizes libraries such as `astropy` for WCS transformations,
+`matplotlib` for plotting, `numpy` and `scipy` for numerical operations, and
+`skimage` for feature detection. It supports the analysis of astronomical data
+by identifying and cataloging objects based on their spectral and spatial
+characteristics.
+
+Dependencies:
+- astropy: For FITS file handling and WCS transformations.
+- matplotlib: For plotting and visualizations.
+- numpy, scipy: For numerical calculations and array manipulations.
+- skimage: For object detection in images.
+- json, os, sys: For file and system operations.
+
+Note:
+This module is designed to work with specific project path configurations and
+assumes the availability of certain global variables and data files defined
+elsewhere in the project.
+"""
+
 import json
 import os
 import sys

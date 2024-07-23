@@ -1,3 +1,36 @@
+"""
+This module, `create_pdf`, is designed for handling PDF operations within the
+astronomical data analysis project. It provides functionalities to merge single
+PDF files into a comprehensive document and to clean up the data folder by
+removing these single PDF files after merging. This is particularly useful for
+aggregating individual plot files into a single report document and maintaining
+a clean workspace.
+
+Functions:
+- create_pdf_file: Merges all single PDF files found in the specified data
+  folder into one PDF file, named with the current timestamp to
+  ensure uniqueness.
+- remove_pdf_files: Deletes all single PDF files in the data folder to free up
+  space and keep the directory organized.
+
+The module leverages the `pypdf` library for PDF manipulation,
+including merging PDF documents. It also uses configurations from
+`project_path_config` to locate the data folder where PDF files are stored.
+This module is part of a larger project focused on the analysis of astronomical
+data, facilitating the documentation and reporting aspect of the analysis.
+
+Dependencies:
+- pypdf: For PDF file manipulation, specifically merging PDF files.
+- os: For interacting with the file system.
+- datetime: For generating timestamps used in naming the merged PDF file.
+- project_path_config: For accessing project-specific path configurations.
+
+Note:
+This module assumes that the PDF files to be merged follow a specific naming
+convention (containing 'fig' in their names) and are located in a predefined
+data folder as specified in `project_path_config`.
+"""
+
 import os
 import pypdf
 import project_path_config

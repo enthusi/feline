@@ -1,3 +1,41 @@
+"""
+This module, `create_final_plots`, is designed for generating various plots
+and visualizations
+related to the analysis of astronomical data. It includes functions for
+converting pixel to world coordinates and vice versa, calculating the impact
+parameter between a quasar and a galaxy, fitting spectral templates to observed
+galaxy data, and more. The module utilizes libraries such as matplotlib for
+plotting, astropy for astronomical calculations and coordinate transformations,
+and mpdaf for handling data cubes. It also includes functionality for reading
+and processing data from specific project paths and files, as defined in the
+`project_path_config` module.
+
+Key functionalities include:
+- Converting between pixel and world (RA, Dec) coordinates.
+- Calculating the plate scale and impact parameter at a given redshift.
+- Fitting galaxy models to observed spectra using Gaussian functions.
+- Generating plots for spectral data, including overlays of model fits and
+  annotations for expected absorption and emission lines.
+- Visualizing data cubes and quality metrics for astronomical objects.
+
+This module is part of a larger project focused on the analysis of astronomical
+data cubes, with a particular emphasis on the study of galaxies and quasars.
+
+Dependencies:
+- astropy: For cosmological calculations, FITS file handling, and
+  WCS transformations.
+- matplotlib: For creating plots and visualizations.
+- mpdaf: For manipulating data cubes from astronomical observations.
+- numpy: For numerical calculations and array manipulations.
+- json, os, sys, logging, struct: For handling files, logging, and other system
+  operations.
+
+Note:
+This module assumes the availability of specific global variables and
+configurations defined elsewhere in the project, such as cosmological
+parameters and project path configurations.
+"""
+
 import json
 import math
 import os

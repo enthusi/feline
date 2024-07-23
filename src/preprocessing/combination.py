@@ -1,3 +1,37 @@
+"""
+This module, `combination`, is designed for preprocessing astronomical data in
+the context of an astronomical data analysis project. It provides
+functionalities for loading data from files, creating masking plots, and
+processing cube data to facilitate further analysis.
+
+Functions:
+- load_data: Loads data from a specified file and extension number, returning
+  a summed cube data along a specified axis.
+- create_masking_plot: Generates a masking plot based on signal-to-noise ratio
+  and writes it to a file, aiding in identifying areas of interest.
+- write_to_file: Writes numerical data to a file in binary format, supporting
+  data persistence and sharing.
+- process_cube_data: Processes cube data by extracting spectra from each pixel
+  and writing the processed data to a file, enabling detailed spectral
+  analysis.
+
+This module leverages the `mpdaf` library for handling astronomical data cubes,
+`numpy` for numerical operations, and standard libraries such as `os` and
+`struct` for file and system operations. It plays a crucial role in the
+preprocessing stage of the project, preparing data for subsequent
+analysis steps.
+
+Dependencies:
+- mpdaf: For manipulation and analysis of astronomical data cubes.
+- numpy: For numerical calculations and array manipulations.
+- os, sys, struct: For file and system operations.
+
+Note:
+This module is part of a larger project focused on the analysis of astronomical
+data. It assumes the availability of project-specific path configurations
+defined in the `project_path_config` module.
+"""
+
 import os
 import struct
 import sys
