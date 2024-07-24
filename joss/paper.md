@@ -7,14 +7,12 @@ tags:
 authors:
   - name: Martin Wendt
     orcid: 0000-0001-5020-9994
-    equal-contrib: true
     affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Marvin Henschel
-    equal-contrib: true
+    orcid: 0009-0000-9462-433X
     affiliation: 2
   - name: Oskar Fjonn Soth
     orcid: 0009-0004-1200-9130
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
     affiliation: 2
 
 affiliations:
