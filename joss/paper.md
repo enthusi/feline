@@ -1,5 +1,5 @@
 ---
-title: 'FELINE: A something...'
+title: 'FELINE: A tool to detect emission line galaxies in 3d data'
 tags:
   - Python
   - astronomy
