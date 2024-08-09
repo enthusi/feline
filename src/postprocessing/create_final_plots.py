@@ -374,7 +374,7 @@ if __name__ == "__main__":
     logging.disable(logging.CRITICAL - 2)
     cosmo = astropy.cosmology.FlatLambdaCDM(H0=70, Om0=0.3)
 
-    # MW23 these are positions in Angstrom (wavelength)
+    # These are positions in Angstrom (wavelength)
     # where one might expect absorption in Galaxies! Iron,Magnesium etc.
     # those are just marked as vertical bars later to help the identifcation
     expected_galaxy_absorption_positions = [
@@ -392,7 +392,8 @@ if __name__ == "__main__":
         5895.6
     ]
 
-    # dummies
+    # place an object, e.g. quasar in pixel coordinates to
+    # compute the impact parameter
     qso_x = 150
     qso_y = 150
     foundb = -1
@@ -410,7 +411,6 @@ if __name__ == "__main__":
 
     prev_cat = False
 
-    # 12 just woudlnt fit in!
     max_lines_shown = 12
     columns = 12
     rows = 4
@@ -433,8 +433,6 @@ if __name__ == "__main__":
         print("SYNTAX: %s cube.fits catalog.cat [ds9.reg]" % sys.argv[0])
         sys.exit(0)
 
-    # MW23 remember? would be nice to read this in from
-    # the SAME config file in all codes that need it
     # MW23 lazy way to tell which lines are pairs and
     # which are not something like for:
     # entry in atoms use len(entry)

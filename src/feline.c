@@ -6,9 +6,6 @@
     #include <SDL2/SDL.h>
 #endif
 
-
-// new in version 7: export to 2d float arrays
-
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define DATA_PATH "data/raw/"
@@ -64,7 +61,6 @@ float max_match = 8.0;
 int previous = 0;
 //this parameter de-values single super strong peaks in the S2N cube
 //and thus favors multi-line-solutions
-
 
 
 int main(int argc, char *argv[]) {
@@ -215,7 +211,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < dy * dx; i++) {
 
         float v;
-        //int iter=0;
+        
         int y = i / (dx);
         int x = i % (dx);
         int z;
@@ -285,9 +281,6 @@ int main(int argc, char *argv[]) {
 
             if (lines_ptr < min_used) continue; //try next template
 
-            //v3:
-
-
             for (int k = 0; k < lines_ptr; k++) {
                 emission = all_lines[k];
                 zmin = MAX(lmin / emission - 1, zmin);
@@ -310,22 +303,10 @@ int main(int argc, char *argv[]) {
                 for (int k = 0; k < lines_ptr; k++) {
                     emission = all_lines[k] * (redshift + 1);
                     z = (int) ((emission - lmin) / 1.25);
-                    //if (z<0) printf("alarm low!\n");
-                    //if (z>dz) printf("alarm high!\n");
-                    //  *  this is the used lineshape now
-                    //  *
-                    // ***
-                    // ***
                     v = temp[z + y * dx * dz + x * dz + size_header];//*scale;
-
-                    //if (0)
-                    //{
-                    //  v+=temp[z+1+y*dx*dz+x*dz+header]/2.0;//*scale;
-                    //  v+=temp[z-1+y*dx*dz+x*dz+header]/2.0;//*scale;
-                    //}
                     if (v < ignore_below) v = 0;
-                    // if (v>max_match) v=max_match;
-                    if (v > max_match) v = max_match + log(v);
+                    
+                    if (v > max_match) v = max_match + log(v); //crop intensity spikes
                     sum += v * scale;
                 }//Emission loop
 
@@ -363,8 +344,7 @@ int main(int argc, char *argv[]) {
 
         int tid = omp_get_thread_num();
         if (tid == 0) {
-            //if (i % (dy) == 0) {
-
+       
             {
 #if SDLavailable
                 SDL_UpdateTexture(texture, NULL, pixels, dx * 4 * sizeof(Uint32));
@@ -375,13 +355,11 @@ int main(int argc, char *argv[]) {
                 printf("\rSeeking for Emitters... %.1f", ((i * 100.0) / (dy * dx)));
                 //fflush(stdout);
             }
-            // }
+            
         }
 
 
     }//xy-loop
-
-    //printf("* %d\n", sizeof(unsigned int));
 
     printf("%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
 
