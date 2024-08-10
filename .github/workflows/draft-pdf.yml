@@ -1,7 +1,7 @@
 name: Draft PDF
 
 on:
-  workflow_dispatch:  # This ensures the workflow can only be triggered manually
+  workflow_dispatch:
 
 jobs:
   paper:
@@ -14,9 +14,13 @@ jobs:
         uses: openjournals/openjournals-draft-action@master
         with:
           journal: joss
-          paper-path: joss/paper.md  # Path to the paper within your repo
+          # This should be the path to the paper within your repo.
+          paper-path: joss/paper.md
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
           name: paper
-          path: joss/paper.pdf  # Output path for the compiled PDF
+          # This is the output path where Pandoc will write the compiled
+          # PDF. Note, this should be the same directory as the input
+          # paper.md
+          path: joss/paper.pdf
