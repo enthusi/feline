@@ -9,7 +9,7 @@ authors:
     orcid: 0000-0001-5020-9994
     affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Marvin Henschel
-    orcid: 0009-0000-9462-433X #test123
+    orcid: 0009-0000-9462-433X
     affiliation: 2
   - name: Oskar Fjonn Soth
     orcid: 0009-0004-1200-9130
@@ -38,7 +38,7 @@ setup), benchmark
 
 
 # Summary
-
+# Test
 
 The detection and classification of objects in astrophysical data has been a key task since the earliest days of astronomy. Over the past decade, the volume of newly observed data has increased dramatically. The advent of integral field unit spectrographs (IFUs), which produce 3D data cubes, has shifted the focus from classical single-target observations to much broader fields of view captured in a single exposure.
 Simple flux-level peak detection algorithms based on thresholding are prone to either missing many potential real objects or, as a trade-off, producing an abundance of false positives.
