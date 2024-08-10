@@ -27,18 +27,16 @@ bibliography: paper.bib
 # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
 aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
 aas-journal: Astrophysical Journal <- The name of the AAS journal.
- 1) summary mit allem, aber kurz
- 2) science (whatfor and why and how (matched filter), USE CASES
- 3) implementation (open MP, C, CUDA, brute force, cache friendly data 
-setup), benchmark
- 4) references
-- github alles in main
-- github clean up allgemein
+# 1) summary mit allem, aber kurz
+# 2) science (whatfor and why and how (matched filter), USE CASES
+# 3) implementation (open MP, C, CUDA, brute force, cache friendly data setup), benchmark
+# 4) references
+# github alles in main
+# github clean up allgemein
 ---
 
 
 # Summary
-# Test
 
 The detection and classification of objects in astrophysical data has been a key task since the earliest days of astronomy. Over the past decade, the volume of newly observed data has increased dramatically. The advent of integral field unit spectrographs (IFUs), which produce 3D data cubes, has shifted the focus from classical single-target observations to much broader fields of view captured in a single exposure.
 Simple flux-level peak detection algorithms based on thresholding are prone to either missing many potential real objects or, as a trade-off, producing an abundance of false positives.
