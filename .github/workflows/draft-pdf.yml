@@ -1,11 +1,7 @@
 name: Draft PDF
 
 on:
-  push:
-    paths:
-      - paper/**
-      - .github/workflows/draft-pdf.yml
-  workflow_dispatch:  # This ensures the workflow can also be triggered manually
+  workflow_dispatch:  # This ensures the workflow can only be triggered manually
 
 jobs:
   paper:
