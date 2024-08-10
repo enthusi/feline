@@ -47,7 +47,7 @@ asks for automated processes to support the scientists.
 
 The *F*ind *E*mission *LINE*s tool ``FELINE`` combines a fully parallelized galaxy line template matching with the matched filter approach for individual emission features of LSDcat [@HerenzE_17a; @herenz2023].
 ￼
-The ``FELINE`` algorithm evaluates the likelihood of emission lines at specific positions in each spectrum of the data cube. It does this by probing all possible combinations of up to 14 typical emission features, including Hα, Hβ, Hγ, Hδ, [OII], [OIII], [NII], [SII], and [NeIII], for the redshift range of interest (0.4 < z < 1.4). This extensive analysis leads to approximately 230,400,000,000 iterations.
+The ``FELINE`` algorithm evaluates the likelihood of emission lines at specific positions in each spectrum of the data cube. It does this by probing all possible combinations of up to 14 typical emission features, including Hα, Hβ, Hγ, Hδ, [OII], [OIII], [NII], [SII], and [NeIII], for the redshift range of interest (0.4 < z < 1.4). This extensive analysis leads to approximately 230,400,000,000  iterations.
 
 # Science field
 The signal-to-noise cube generated after matched filtering with a 3D emission line template reflects the probability of an emission line at a given spatial and spectral position. This probability is significantly boosted by the filtering process.
