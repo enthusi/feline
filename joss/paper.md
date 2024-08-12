@@ -5,7 +5,7 @@ tags:
   - astronomy
   - ...
 authors:
-  - name: Martin Wendt^[First author]
+  - name: Martin Wendt^[mwendt@astro.physik.uni-potsdam.de]
     orcid: 0000-0001-5020-9994
     affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Marvin Henschel
@@ -27,17 +27,10 @@ bibliography: paper.bib
 # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
 aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
 aas-journal: Astrophysical Journal <- The name of the AAS journal.
-# 1) summary mit allem, aber kurz
-# 2) science (whatfor and why and how (matched filter), USE CASES
-# 3) implementation (open MP, C, CUDA, brute force, cache friendly data setup), benchmark
-# 4) references
-# github alles in main
-# github clean up allgemein
 ---
 
 
 # Summary
-
 The detection and classification of objects in astrophysical data has been a key task since the earliest days of astronomy. Over the past decade, the volume of newly observed data has increased dramatically. The advent of integral field unit spectrographs (IFUs), which produce 3D data cubes, has shifted the focus from classical single-target observations to much broader fields of view captured in a single exposure.
 Simple flux-level peak detection algorithms based on thresholding are prone to either missing many potential real objects or, as a trade-off, producing an abundance of false positives.
 
@@ -57,7 +50,6 @@ This approach is particularly successful for galaxies that show no or little con
 ``FELINE`` was used for the galaxy catalogs of the MEGAFLOW survey in @Langan2023, @Cherrey2024, and @Schroetter2024.
 
 # Implementation
-
 The tool uses a brute-force search through the parameter space. Due to the size of the parameter space, the language of implementation was chosen as C for computational efficiency. This approach demonstrates the success of filtering the data with expected templates for individual emission lines, rather than testing full physical models of galaxies (including simulated continuum and temperature-broadened emission lines) against the raw observed data. This reduces the individual models to a single position at which the likelihood of a line is being probed.
 ---
 For each set of parameters (spatial position in the cube, redshift, and line composition), the ``FELINE`` algorithm returns the value of the highest-scoring combination, along with its corresponding redshift and line composition.
@@ -80,7 +72,7 @@ Shown are from left to right the quality of the best match, the corresponding re
 
 We provide a python framework to further visualize and verify the ``FELINE`` detections.
 
-![Plot generated from the FELINE result.\label{fig:visualization}](feline_plots.png)
+![Plot generated from the FELINE result.\label{fig:visualization}](feline_plot.png)
 
 
 # Acknowledgements
