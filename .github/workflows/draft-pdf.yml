@@ -3,7 +3,7 @@ name: Draft PDF
 on:
   push:
     paths:
-      - paper/**
+      - joss/**
       - .github/workflows/draft-pdf.yml
   workflow_dispatch:
 
