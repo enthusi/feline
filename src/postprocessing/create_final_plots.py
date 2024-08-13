@@ -722,8 +722,6 @@ if __name__ == "__main__":
         lines_found.sort()
 
         # plot all found lines AND always Ha,Hb
-        hain = False
-        hbin = False
         first = True
         height2b = 1
         height2a = 1
@@ -741,18 +739,24 @@ if __name__ == "__main__":
             # thision = atom_id[wave]
             thision = atoms["atom_id"].get(str(wave))
             wobs = ref_index.vac2air(wave * (z + 1) / 10.0) * 10.0
+
+            # vertical red line in middle of x-axis
             ax3.axvline(x=wobs, color="r", linestyle="--")
 
-            ax3.plot(waven, data1, linestyle="-", drawstyle="steps-mid")
-            ax3.plot(waven, data2, linestyle="-", drawstyle="steps-mid")
-            fakewav = np.arange(wobs - 5, wobs + 5, 0.1)
+            ax3.plot(waven, data1,
+                     linestyle="-",
+                     drawstyle="steps-mid",
+                     color="blue")
+            ax3.plot(waven, data2,
+                     linestyle="-",
+                     drawstyle="steps-mid",
+                     color="orange")
 
-            if atoms["atom_id"].get(atoms["atom_id"].get(
-                    str(lines_found[h]))) == r"H$\alpha$":
-                hain = True
-            if atoms["atom_id"].get(atoms["atom_id"].get(
-                    str(lines_found[h]))) == r"H$\beta$":
-                hbin = True
+            # Set y-axis limits based on the blue line (data1)
+            y_min = min(data1)
+            y_max = max(data1)
+            ax3.set_ylim(y_min, y_max)
+
             dl = 15.0
             lim_low = max(crval, wobs - dl)
             lim_high = min(wobs + dl, crmax)
