@@ -1,3 +1,4 @@
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 # Feline (Find Emission Lines)
 ## Table of Contents
 - [Project Overview](#project-overview)
