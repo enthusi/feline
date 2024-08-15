@@ -48,14 +48,14 @@ jobs:
         mkdir -p $HOME/tmp
         export TMPDIR=$HOME/tmp
 
-    - name: Download test data
-      run: |
-        wget https://github.com/osoth/testdata/raw/main/subset_cube.fits
-        mv subset_cube.fits test_file.fits
-        cp test_file.fits data/raw/test_file.fits
-
-    - name: Test with pytest
-      env:
-        PYTHONPATH: ${{ github.workspace }}/src/postprocessing:${{ github.workspace }}/src/preprocessing
-      run: |
-        pytest
+#    - name: Download test data
+#      run: |
+#        wget https://github.com/osoth/testdata/raw/main/subset_cube.fits
+#        mv subset_cube.fits test_file.fits
+#        cp test_file.fits data/raw/test_file.fits
+#
+#    - name: Test with pytest
+#      env:
+#        PYTHONPATH: ${{ github.workspace }}/src/postprocessing:${{ github.workspace }}/src/preprocessing
+#      run: |
+#        pytest

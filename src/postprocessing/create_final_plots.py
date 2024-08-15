@@ -814,5 +814,3 @@ if __name__ == "__main__":
                                  file), format="pdf")
         plt.close()
         i += 1
-
-
