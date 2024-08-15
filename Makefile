@@ -93,7 +93,11 @@ run:
 	cd src/preprocessing ; \
 	python combination.py $(CUBEFILENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
-	rm feline.bin
+	@if [ -e feline.bin ]; then \
+		rm -f feline.bin; \
+	else \
+		echo ""; \
+	fi
 	@$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
 	./feline.bin $(ZLOW) $(ZHIGH) $(MAX_MATCH) $(IGNORE_BELOW)
 
@@ -147,7 +151,11 @@ cuda:
 	cd src/preprocessing ; \
 	python combination.py $(CUBEFILENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
-	rm feline.bin
+	@if [ -e feline.bin ]; then \
+                rm -f feline.bin; \
+        else \
+                echo ""; \
+        fi
 	nvcc -O3 --use_fast_math -o feline.bin src/feline.cu
 	./feline.bin $(ZLOW) $(ZHIGH) $(MAX_MATCH) $(IGNORE_BELOW)
 

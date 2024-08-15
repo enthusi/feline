@@ -1,0 +1,51 @@
+Benchmarking Results
+====================
+
+CPU Name: AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx
+CPU Cores: 8
+CPU Max Frequency: 2100,0000 MHz
+Total RAM: 14917.1 MB
+
+Cube File: cube.fits
+Cube File Size: 192M
+
+Run #1
+Run time: 25.698665853 seconds
+Average CPU Clock Speed: 2656.03320000000000000000 MHz
+
+Run #2
+Run time: 172.250952032 seconds
+Average CPU Clock Speed: 2481.91900000000000000000 MHz
+
+Run #3
+Run time: 200.425300506 seconds
+Average CPU Clock Speed: 2197.48401562500000000000 MHz
+
+Run #4
+Run time: 192.734819895 seconds
+Average CPU Clock Speed: 2235.61392432432432432432 MHz
+
+Run #5
+Run time: 211.180937749 seconds
+Average CPU Clock Speed: 2070.46642288557213930348 MHz
+
+Run #6
+Run time: 189.488429323 seconds
+Average CPU Clock Speed: 2266.26703296703296703296 MHz
+
+Run #7
+Run time: 194.912812939 seconds
+Average CPU Clock Speed: 2202.13652941176470588235 MHz
+
+Run #8
+Run time: 190.064686370 seconds
+Average CPU Clock Speed: 2325.41138251366120218579 MHz
+
+Run #9
+Run time: 213.002163536 seconds
+Average CPU Clock Speed: 2092.23578325123152709359 MHz
+
+Run #10
+Run time: 203.915297541 seconds
+Average CPU Clock Speed: 2116.22383589743589743589 MHz
+
