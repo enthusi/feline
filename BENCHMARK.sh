@@ -9,92 +9,89 @@ echo "" >> $RESULT_FILE
 # Hardware Informationen sammeln
 echo "Collecting hardware information..."
 
+# CPU Informationen
 CPU_NAME=$(lscpu | grep "Model name:" | awk -F: '{print $2}' | sed 's/^ *//')
 CPU_CORES=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
-CPU_MAX_FREQ=$(lscpu | grep "CPU max MHz:" | awk -F: '{print $2}' | sed 's/^ *//')
 TOTAL_RAM=$(grep MemTotal /proc/meminfo | awk '{print $2 / 1024 " MB"}')
+
+# GPU Informationen (NVIDIA)
+if command -v nvidia-smi &> /dev/null
+then
+    GPU_MODEL=$(nvidia-smi --query-gpu=name --format=csv,noheader)
+    GPU_VRAM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader)
+else
+    GPU_MODEL="N/A"
+    GPU_VRAM="N/A"
+fi
 
 # Hardware Informationen in die Ergebnisdatei schreiben
 echo "CPU Name: $CPU_NAME" >> $RESULT_FILE
 echo "CPU Cores: $CPU_CORES" >> $RESULT_FILE
-echo "CPU Max Frequency: $CPU_MAX_FREQ MHz" >> $RESULT_FILE
 echo "Total RAM: $TOTAL_RAM" >> $RESULT_FILE
+echo "GPU Model: $GPU_MODEL" >> $RESULT_FILE
+echo "GPU VRAM: $GPU_VRAM MB" >> $RESULT_FILE
 echo "" >> $RESULT_FILE
 
 # CUBENAME aus der Makefile auslesen
-CUBENAME=$(grep -oP '^CUBENAME := "\K[^"]+' Makefile)
+CUBENAME="DATACUBE_UDF-10.fits"
+ZLOW="0"
+ZHIGH="1.9"
+MAX_MATCH="20"
+IGNORE_BELOW="7"
 
-if [ -n "$CUBENAME" ]; then
-    # Dateigröße ermitteln
-    if [ -f "$CUBENAME" ]; then
-        CUBE_SIZE=$(du -h "$CUBENAME" | awk '{print $1}')
-        echo "Cube File: $CUBENAME" >> $RESULT_FILE
-        echo "Cube File Size: $CUBE_SIZE" >> $RESULT_FILE
-    else
-        echo "Cube File: $CUBENAME not found" >> $RESULT_FILE
-    fi
-    echo "" >> $RESULT_FILE
-else
-    echo "CUBENAME not found in Makefile" >> $RESULT_FILE
-    echo "" >> $RESULT_FILE
-fi
+# Preprocessing der Cubefile und Erstellen der Binärdatei
+#cp $CUBENAME data/raw/$CUBENAME
+echo "Starting preprocessing of the cubefile..."
+echo ""
+echo "apply median filter to 'flat' out the data (emission lines remain)..."
+#python3 src/preprocessing/median-filter-cube.py data/raw/$CUBENAME --signalHDU=1 --varHDU=2 --num_cpu=$CPU_CORES --width=151 --output=data/processed/med_filt.fits > /dev/null
+echo ""
+echo "filter the data cube with a 'typical line' template in spatial dimension first..."
+#python3 src/preprocessing/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=$CPU_CORES --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite > /dev/null
+echo "filter the data cube with a 'typical line' template in spectral dimension..."
+#python3 src/preprocessing/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=$CPU_CORES --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite > /dev/null
+echo "construct a signal-to-noise cube..."
+#python3 src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1 > /dev/null
 
-# Benchmark durchführen
-echo "Starting the benchmark..."
-for i in {1..10}
+echo "deleting tmp files..."
+#rm data/processed/spatial_cc.fits
+#rm data/processed/spectral_cc.fits
+#ln -s data/raw/$CUBENAME data/raw/
+
+#echo "Create Masking Plot and transpose Cube for better Cache Access..."
+#cd src/preprocessing
+#python3 combination.py $CUBENAME s2n_v250.fits
+#cd ../..
+
+# Compile the CUDA code
+#echo "Starting FELINE..."
+#if [ -e feline.bin ]; then
+#    rm -f feline.bin
+#fi
+
+#make
+
+# Benchmarking feline.bin
+echo "Benchmarking feline.bin..."
+for i in $(seq 1 10)
 do
     echo "Run #$i" >> $RESULT_FILE
-    
-    # Initialisieren der Variablen zur Berechnung der Durchschnittswerte
-    FREQ_SUM=0
-    FREQ_COUNT=0
     
     # Zeitmessung starten
     START_TIME=$(date +%s.%N)
     
-    # make run ausführen und währenddessen Taktrate überwachen
-    make run &
-    PID=$!
-    
-    while kill -0 $PID 2> /dev/null; do
-        # Alle CPU-Kern-Taktraten sammeln
-        FREQ=$(cat /proc/cpuinfo | grep "MHz" | awk '{print $4}')
-        
-        # Durchschnitt der Taktraten berechnen
-        AVG_CORE_FREQ=$(echo "$FREQ" | awk '{sum+=$1} END {print sum/NR}')
-        
-        # Taktrate summieren
-        FREQ_SUM=$(echo "$FREQ_SUM + $AVG_CORE_FREQ" | bc)
-        
-        # Anzahl der Messungen erhöhen
-        FREQ_COUNT=$((FREQ_COUNT + 1))
-        
-        sleep 1  # 1 Sekunde warten, bevor die Werte erneut überprüft werden
-    done
-    
-    wait $PID
-    
-    # make clean ausführen
-    make clean
+    # Feline ausführen
+    time ./feline.bin $ZLOW $ZHIGH $MAX_MATCH $IGNORE_BELOW
     
     # Zeitmessung beenden
     END_TIME=$(date +%s.%N)
     
     # Laufzeit berechnen
-    RUN_TIME=$(echo "$END_TIME - $START_TIME" | bc)
+    RUN_TIME=$(echo "$END_TIME - $START_TIME" | awk '{print $1 - $2}')
     
-    # Durchschnittstaktrate berechnen
-    if [ $FREQ_COUNT -gt 0 ]; then
-        AVG_FREQ=$(echo "$FREQ_SUM / $FREQ_COUNT" | bc -l)
-    else
-        AVG_FREQ="N/A"
-    fi
-    
-    # Laufzeit und Durchschnittstaktrate in die Ergebnisdatei schreiben
+    # Laufzeit in die Ergebnisdatei schreiben
     echo "Run time: $RUN_TIME seconds" >> $RESULT_FILE
-    echo "Average CPU Clock Speed: $AVG_FREQ MHz" >> $RESULT_FILE
     echo "" >> $RESULT_FILE
 done
-python3 benchmark_plot.py
+rm data/raw/$CUBENAME
 echo "Benchmark completed. Results are saved in $RESULT_FILE."
-
