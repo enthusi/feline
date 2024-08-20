@@ -1,0 +1,39 @@
+Benchmarking Results
+====================
+
+CPU Name: Intel(R) Core(TM) i7-10510U CPU @ 1.80GHz
+CPU Cores: 8
+Total RAM: 15735,7 MB
+GPU Model: 
+GPU VRAM:  MB
+
+Run #1
+Run time: 177.743091541 seconds
+
+Run #2
+Run time: 170.834409606 seconds
+
+Run #3
+Run time: 167.283401093 seconds
+
+Run #4
+Run time: 169.108544824 seconds
+
+Run #5
+Run time: 171.078773291 seconds
+
+Run #6
+Run time: 168.824644042 seconds
+
+Run #7
+Run time: 170.667599665 seconds
+
+Run #8
+Run time: 168.839465346 seconds
+
+Run #9
+Run time: 172.374496967 seconds
+
+Run #10
+Run time: 171.338795003 seconds
+
