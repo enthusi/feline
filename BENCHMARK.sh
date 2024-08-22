@@ -8,21 +8,21 @@ echo "" >> $RESULT_FILE
 
 # Hardware Informationen sammeln
 echo "Collecting hardware information..."
-
+export omp_num_threads=1
 # CPU Informationen
 CPU_NAME=$(lscpu | grep "Model name:" | awk -F: '{print $2}' | sed 's/^ *//')
-CPU_CORES=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
+CPU_CORES=$(lscpu | grep "^Core(s) per socket:" | awk '{print $4}')
 TOTAL_RAM=$(grep MemTotal /proc/meminfo | awk '{print $2 / 1024 " MB"}')
 
 # GPU Informationen (NVIDIA)
-#if command -v nvidia-smi &> /dev/null
-#then
-#    GPU_MODEL=$(nvidia-smi --query-gpu=name --format=csv,noheader)
-#    GPU_VRAM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader)
-#else
-#    GPU_MODEL="N/A"
-#    GPU_VRAM="N/A"
-#fi
+if command -v nvidia-smi &> /dev/null
+then
+    GPU_MODEL=$(nvidia-smi --query-gpu=name --format=csv,noheader)
+    GPU_VRAM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader)
+else
+    GPU_MODEL="N/A"
+    GPU_VRAM="N/A"
+fi
 
 # Hardware Informationen in die Ergebnisdatei schreiben
 echo "CPU Name: $CPU_NAME" >> $RESULT_FILE
@@ -30,7 +30,7 @@ echo "CPU Cores: $CPU_CORES" >> $RESULT_FILE
 echo "Total RAM: $TOTAL_RAM" >> $RESULT_FILE
 echo "GPU Model: $GPU_MODEL" >> $RESULT_FILE
 echo "GPU VRAM: $GPU_VRAM MB" >> $RESULT_FILE
-echo "" >> $RESULT_FILE
+
 
 # CUBENAME aus der Makefile auslesen
 CUBENAME="cube.fits"
@@ -38,6 +38,7 @@ ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
 IGNORE_BELOW="7"
+echo "Cube File: $CUBENAME ($(du -h "$CUBENAME" | awk '{print $1}'))" >> "$RESULT_FILE"
 
 # Preprocessing der Cubefile und Erstellen der Binärdatei
 cp $CUBENAME data/raw/$CUBENAME
@@ -56,7 +57,7 @@ python3 src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --
 echo "deleting tmp files..."
 rm data/processed/spatial_cc.fits
 rm data/processed/spectral_cc.fits
-ln -s data/raw/$CUBENAME data/raw/
+cp $CUBENAME data/raw/$CUBENAME
 
 echo "Create Masking Plot and transpose Cube for better Cache Access..."
 cd src/preprocessing
@@ -69,29 +70,29 @@ if [ -e feline.bin ]; then
     rm -f feline.bin
 fi
 
+# nvcc -O3 --use_fast_math -o feline.bin src/feline.cu
 make
-
 # Benchmarking feline.bin
 echo "Benchmarking feline.bin..."
 for i in $(seq 1 10)
 do
     echo "Run #$i" >> $RESULT_FILE
-    
+
     # Zeitmessung starten
-    START_TIME=$(date +%s.%N)
-    
+    START_TIME=$(date +%s%N)
+
     # Feline ausführen
     ./feline.bin $ZLOW $ZHIGH $MAX_MATCH $IGNORE_BELOW
-    
+
     # Zeitmessung beenden
-    END_TIME=$(date +%s.%N)
-    
-    # Laufzeit berechnen
-    RUN_TIME=$(echo "$END_TIME - $START_TIME" | bc)
-    
+    END_TIME=$(date +%s%N)
+
+    # Laufzeit berechnen using awk for floating-point subtraction
+    RUN_TIME=$(awk "BEGIN {print $END_TIME - $START_TIME}")
+
     # Laufzeit in die Ergebnisdatei schreiben
-    echo "Run time: $RUN_TIME seconds" >> $RESULT_FILE
+    echo "Run time: $RUN_TIME ns" >> $RESULT_FILE
     echo "" >> $RESULT_FILE
 done
-rm data/raw/$CUBENAME
+make clean
 echo "Benchmark completed. Results are saved in $RESULT_FILE."
