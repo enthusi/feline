@@ -361,7 +361,7 @@ int main(int argc, char *argv[]) {
 
     }//xy-loop
 
-    printf("%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
+    printf("\n%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
 
     FILE *res_i_file;
     res_i_file = fopen("float32_array_omp4.raw", "wb");
