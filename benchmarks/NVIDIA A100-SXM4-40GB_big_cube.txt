@@ -1,0 +1,40 @@
+Benchmarking Results CPU + GPU
+====================
+
+CPU Name: AMD EPYC 7763 64-Core Processor
+CPU Cores: 64
+Total RAM: 1.03162e+06 MB
+GPU Model: NVIDIA A100-SXM4-40GB
+GPU VRAM: 40960 MiB MB
+Cube File: DATACUBE_UDF-10.fits (2.8 G)
+
+
+Run #1
+Run time: 26828711680 ns
+
+Run #2
+Run time: 26772287744 ns
+
+Run #3
+Run time: 26711420416 ns
+
+Run #4
+Run time: 26777903616 ns
+
+Run #5
+Run time: 26771683840 ns
+
+Run #6
+Run time: 26727774976 ns
+
+Run #7
+Run time: 26749544192 ns
+
+Run #8
+Run time: 26698120448 ns
+
+Run #9
+Run time: 26691131136 ns
+
+Run #10
+Run time: 26776671744 ns
