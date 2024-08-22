@@ -1,0 +1,39 @@
+Benchmarking Results
+====================
+
+CPU Name: Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz
+CPU Cores: 1
+Total RAM: 15927,6 MB
+GPU Model: 
+GPU VRAM:  MB
+
+Run #1
+Run time: 378.769396074 seconds
+
+Run #2
+Run time: 379.743874011 seconds
+
+Run #3
+Run time: 376.921406902 seconds
+
+Run #4
+Run time: 376.594082485 seconds
+
+Run #5
+Run time: 376.492310147 seconds
+
+Run #6
+Run time: 379.188778522 seconds
+
+Run #7
+Run time: 377.785288878 seconds
+
+Run #8
+Run time: 376.847470885 seconds
+
+Run #9
+Run time: 377.997482417 seconds
+
+Run #10
+Run time: 378.797024024 seconds
+
