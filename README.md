@@ -40,6 +40,10 @@ After editing the Makefile you can run the workflow with
 ```bash
 make run
 ```
+Or if a nvidia gpu is available and the necessary developer tools are installed you can also run:
+```bash
+make cuda
+```
 When the Workflow finished and all PDF Files are successfully merged you can find you results at
 ```bash
 data/pdf_files/result_*.pdf

@@ -1,11 +1,10 @@
-Benchmarking Results
+Benchmarking Results CPU
 ====================
 
 CPU Name: Intel(R) Core(TM) i7-10510U CPU @ 1.80GHz
-CPU Cores: 8
+CPU Cores: 4
 Total RAM: 15735,7 MB
-GPU Model: 
-GPU VRAM:  MB
+Cube File: cube.fits (192 M)
 
 Run #1
 Run time: 177.743091541 seconds

@@ -4,7 +4,7 @@ Benchmarking Results
 CPU Name: AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx
 CPU Cores: 4
 Total RAM: 14917.1 MB
-Cube File: cube.fits (185 MB)
+Cube File: cube.fits (192 M)
 
 Run #1
 Run time: 114.203265473 seconds
