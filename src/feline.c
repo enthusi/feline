@@ -8,9 +8,20 @@
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
-#define DATA_PATH "data/raw/"
 #define DATA_PATH_PROCESSED "data/processed/"
 
+
+/**
+ * Generates a color value based on an input integer.
+ *
+ * Calculates a color represented in RGB format based on the value
+ * of the input integer 'v'. Assigns different values to the red,
+ * green, and blue components depending on the range in which 'v' falls:
+ *
+ * @param v: An integer value between 0 and 255 that determines the resulting RGB color.
+ *
+ * @return: An integer representing the RGB color, packed in the format 0xRRGGBB.
+ */
 int getcolor(int v) {
     int red, green, blue;
     red = 255;
@@ -33,6 +44,15 @@ int getcolor(int v) {
 }
 
 
+/**
+ * Counts the number of set bits (1s) in an integer.
+ *
+ * Takes an integer `v` as input and returns the number
+ * of bits that are set to 1 in its binary representation.
+ *
+ * @param v The integer whose set bits are to be counted.
+ * @return The number of set bits (1s) in the integer.
+ */
 inline int countbits(int v) {
     int c;
     for (c = 0; v; v >>= 1) { c += v & 1; }
