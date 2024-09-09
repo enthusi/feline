@@ -57,6 +57,19 @@ For each set of parameters (spatial position in the cube, redshift, and line com
 The data cube contains 300 x 300 spectra, each of which is relatively small (< 64KB). The algorithm performs 512 x 5000 iterations on each spectrum, returning only 3 values: the quality of the best match, the redshift of the best match, and the line combination of the best match. Importantly, the outer 300 x 300 iterations are completely independent of each other.
 
 To take advantage of this independence, the code utilizes full parallelization of the outer loop using ``OpenMP``, with most variables shared due to their independence. As a result, FELINE scales quite well with the number of CPU cores.
+Runtimes for the ``FELINE`` code on the provided 2.8 GB example cube:
+
++-------------------+------------+--------------------+
+| Device            | Cores      | Runtime in seconds |
+|                   |            |                    |
++:=================:+:==========:+:==================:+
+| AMD_EPYC_7542     |        1   |            1150    |
+| AMD_EPYC_7542     |        4   |             282    |
+| AMD_EPYC_7542     |        8   |             141    |
+| AMD_EPYC_7542     |       16   |              71    |
++-------------------+------------+--------------------+
+| NVIDIA A100 GPU   |       64   |              27    |
++-------------------+------------+--------------------+
 
 Another major improvement in execution time was accomplished by re-arranging the data to maximize the amount of cache hits. Initially, the cube data is stored as a series of images, i.e., 300 x 300 spatial data points arranged in an array of 4,000 in spectral dimension. The algorithm works on spectral which would be strongly interleaved by  ~360 KB for consecutive data points and the full spectrum exceeding a range of 1 GiB.
 As a preprocessing step, the data cube is re-arranged as a spatial grid of full spectra.
