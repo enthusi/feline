@@ -47,16 +47,29 @@ The signal-to-noise cube generated after matched filtering with a 3D emission li
 As a result, galaxies with multiple weak emission features can be detected with a significance that substantially exceeds the significance of each individual contributing line.
 This approach is particularly successful for galaxies that show no or little continuum flux in the data, and therefore would generally go undetected in imaging data alone.
 
-``FELINE`` was used for the galaxy catalogs of the MEGAFLOW survey in @Langan2023, @Cherrey2024, and @Schroetter2024.
+``FELINE`` was used for the galaxy catalogs of the MEGAFLOW survey in [@Langan2023; @Cherrey2024; @Schroetter2024].
 
 # Implementation
 The tool uses a brute-force search through the parameter space. Due to the size of the parameter space, the language of implementation was chosen as C for computational efficiency. This approach demonstrates the success of filtering the data with expected templates for individual emission lines, rather than testing full physical models of galaxies (including simulated continuum and temperature-broadened emission lines) against the raw observed data. This reduces the individual models to a single position at which the likelihood of a line is being probed.
----
+
 For each set of parameters (spatial position in the cube, redshift, and line composition), the ``FELINE`` algorithm returns the value of the highest-scoring combination, along with its corresponding redshift and line composition.
 
 The data cube contains 300 x 300 spectra, each of which is relatively small (< 64KB). The algorithm performs 512 x 5000 iterations on each spectrum, returning only 3 values: the quality of the best match, the redshift of the best match, and the line combination of the best match. Importantly, the outer 300 x 300 iterations are completely independent of each other.
 
 To take advantage of this independence, the code utilizes full parallelization of the outer loop using ``OpenMP``, with most variables shared due to their independence. As a result, FELINE scales quite well with the number of CPU cores.
+Runtimes for the ``FELINE`` code on the provided 2.8 GB example cube [@Bacon+22] (CC BY-NC-SA 4.0):
+
++-------------------+------------+--------------------+
+| Device            | Cores      | Runtime in seconds |
+|                   |            |                    |
++:=================:+:==========:+:==================:+
+| AMD_EPYC_7542     |        1   |            1150    |
+| AMD_EPYC_7542     |        4   |             282    |
+| AMD_EPYC_7542     |        8   |             141    |
+| AMD_EPYC_7542     |       16   |              71    |
++-------------------+------------+--------------------+
+| NVIDIA A100 GPU   |       64   |              27    |
++-------------------+------------+--------------------+
 
 Another major improvement in execution time was accomplished by re-arranging the data to maximize the amount of cache hits. Initially, the cube data is stored as a series of images, i.e., 300 x 300 spatial data points arranged in an array of 4,000 in spectral dimension. The algorithm works on spectral which would be strongly interleaved by  ~360 KB for consecutive data points and the full spectrum exceeding a range of 1 GiB.
 As a preprocessing step, the data cube is re-arranged as a spatial grid of full spectra.

@@ -1,0 +1,38 @@
+Benchmarking Results CPU
+====================
+
+CPU Name: Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz
+CPU Cores: 4
+Total RAM: 15927,6 MB
+Cube File: cube.fits (192 M)
+
+Run #1
+Run time: 81.892303758 seconds
+
+Run #2
+Run time: 79.109648203 seconds
+
+Run #3
+Run time: 79.441343055 seconds
+
+Run #4
+Run time: 79.596974759 seconds
+
+Run #5
+Run time: 80.422721660 seconds
+
+Run #6
+Run time: 78.669997679 seconds
+
+Run #7
+Run time: 78.809376787 seconds
+
+Run #8
+Run time: 78.753722865 seconds
+
+Run #9
+Run time: 78.614519536 seconds
+
+Run #10
+Run time: 78.528980347 seconds
+

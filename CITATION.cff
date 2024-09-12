@@ -4,14 +4,15 @@ authors:
   - family-names: Wendt
     given-names: Martin
     orcid: https://orcid.org/0000-0001-5020-9994
+  - family-names: Henschel
+    given-names: Marvin
+    orcid: https://orcid.org/0009-0000-9462-433X
   - family-names: Soth
     given-names: Oskar
     orcid: https://orcid.org/0009-0004-1200-9130
-  - family-names: Henschel
-    given-names: Marvin
 title: "FELINE - Find Emission Lines"
 version: 1.0.0
 identifiers:
   - type: doi
     value: doi value will come here after publishing
-date-released: 2024-07-21
+date-released: 2024-09-12

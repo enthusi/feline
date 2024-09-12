@@ -32,13 +32,18 @@ You can either excecute the program manually or with our prewritten workflow ins
 ### Automatic Usage
 Edit the CUBENAME and CUBELINK inside the Makefile
 
-![image](https://github.com/user-attachments/assets/d6f2383a-e3e2-4a55-910e-9401bfe3cbea)
+![image](https://github.com/user-attachments/assets/b9f49b73-1527-4c77-aeef-ab9fe887a30d)
+
 
 If you have your CUBEFILE stored locally copy the cube in the root folder of the Project and just edit the CUBENAME.
 
 After editing the Makefile you can run the workflow with
 ```bash
 make run
+```
+Or if a nvidia gpu is available and the necessary developer tools are installed you can also run:
+```bash
+make cuda
 ```
 When the Workflow finished and all PDF Files are successfully merged you can find you results at
 ```bash
@@ -90,7 +95,7 @@ Now we can compile and run the main program
 ```bash
 cd ../../
 make
-./ feline.bin ZLOW ZHIGH MAX_MATCH IGNORE_BELOW
+./ feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
 ```
 Now we start the postprocessing
 ```bash
@@ -113,16 +118,13 @@ after running the workflow you can clean up all temporary files with
 ```bash
 make clean
 ```
-## Features
-## Documentation
+
 ## Contribution Guidelines
 We Welcome everyone who wants to Contribute to our Project you can find our Code of Conduct and Contribution Guidelines here:
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor_Convenant-2.1-blue)](CONDUCT.md)
-[![CONTRIBUTION](https://img.shields.io/badge/CONTRIBUTING.md-V1.0-blue)](CONTRIBUTING.md)
-## License
-## Changelog
-## Contact Information
+[![CONTRIBUTION](https://img.shields.io/badge/CONTRIBUTING.md-1.0-blue)](CONTRIBUTING.md)
+
 ## Acknowledgments
 We would like to acknowledge the use of the LSDCat (Line Source Detection and Cataloguing Tool) project for our preprocessing steps. The LSDCat project was developed by Edmund Christian Herenz and has been instrumental in our data analysis.
 

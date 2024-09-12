@@ -1,0 +1,39 @@
+Benchmarking Results
+====================
+
+CPU Name: AMD EPYC 7542 32-Core Processor
+CPU Cores: 32
+Total RAM: 515547 MB
+GPU Model: Tesla V100-PCIE-16GB
+GPU VRAM: 16384 MiB MB
+Cube File: DATACUBE_UDF-10.fits (2,8G)
+Run #1
+Run time: 66420349440 ns
+
+Run #2
+Run time: 66520917504 ns
+
+Run #3
+Run time: 66558698496 ns
+
+Run #4
+Run time: 66518882560 ns
+
+Run #5
+Run time: 66479213056 ns
+
+Run #6
+Run time: 66478073600 ns
+
+Run #7
+Run time: 66479740160 ns
+
+Run #8
+Run time: 66490089728 ns
+
+Run #9
+Run time: 66432457728 ns
+
+Run #10
+Run time: 66455070976 ns
+

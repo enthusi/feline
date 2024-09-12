@@ -7,8 +7,6 @@ astronomical images.
 Functions:
 - world_to_pix: Converts world coordinates (RA, Dec) to pixel coordinates.
 - pix_to_world: Converts pixel coordinates to world coordinates (RA, Dec).
-- gauss2d: Calculates the value of a 2D Gaussian function.
-- twoD_Gaussian: Computes a 2D Gaussian value at a given point.
 - print_lines: Returns catalog lines for a given toggle and redshift.
 - sort_catalog: Sorts the catalog based on a specific value.
 - write_to_file: Writes sorted catalog data to a file.
@@ -42,12 +40,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as path_effects
 import numpy as np
-import scipy
 import scipy.ndimage
-import skimage
 import skimage.feature
 import struct
-
 
 import project_path_config
 
@@ -56,30 +51,6 @@ try:
     mpl.use("TkAgg")
 except ImportError as e:
     mpl.use("Agg")
-
-
-def world_to_pix(coord: astropy.wcs.WCS, rad: tuple) -> tuple:
-    """
-    Convert world coordinates to pixel coordinates.
-
-    Given a set of world coordinates (RA, Dec) and an astropy WCS object,
-    this function calculates the corresponding pixel coordinates in the
-    image.
-
-    Args:
-        coord (astropy.wcs.WCS): The World Coordinate System object that
-            defines the transformation between pixel and world coordinates.
-        rad (tuple): A tuple containing the right ascension (RA) and
-            declination (Dec) in degrees.
-
-    Returns:
-        tuple: A tuple containing the x and y pixel coordinates.
-    """
-    radarray = np.array([[rad[0], rad[1], 0]], np.float_)
-    world = coord.wcs_world2pix(radarray, 0)
-    x = world[0][0]
-    y = world[0][1]
-    return x, y
 
 
 def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
@@ -103,82 +74,6 @@ def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     ra = world[0][0]
     dec = world[0][1]
     return ra, dec
-
-
-def gauss2d(xy: tuple, amp: float, x0: float, y0: float, a: float, b: float,
-            c: float) -> float:
-    """
-    Calculate the value of a 2D Gaussian function.
-
-    This function computes the value of a 2D Gaussian with the given
-    parameters at the specified (x, y) coordinates.
-
-    Args:
-        xy (tuple): The (x, y) coordinates where the Gaussian is evaluated.
-        amp (float): The amplitude of the Gaussian.
-        x0 (float): The x-coordinate of the center of the Gaussian.
-        y0 (float): The y-coordinate of the center of the Gaussian.
-        a (float): The coefficient of the squared x term.
-        b (float): The coefficient of the xy term.
-        c (float): The coefficient of the squared y term.
-
-    Returns:
-        float: The value of the 2D Gaussian at the given coordinates.
-    """
-    x, y = xy
-    inner = a * (x - x0) ** 2
-    inner += 2 * b * (x - x0) ** 2 * (y - y0) ** 2
-    inner += c * (y - y0) ** 2
-    return amp * np.exp(-inner)
-
-
-def twoD_Gaussian(changeme: tuple, amplitude: float, xo: float, yo: float,
-                  sigma_x: float, sigma_y: float, theta: float,
-                  offset: float) -> float:
-    """
-    Calculate a 2D Gaussian value at a given point.
-
-    This function computes the value of a 2D Gaussian function at a specific
-    point. The Gaussian is defined by its amplitude, center (xo, yo), standard
-    deviations along x and y (sigma_x, sigma_y), rotation angle (theta), and
-    an offset.
-
-    Args:
-        changeme (tuple): The (x, y) coordinates where the Gaussian is
-                          evaluated.
-        amplitude (float): The peak amplitude of the Gaussian.
-        xo (float): The x-coordinate of the center of the Gaussian.
-        yo (float): The y-coordinate of the center of the Gaussian.
-        sigma_x (float): The standard deviation of the Gaussian along
-                         the x-axis.
-        sigma_y (float): The standard deviation of the Gaussian along
-                         the y-axis.
-        theta (float): The rotation angle of the Gaussian in radians.
-        offset (float): The offset value added to the Gaussian.
-
-    Returns:
-        float: The value of the 2D Gaussian function at the given coordinates.
-    """
-    (x, y) = changeme
-    xo = float(xo)
-    yo = float(yo)
-    a = ((np.cos(theta) ** 2) /
-         (2 * sigma_x ** 2) +
-         (np.sin(theta) ** 2) /
-         (2 * sigma_y ** 2))
-    b = (-(np.sin(2 * theta)) /
-         (4 * sigma_x ** 2) +
-         (np.sin(2 * theta)) /
-         (4 * sigma_y ** 2))
-    c = ((np.sin(theta) ** 2) /
-         (2 * sigma_x ** 2) +
-         (np.cos(theta) ** 2) /
-         (2 * sigma_y ** 2))
-    g = (offset + amplitude *
-         np.exp(- (a * ((x - xo) ** 2) + 2 *
-                   b * (x - xo) * (y - yo) +
-                   c * ((y - yo) ** 2))))
-    return g.ravel()
 
 
 def print_lines(toggle: int, z: float) -> list:

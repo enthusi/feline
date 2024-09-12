@@ -1,0 +1,37 @@
+Benchmarking Results CPU Single Core
+====================
+
+CPU Name: AMD EPYC 7542 32-Core Processor
+CPU Cores: 1
+Total RAM: 515547 MB
+Cube Name: cube.fits (192 M)
+
+Run #1
+Run time: 70764292096 ns
+
+Run #2
+Run time: 70745437952 ns
+
+Run #3
+Run time: 70700369664 ns
+
+Run #4
+Run time: 70492271104 ns
+
+Run #5
+Run time: 70727312384 ns
+
+Run #6
+Run time: 70744919040 ns
+
+Run #7
+Run time: 70379060480 ns
+
+Run #8
+Run time: 70601497600 ns
+
+Run #9
+Run time: 70406673664 ns
+
+Run #10
+Run time: 70764803840 ns
