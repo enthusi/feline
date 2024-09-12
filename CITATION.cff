@@ -3,12 +3,15 @@ message: "If you use this software, please cite it as below."
 authors:
   - family-names: Wendt
     given-names: Martin
+    affiliation: University of Potsdam
     orcid: https://orcid.org/0000-0001-5020-9994
   - family-names: Henschel
     given-names: Marvin
+    affiliation: University of Potsdam
     orcid: https://orcid.org/0009-0000-9462-433X
   - family-names: Soth
     given-names: Oskar
+    affiliation: University of Potsdam
     orcid: https://orcid.org/0009-0004-1200-9130
 title: "FELINE - Find Emission Lines"
 version: 1.0.0
