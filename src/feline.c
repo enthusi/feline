@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
 #endif
     int i, x, y;
 
-    printf("Feline v0.7.2 - 2024/01/09\n");
+    printf("Feline v1.0.0 - 2024/09/12\n");
     printf("Martin Wendt\n");
     if (argc < 5) {
         printf("Syntax: %s zlow zhigh max_match ignore_below\n", argv[0]);
