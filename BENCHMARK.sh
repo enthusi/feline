@@ -33,7 +33,7 @@ echo "GPU VRAM: $GPU_VRAM MB" >> $RESULT_FILE
 
 
 # CUBENAME aus der Makefile auslesen
-CUBENAME="cube.fits"
+CUBENAME="DATACUBE_UDF-10.fits"
 ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
