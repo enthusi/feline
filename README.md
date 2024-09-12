@@ -4,12 +4,7 @@
 - [Project Overview](#project-overview)
 - [Installation Instructions](#installation-instructions)
 - [Usage Guide](#usage-guide)
-- [Features](#features)
-- [Documentation](#documentation)
 - [Contribution Guidelines](#contribution-guidelines)
-- [License](#license)
-- [Changelog](#changelog)
-- [Contact Information](#contact-information)
 - [Acknowledgments](#acknowledgments)
   
 ## Project Overview
