@@ -95,7 +95,7 @@ Now we can compile and run the main program
 ```bash
 cd ../../
 make
-./ feline.bin ZLOW ZHIGH MAX_MATCH IGNORE_BELOW
+./ feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
 ```
 Now we start the postprocessing
 ```bash
@@ -118,16 +118,13 @@ after running the workflow you can clean up all temporary files with
 ```bash
 make clean
 ```
-## Features
-## Documentation
+
 ## Contribution Guidelines
 We Welcome everyone who wants to Contribute to our Project you can find our Code of Conduct and Contribution Guidelines here:
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor_Convenant-2.1-blue)](CONDUCT.md)
-[![CONTRIBUTION](https://img.shields.io/badge/CONTRIBUTING.md-V1.0-blue)](CONTRIBUTING.md)
-## License
-## Changelog
-## Contact Information
+[![CONTRIBUTION](https://img.shields.io/badge/CONTRIBUTING.md-1.0-blue)](CONTRIBUTING.md)
+
 ## Acknowledgments
 We would like to acknowledge the use of the LSDCat (Line Source Detection and Cataloguing Tool) project for our preprocessing steps. The LSDCat project was developed by Edmund Christian Herenz and has been instrumental in our data analysis.
 

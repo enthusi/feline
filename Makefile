@@ -5,7 +5,6 @@ TARGET = feline.bin
 SOURCE = src/feline.c
 
 
-
 # Check for SDL2 availability
 SDL_CONFIG := sdl2-config
 SDL2_CFLAGS := $(shell $(SDL_CONFIG) --cflags 2>/dev/null)
@@ -24,10 +23,9 @@ LDFLAGS += $(SDL2_LIBS)
 # Define the SDLavailable macro for use in your source code
 CFLAGS += -D SDLavailable=$(SDLavailable)
 
-CUBELINK := "martinwendt.de/cube.fits"
-CUBENAME := "cube.fits"
-#CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-#CUBENAME := "DATACUBE_UDF-10.fits"
+
+CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+CUBENAME := "DATACUBE_UDF-10.fits"
 
 ZLOW="0"
 ZHIGH="1.9"
@@ -38,9 +36,6 @@ MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 CUBEFILE := $(MAKEFILE_DIR)$(CUBENAME)
 CUBEFILENAME := $(CUBENAME)
 CORES := $(shell nproc)
-
-
-
 
 
 all: $(TARGET)                                   
