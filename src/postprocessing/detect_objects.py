@@ -7,8 +7,6 @@ astronomical images.
 Functions:
 - world_to_pix: Converts world coordinates (RA, Dec) to pixel coordinates.
 - pix_to_world: Converts pixel coordinates to world coordinates (RA, Dec).
-- gauss2d: Calculates the value of a 2D Gaussian function.
-- twoD_Gaussian: Computes a 2D Gaussian value at a given point.
 - print_lines: Returns catalog lines for a given toggle and redshift.
 - sort_catalog: Sorts the catalog based on a specific value.
 - write_to_file: Writes sorted catalog data to a file.
