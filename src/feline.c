@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
 
     atexit(SDL_Quit);
 
-    window = SDL_CreateWindow("Feline v0.7.2 - Martin Wendt", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, dx * 4, dy + 1, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Feline v1.0.0 - Martin Wendt", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, dx * 4, dy + 1, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         fputs(SDL_GetError(), stderr);
         exit(1);
