@@ -47,7 +47,7 @@ The signal-to-noise cube generated after matched filtering with a 3D emission li
 As a result, galaxies with multiple weak emission features can be detected with a significance that substantially exceeds the significance of each individual contributing line.
 This approach is particularly successful for galaxies that show no or little continuum flux in the data, and therefore would generally go undetected in imaging data alone.
 
-``FELINE`` was used for the galaxy catalogs of the MEGAFLOW survey in [@Langan2023, @Cherrey2024, and @Schroetter2024].
+``FELINE`` was used for the galaxy catalogs of the MEGAFLOW survey in [@Langan2023; @Cherrey2024; and @Schroetter2024].
 
 # Implementation
 The tool uses a brute-force search through the parameter space. Due to the size of the parameter space, the language of implementation was chosen as C for computational efficiency. This approach demonstrates the success of filtering the data with expected templates for individual emission lines, rather than testing full physical models of galaxies (including simulated continuum and temperature-broadened emission lines) against the raw observed data. This reduces the individual models to a single position at which the likelihood of a line is being probed.
