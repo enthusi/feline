@@ -32,7 +32,8 @@ You can either excecute the program manually or with our prewritten workflow ins
 ### Automatic Usage
 Edit the CUBENAME and CUBELINK inside the Makefile
 
-![image](https://github.com/user-attachments/assets/d6f2383a-e3e2-4a55-910e-9401bfe3cbea)
+![image](https://github.com/user-attachments/assets/b9f49b73-1527-4c77-aeef-ab9fe887a30d)
+
 
 If you have your CUBEFILE stored locally copy the cube in the root folder of the Project and just edit the CUBENAME.
 
