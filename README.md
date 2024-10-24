@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE) [![status](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc/status.svg)](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc)
 # Feline (Find Emission Lines)
 ## Table of Contents
 - [Project Overview](#project-overview)
