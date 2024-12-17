@@ -83,7 +83,7 @@ python src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --o
 ```
 Before we start with the Main Program we will transpose the Cube for better cache access
 ```
-cd src/postprocessing
+cd src/preprocessing
 python combination.py <cubename>.fits s2n_v250.fits
 ```
 Now we can compile and run the main program
