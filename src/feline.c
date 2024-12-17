@@ -283,7 +283,7 @@ int main(int argc, char *argv[]) {
             toggle = template;
 
             for (int c = 0; c < 11; c++) {
-                if (toggle & 0x1 == 1) {
+                if (toggle & 1) {
                     l1 = lines_first[c];
                     l2 = lines_second[c];
                     //add doublets of available
