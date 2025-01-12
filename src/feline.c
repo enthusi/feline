@@ -3,7 +3,7 @@
 #include <omp.h>
 #include <math.h>
 #if SDLavailable
-    #include <SDL2/SDL.h>
+    #include <SDL.h>
 #endif
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))

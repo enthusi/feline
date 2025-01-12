@@ -32,6 +32,16 @@ Edit the CUBENAME and CUBELINK inside the Makefile
 
 If you have your CUBEFILE stored locally copy the cube in the root folder of the Project and just edit the CUBENAME.
 
+> [!NOTE]
+> **Mac OS users**: OpenMP is used for parallelization, however, this is not
+> supported by default with the system provided C compiler.
+> For best performance, please install `gcc`
+> ([homebrew](https://brew.sh/) is a good option for doing this) and set the `CC`
+> variable in the Makefile appropriately (e.g. `gcc-14`, with the version number depending
+> on the installed version of `gcc`). Even after installing gcc via
+> homebrew, simply leaving `CC = gcc` will not work. You must set it to the
+> appropriate version of gcc you have just installed.
+
 After editing the Makefile you can run the workflow with
 ```bash
 make run
