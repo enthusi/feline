@@ -12,6 +12,7 @@ build:
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
+   pip install sphinx_rtd_theme
    configuration: docs/conf.py
 
 # Optionally, but recommended,
