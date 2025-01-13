@@ -15,7 +15,8 @@ Key functionalities include:
 - Calculating the plate scale and impact parameter at a given redshift.
 - Fitting galaxy models to observed spectra using Gaussian functions.
 - Generating plots for spectral data, including overlays of model fits and
-  annotations for expected absorption and emission lines.
+annotations for expected absorption and emission lines.
+
 - Visualizing data cubes and quality metrics for astronomical objects.
 
 This module is part of a larger project focused on the analysis of astronomical
@@ -23,7 +24,8 @@ data cubes, with a particular emphasis on the study of galaxies and quasars.
 
 Dependencies:
 - astropy: For cosmological calculations, FITS file handling, and
-  WCS transformations.
+WCS transformations.
+
 - matplotlib: For creating plots and visualizations.
 - mpdaf: For manipulating data cubes from astronomical observations.
 - numpy: For numerical calculations and array manipulations.

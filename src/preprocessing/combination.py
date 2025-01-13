@@ -6,7 +6,8 @@ processing cube data to facilitate further analysis.
 
 Functions:
 - load_data: Loads data from a specified file and extension number, returning
-  a summed cube data along a specified axis.
+a summed cube data along a specified axis.
+
 - create_masking_plot: Generates a masking plot based on signal-to-noise ratio
   and writes it to a file, aiding in identifying areas of interest.
 - write_to_file: Writes numerical data to a file in binary format, supporting

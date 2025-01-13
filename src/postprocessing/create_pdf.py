@@ -8,8 +8,9 @@ a clean workspace.
 
 Functions:
 - create_pdf_file: Merges all single PDF files found in the specified data
-  folder into one PDF file, named with the current timestamp to
-  ensure uniqueness.
+folder into one PDF file, named with the current timestamp to ensure
+uniqueness.
+
 - remove_pdf_files: Deletes all single PDF files in the data folder to free up
   space and keep the directory organized.
 
