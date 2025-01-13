@@ -1,6 +1,10 @@
 import sphinx_rtd_theme
 from docutils.nodes import author
 
+extensions = [
+    'sphinx_rtd_theme',
+]
+
 project = 'Feline'
 copyright = '2025, Feline Team'
 author = 'Martin Wendt, Marvin Henschel, Oskar Soth'
