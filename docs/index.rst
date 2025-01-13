@@ -8,7 +8,8 @@ Welcome to the Feline project! This documentation provides an overview of the pr
 Contents
 --------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :caption: Code
 
    src/Postprocessing/modules
    src/Preprocessing/modules
