@@ -138,8 +138,7 @@ def get_num_lines(toggle: int) -> int:
                       the model.
 
     Returns:
-        int: The count of active emission lines represented by the set bits
-             in the input integer.
+        int: The count of active emission lines represented by the set bits in the input integer.
     """
     lines = 0
     for k in range(len(atoms)):
@@ -193,9 +192,7 @@ def galaxy(w: float, *p: int) -> np.ndarray:
                    lines being modeled.
 
     Returns:
-        np.ndarray: An array representing the synthetic galaxy spectrum at the
-                    wavelengths specified by `w`. This array has the same
-                    shape as `w`.
+        np.ndarray: An array representing the synthetic galaxy spectrum at the wavelengths specified by `w`. This array has the same shape as `w`.
     """
     global forfit_t, atoms
     z = p[0]
