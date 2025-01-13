@@ -1,1 +1,1 @@
-spinx_rtd_theme==3.0.2
+spinx_rtd_theme>=2.0.0
