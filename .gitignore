@@ -4,3 +4,4 @@ cube.fits
 venv
 __pycache__
 /data/pdf_files/*
+docs/_build
