@@ -13,6 +13,9 @@ Contributing
 .. toctree::
    :maxdepth: 1
    :caption: Installation Guide
+   :hidden:
+
+   usage/installation
 
 .. toctree::
    :maxdepth: 1
@@ -22,8 +25,8 @@ Contributing
    :maxdepth: 1
    :caption: Documentation
 
-   src/Postprocessing/modules
-   src/Preprocessing/modules
+   src/postprocessing/modules
+   src/preprocessing/modules
 
 
 
