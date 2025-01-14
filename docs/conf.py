@@ -23,13 +23,6 @@ release = '1.0.0'
 html_theme = 'sphinx_rtd_theme'
 html_show_sourcelink = False
 
-
-html_context = {
-    "display_github": True,
-    "github_user": "enthusi",
-    "github_repo": "feline",
-    "github_version": "main",
-}
 autodoc_default_options = {
     'members': True,
     'undoc-members': True,
