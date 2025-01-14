@@ -30,7 +30,7 @@ Edit the CUBENAME and CUBELINK inside the Makefile
 ![image](https://github.com/user-attachments/assets/b9f49b73-1527-4c77-aeef-ab9fe887a30d)
 
 
-If you have your CUBEFILE stored locally copy the cube in the root folder of the Project and just edit the CUBENAME.
+If you have your CUBEFILE stored locally copy the cube into the root folder of the Project and just edit the CUBENAME.
 
 After editing the Makefile you can run the workflow with
 ```bash
