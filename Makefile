@@ -169,5 +169,6 @@ clean:
 	rm -f $(TARGET)
 	find data/raw ! -name '.gitkeep' -type f,l -delete
 	find data/processed ! -name '.gitkeep' -type f -delete
+	find data/runtime_files ! -name '.gitkeep' -type f -delete
 	rm -f *.bmp *.raw
 	find src/postprocessing -type f \( -name '*.txt' -o -name '*.fits' -o -name '*.png' -o -name '*.log' -o ! -name "*.*" \) -delete
