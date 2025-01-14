@@ -21,8 +21,8 @@ Setup Instructions
 
    .. code-block:: bash
 
-      git clone <repository-url>
-      cd <repository-directory>
+      git clone git@github.com:enthusi/feline.git
+      cd feline
 
 2. **Set up a virtual environment**:
    Create and activate a virtual environment for Python:
