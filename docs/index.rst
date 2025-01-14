@@ -42,7 +42,7 @@ Code of Conduct and Contribution Guidelines here:
 
 
 
-.. |Github| image:: https://img.shields.io/badge/GitHub-FELINE-blue
+.. |Github| image:: https://img.shields.io/badge/-FELINE-blue.svg?logo=github&labelColor=%23555
    :target: https://github.com/enthusi/feline
 
 .. |JOSS| image:: https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc/status.svg
