@@ -297,7 +297,7 @@ if __name__ == "__main__":
                            "atoms.json"), "r") as data:
         atoms = json.load(data)
 
-    data = np.fromfile(os.path.join(project_path_config.DATA_PATH_ROOT,
+    data = np.fromfile(os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
                                     "float32_array_omp4.raw"), dtype="float32")
     plane, redshift, template, imused = np.split(data, 4)
 

@@ -9,6 +9,7 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define DATA_PATH_PROCESSED "data/processed/"
+#define DATA_PATH_RUNTIME_FILES "data/runtime_files/"
 
 
 /**
@@ -384,12 +385,12 @@ int main(int argc, char *argv[]) {
     printf("\n%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
 
     FILE *res_i_file;
-    res_i_file = fopen("float32_array_omp4.raw", "wb");
+    res_i_file = fopen(DATA_PATH_RUNTIME_FILES "float32_array_omp4.raw", "wb");
     fwrite(res_i, (sizeof(float) * dy * dx * layer), 1, res_i_file);
 
 
 #if SDLavailable
-    char *file = "map_omp4.bmp";
+    char *file = DATA_PATH_RUNTIME_FILES "map_omp4.bmp";
     SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, screen->pixels, screen->pitch);
     if (SDL_SaveBMP(screen, file) != 0) {
         fprintf(stderr, "Could not write %s!\n", file);
