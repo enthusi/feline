@@ -6,8 +6,7 @@
 SOURCEDIR = .
 BUILDDIR = _build
 
-clean:
-	@rm -rf $(BUILDDIR)
 
 html:
+	@rm -rf $(BUILDDIR)
 	@sphinx-build -b html $(SOURCEDIR) $(BUILDDIR)/html
