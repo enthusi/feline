@@ -34,7 +34,6 @@ IGNORE_BELOW="7"
 # Define a variable to store the directory path
 MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 CUBEFILE := $(MAKEFILE_DIR)$(CUBENAME)
-CUBEFILENAME := $(CUBENAME)
 CORES := $(shell nproc)
 
 
@@ -86,7 +85,7 @@ run:
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
 	cd src/preprocessing ; \
-	python combination.py $(CUBEFILENAME) s2n_v250.fits
+	python combination.py $(CUBENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
 	@if [ -e feline.bin ]; then \
 		rm -f feline.bin; \
@@ -100,7 +99,7 @@ run:
 	@. venv/bin/activate ; \
 	cd src/postprocessing || exit ; \
 	python detect_objects.py s2n_v250.fits ; \
-	python create_final_plots.py $(CUBEFILENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
+	python create_final_plots.py $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
 	python create_pdf.py
 
 cuda:
@@ -144,7 +143,7 @@ cuda:
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
 	cd src/preprocessing ; \
-	python combination.py $(CUBEFILENAME) s2n_v250.fits
+	python combination.py $(CUBENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
 	@if [ -e feline.bin ]; then \
                 rm -f feline.bin; \
@@ -158,7 +157,7 @@ cuda:
 	@. venv/bin/activate ; \
 	cd src/postprocessing || exit ; \
 	python detect_objects.py s2n_v250.fits ; \
-	python create_final_plots.py $(CUBEFILENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
+	python create_final_plots.py $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
 	python create_pdf.py
 
 clean:
@@ -168,3 +167,7 @@ clean:
 	find data/processed ! -name '.gitkeep' -type f -delete
 	rm -f *.bmp *.raw
 	find src/postprocessing -type f \( -name '*.txt' -o -name '*.fits' -o -name '*.png' -o -name '*.log' -o ! -name "*.*" \) -delete
+
+
+debug:
+	@echo MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))

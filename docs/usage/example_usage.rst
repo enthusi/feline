@@ -8,7 +8,14 @@ Automatic Usage
 To use FELINE in an automated manner, you can use the pre-configured Makefile workflow.
 
 1. **Edit the Makefile**:
-   Edit the `CUBENAME` and `CUBELINK` parameters inside the `Makefile`. If the cube file is stored locally, copy it into the project root directory and update `CUBENAME`. If you wish to use a URL, update `CUBELINK`.
+   Edit the `CUBELINK` and `CUBENAME` parameters inside the `Makefile`.
+   If the cube file is stored locally, copy it into the /data/raw directory and update `CUBENAME`.
+   If you wish to use a URL, update `CUBELINK`.
+
+   .. code-block:: bash
+
+       [27] CUBELINK := {link}
+       [28] CUBENAME := {name}
 
 2. **Run the workflow**:
    To run the workflow, use the following command:
