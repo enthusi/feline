@@ -58,4 +58,4 @@ jobs:
       env:
         PYTHONPATH: ${{ github.workspace }}/src/postprocessing:${{ github.workspace }}/src/preprocessing
       run: |
-        pytest
+        pytest -v
