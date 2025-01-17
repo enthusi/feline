@@ -1,6 +1,3 @@
-import sphinx_rtd_theme
-from docutils.nodes import author
-
 import os
 import sys
 
@@ -16,16 +13,16 @@ extensions = [
 ]
 
 project = 'Feline'
-copyright = '2025, Feline Team'
 author = 'Martin Wendt, Marvin Henschel, Oskar Soth'
 release = '1.0.0'
 
+html_static_path = ['_static']
+html_js_files = [
+    'custom.js',  # Add your JavaScript file
+]
+
 html_theme = 'sphinx_rtd_theme'
 
-html_theme_options = {
-	"repository_url": "https://github.com/enthusi/feline",
-	"use_repository_button": True,
-}
 
 autodoc_default_options = {
     'members': True,
