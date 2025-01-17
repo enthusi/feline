@@ -1,6 +1,7 @@
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE) [![status](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc/status.svg)](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc) [![Docs](http://img.shields.io/badge/Docs-latest-green.svg)](https://feline.readthedocs.io)
 
 
+
 # Feline (Find Emission Lines)
 ## Table of Contents
 - [Project Overview](#project-overview)
@@ -32,7 +33,7 @@ Edit the CUBENAME and CUBELINK inside the Makefile
 ![image](https://github.com/user-attachments/assets/b9f49b73-1527-4c77-aeef-ab9fe887a30d)
 
 
-If you have your CUBEFILE stored locally copy the cube in the root folder of the Project and just edit the CUBENAME.
+If you have your CUBEFILE stored locally copy the cube into the root folder of the Project and just edit the CUBENAME.
 
 After editing the Makefile you can run the workflow with
 ```bash
@@ -92,7 +93,7 @@ Now we can compile and run the main program
 ```bash
 cd ../../
 make
-./ feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
+./feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
 ```
 Now we start the postprocessing
 ```bash
@@ -113,6 +114,7 @@ data/pdf_files/result_*.pdf
 ```
 after running the workflow you can clean up all temporary files with
 ```bash
+cd ../..
 make clean
 ```
 

@@ -98,7 +98,7 @@ Maintain consistency and quality in the codebase by following these guidelines:
 
 ## Reporting Issues
 
-If you find a bug or have a feature request, please [open an issue](link to issues). Make sure to include:
+If you find a bug or have a feature request, please [open an issue](https://github.com/enthusi/feline/issues). Make sure to include:
 
 - A concise title and description.
 - Steps to reproduce the issue.
