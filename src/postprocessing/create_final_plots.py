@@ -297,7 +297,7 @@ if __name__ == "__main__":
                            "atoms.json"), "r") as data:
         atoms = json.load(data)
 
-    data = np.fromfile(os.path.join(project_path_config.DATA_PATH_ROOT,
+    data = np.fromfile(os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
                                     "float32_array_omp4.raw"), dtype="float32")
     plane, redshift, template, imused = np.split(data, 4)
 
@@ -333,7 +333,7 @@ if __name__ == "__main__":
 
     dz, dy, dx = cube.shape
 
-    catalog = open(sys.argv[3])
+    catalog = open(f"{project_path_config.DATA_PATH_RUNTIME_FILES}/{sys.argv[3]}")
     try:
         colors = mpl.colormaps['winter']
     except Exception as e:
