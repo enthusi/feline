@@ -8,6 +8,7 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define DATA_PATH "data/raw/"
 #define DATA_PATH_PROCESSED "data/processed/"
+#define DATA_PATH_RUNTIME_FILES "data/runtime_files/"
 
 const float lines_first[11] = {6564.61, 4862.72, 4341.68, 4102.89, 3727.09, 4960.30, 6549.86, 6718.29, 3869.81, 1908.73,
                                1215.67};
@@ -243,7 +244,7 @@ int main(int argc, char *argv[]) {
     printf("%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
 
     FILE *res_i_file;
-    res_i_file = fopen("float32_array_omp4.raw", "wb");
+    res_i_file = fopen(DATA_PATH_RUNTIME_FILES "float32_array_omp4.raw", "wb");
     fwrite(res_i, (sizeof(float) * dy * dx * layer), 1, res_i_file);
 
     free(temp);

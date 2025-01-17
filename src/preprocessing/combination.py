@@ -76,7 +76,7 @@ def create_masking_plot() -> None:
     statistic = load_data(file, 2)
     snimage = data.copy()
     snimage.data = data.data / statistic.data
-    snimage.write(project_path_config.DATA_PATH_PROCESSED + '/image00.fits')
+    snimage.write(f"{project_path_config.DATA_PATH_PROCESSED}/image00.fits")
 
 
 def write_to_file(file_path: str, data: float) -> None:
