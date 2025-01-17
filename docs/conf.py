@@ -10,6 +10,7 @@ extensions = [
 	'sphinx.ext.autodoc',
 	'sphinx.ext.napoleon',  # If you're using Google-style or NumPy-style docstrings
 	'sphinx.ext.viewcode',  # Optional: Adds links to highlighted source code
+    'sphinx_copybutton',
 ]
 
 project = 'Feline'
@@ -22,7 +23,8 @@ html_js_files = [
 ]
 
 html_theme = 'sphinx_rtd_theme'
-
+html_show_sourcelink = False
+pygments_style = 'sphinx'
 
 autodoc_default_options = {
     'members': True,
