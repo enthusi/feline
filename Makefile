@@ -24,16 +24,17 @@ LDFLAGS += $(SDL2_LIBS)
 CFLAGS += -D SDLavailable=$(SDLavailable)
 
 
-CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-CUBENAME := "DATACUBE_UDF-10.fits"
+#CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+#CUBENAME := "DATACUBE_UDF-10.fits"
+CUBELINK := "martinwendt.de/cube.fits"
+CUBENAME := "cube.fits"
 
 
 ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
 IGNORE_BELOW="7"
-CORES := $(shell nproc)
-
+CORES := $(shell uname -s| awk '{if ($$0 == "Darwin") print "sysctl -n hw.physicalcpu"; else print "nproc"}' | sh)
 
 all: $(TARGET)
 
@@ -166,3 +167,6 @@ clean:
 	find data/processed ! -name '.gitkeep' -type f -delete
 	find src/postprocessing -type f \( -name '*.txt' -o -name '*.fits' -o -name '*.png' -o -name '*.log' -o ! -name "*.*" \) -delete
 	find data/runtime_files ! -name '.gitkeep' -type f -delete
+
+debug:
+
