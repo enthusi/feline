@@ -14,8 +14,8 @@ To use FELINE in an automated manner, you can use the pre-configured Makefile wo
 
    .. code-block:: bash
 
-       [27] CUBELINK := {link}
-       [28] CUBENAME := {name}
+       [27] CUBELINK := <link>
+       [28] CUBENAME := <name>
 
 2. **Run the workflow**:
    To run the workflow, use the following command:
