@@ -16,6 +16,16 @@ Ensure the following software is installed on your system:
 Setup Instructions
 ------------------
 
+.. note::
+    **Mac OS users**: OpenMP is used for parallelization, however,
+    this is not supported by default with the system provided C compiler.
+    For best performance, please install ``gcc`` (`homebrew <https://brew.sh/>`_ is a good option for doing this) and
+    set the ``CC`` variable in the Makefile appropriately (e.g. ``gcc-14``, with the version number
+    depending on the installed version of ``gcc``). Even after installing ``gcc`` via homebrew, simply
+    leaving ``CC = gcc`` will not work. You must set it to the appropriate version of ``gcc`` you have just installed.
+
+
+
 1. **Clone the repository**:
    Clone the FELINE repository to your local machine:
 
