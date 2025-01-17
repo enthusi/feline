@@ -27,17 +27,15 @@ CFLAGS += -D SDLavailable=$(SDLavailable)
 CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
 CUBENAME := "DATACUBE_UDF-10.fits"
 
+
 ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="20"
 IGNORE_BELOW="7"
-# Define a variable to store the directory path
-MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-CUBEFILE := $(MAKEFILE_DIR)$(CUBENAME)
 CORES := $(shell nproc)
 
 
-all: $(TARGET)                                   
+all: $(TARGET)
 
 $(TARGET): $(SOURCE)
 
@@ -46,11 +44,12 @@ $(TARGET): $(SOURCE)
 
 run:
 
-	@if [ -f $(CUBENAME) ]; then \
+	@if [ -f data/raw/$(CUBENAME) ]; then \
 		echo "File exists";\
 	else\
 		echo "Downloading Cube File...";\
 		wget --no-check-certificate $(CUBELINK) ;\
+		mv $(CUBENAME) data/raw/$(CUBENAME);\
 	fi
 
 	@if [ ! -d "venv" ]; then \
@@ -65,7 +64,7 @@ run:
 	@echo ""
 	@echo "apply median filter to 'flat' out the data (emission lines remain)..."
 	@. venv/bin/activate && \
-	python src/preprocessing/median-filter-cube.py $(CUBEFILE) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
+	python src/preprocessing/median-filter-cube.py data/raw/$(CUBENAME) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
 	@echo ""
 	@echo "filter the data cube with a 'typical line' template in spatial dimension first..."
 	@. venv/bin/activate && \
@@ -80,7 +79,6 @@ run:
 	@echo "deleting tmp files..."
 	@rm data/processed/spatial_cc.fits
 	@rm data/processed/spectral_cc.fits
-	@ln -s $(CUBEFILE) data/raw/
 
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
@@ -109,6 +107,7 @@ cuda:
 	else\
 		echo "Downloading Cube File...";\
 		wget --no-check-certificate $(CUBELINK) ;\
+		mv $(CUBENAME) data/raw/$(CUBENAME)
 	fi
 
 	@if [ ! -d "venv" ]; then \
@@ -123,7 +122,7 @@ cuda:
 	@echo ""
 	@echo "apply median filter to 'flat' out the data (emission lines remain)..."
 	@. venv/bin/activate && \
-	python src/preprocessing/median-filter-cube.py $(CUBEFILE) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
+	python src/preprocessing/median-filter-cube.py data/raw/$(CUBEFILE) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
 	@echo ""
 	@echo "filter the data cube with a 'typical line' template in spatial dimension first..."
 	@. venv/bin/activate && \
@@ -163,11 +162,7 @@ cuda:
 clean:
 
 	rm -f $(TARGET)
-	find data/raw ! -name '.gitkeep' -type f,l -delete
+	find data/raw -type f ! -name '*.fits' ! -name '.gitkeep' -delete
 	find data/processed ! -name '.gitkeep' -type f -delete
-	rm -f *.bmp *.raw
 	find src/postprocessing -type f \( -name '*.txt' -o -name '*.fits' -o -name '*.png' -o -name '*.log' -o ! -name "*.*" \) -delete
-
-
-debug:
-	@echo MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+	find data/runtime_files ! -name '.gitkeep' -type f -delete

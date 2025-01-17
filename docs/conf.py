@@ -1,6 +1,3 @@
-import sphinx_rtd_theme
-from docutils.nodes import author
-import datetime as dt
 import os
 import sys
 
@@ -17,9 +14,13 @@ extensions = [
 ]
 
 project = 'Feline'
-copyright = f'{dt.datetime.now():%Y}, Feline Team'
 author = 'Martin Wendt, Marvin Henschel, Oskar Soth'
 release = '1.0.0'
+
+html_static_path = ['_static']
+html_js_files = [
+    'custom.js',  # Add your JavaScript file
+]
 
 html_theme = 'sphinx_rtd_theme'
 html_show_sourcelink = False

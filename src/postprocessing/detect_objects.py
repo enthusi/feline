@@ -144,7 +144,7 @@ def write_to_file(catalog_list: list) -> None:
         Returns:
             None
     """
-    with open('sorted_catalog.txt', 'w') as file:
+    with open(f'{project_path_config.DATA_PATH_RUNTIME_FILES}/sorted_catalog.txt', 'w') as file:
         for line1 in catalog_list:
             file.write(line1 + '\n')
 
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     size = isize
 
     data = np.fromfile(
-        os.path.join(project_path_config.DATA_PATH_ROOT,
+        os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
                      "float32_array_omp4.raw"), dtype="float32")
     plane, redshift, template, used = np.split(data, 4)
 
@@ -206,10 +206,10 @@ if __name__ == "__main__":
     plt.axis('off')
 
     # Save the image using imageio.imwrite
-    imageio.imsave("image.png", plane_uint8)
+    imageio.imsave(f"{project_path_config.DATA_PATH_RUNTIME_FILES}/image.png", plane_uint8)
 
-    if os.path.isfile("imagemask.png"):
-        mymask = imageio.v2.imread("imagemask.png")
+    if os.path.isfile(f"{project_path_config.DATA_PATH_RAW}/imagemask.png"):
+        mymask = imageio.v2.imread(f"{project_path_config.DATA_PATH_RAW}/imagemask.png")
 
         ny, nx = mymask.shape
         for iy in range(ny):
@@ -235,8 +235,10 @@ if __name__ == "__main__":
     bbottom = yd - width
 
     hdu_muse = astropy.io.fits.open(
-        project_path_config.DATA_PATH_PROCESSED +
-        "/image00.fits", memmap=False)
+        f"{project_path_config.DATA_PATH_PROCESSED}/image00.fits",
+        memmap=False
+    )
+
     data_muse = hdu_muse[1].data
     nan_sel = np.isnan(data_muse)
 
