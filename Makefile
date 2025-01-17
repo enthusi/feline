@@ -1,4 +1,4 @@
-CC = gcc
+CC ?= gcc
 CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99
 LDFLAGS = -lm
 TARGET = feline.bin
