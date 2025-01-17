@@ -55,6 +55,9 @@ import ref_index
 import struct
 import project_path_config
 
+import detect_objects
+
+
 
 def scale_params(redshift: float) -> float:
     """
@@ -100,27 +103,6 @@ def get_impact(QSO_X: float, QSO_Y: float, px: float, py: float,
     scale = scale_params(z)
     # print theta,scale, theta*scale, b
     return theta * scale
-
-
-# MW23 it is ageneral annoyance to convert pixel positions in an
-# image to world coordinates (WCS) given as two angles on the sky (ra, dec)
-def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
-    """
-    Converts world coordinates (RA, Dec) to pixel coordinates.
-
-    Args:
-        coord (astropy.wcs.WCS): WCS object for coordinate transformation.
-        rad (tuple): World coordinates (RA, Dec) to convert.
-
-    Returns:
-        tuple: Pixel coordinates corresponding to the given world coordinates.
-    """
-
-    pixarray = np.array([[pix[0], pix[1], 0]], np.float64)
-    world = coord.wcs_pix2world(pixarray, 0)
-    ra = world[0][0]
-    dec = world[0][1]
-    return ra, dec
 
 
 # MW23 a single model ist just an integer number,
@@ -221,6 +203,32 @@ def galaxy(w: float, *p: int) -> np.ndarray:
     return flux
 
 
+def find_bottom_of_plot(ax, crval, crmax, data):
+    # find bottom:
+    lowest = min(data)
+    if lowest >= 0:
+        bottom = -10
+    if lowest < 0:
+        bottom = lowest * 1.2
+
+    ax.set_xticks(np.arange(crval, crmax, 200))
+    ax.set_xlim(crval, crmax)
+    ax.set_ylim(bottom, max(data) * 1.2)
+
+    return ax
+
+
+def add_ticks_to_plot(plt, aw, px_py):
+    plt.xlim(aw - 10, aw + 10)
+    plt.ylim(px_py - 10, px_py + 10)
+    plt.tick_params(axis="both", which="both", right=True,
+                    top=True, left=True, bottom=True,
+                    labelbottom=False, labelleft=False,
+                    labeltop=False, labelright=False)
+    plt.gca().invert_yaxis()
+
+    return plt
+
 if __name__ == "__main__":
     mpl.use("Agg")
     logging.disable(logging.CRITICAL - 2)
@@ -267,19 +275,11 @@ if __name__ == "__main__":
     columns = 12
     rows = 4
 
-    with open(os.path.join(project_path_config.DATA_PATH_PROCESSED,
-                           "raw_reordered_s2ncube.dat"), "rb") as f:
-        header = f.read()[:16]
+    dz, xd, yd, header = detect_objects.extract_arrays()
 
-    dz = struct.unpack("f", header[0:4])[0]
-    xd = struct.unpack("f", header[4:8])[0]
-    yd = struct.unpack("f", header[8:12])[0]
     crval = struct.unpack("f", header[12:16])[0]
     crmax = crval + dz * 1.25
 
-    dz = int(dz)
-    xd = int(xd)
-    yd = int(yd)
 
     if len(sys.argv) < 2:
         print("SYNTAX: %s cube.fits catalog.cat [ds9.reg]" % sys.argv[0])
@@ -297,14 +297,7 @@ if __name__ == "__main__":
                            "atoms.json"), "r") as data:
         atoms = json.load(data)
 
-    data = np.fromfile(os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
-                                    "float32_array_omp4.raw"), dtype="float32")
-    plane, redshift, template, imused = np.split(data, 4)
-
-    plane.resize((xd, yd))
-    redshift.resize((xd, yd))
-    template.resize((xd, yd))
-    imused.resize((xd, yd))
+    plane, redshift, template, imused = detect_objects.resize_filters(xd, yd)
 
     # for data cube
     cube = mpdaf.obj.Cube(os.path.join(project_path_config.DATA_PATH_PROCESSED,
@@ -387,7 +380,7 @@ if __name__ == "__main__":
             quality = float((line.split()[4]))
             used = int((line.split()[5]))
             gtemplate = int((line.split()[6]))
-            ra, dec = pix_to_world(coord, (px, py))
+            ra, dec = detect_objects.pix_to_world(coord, (px, py))
             # SPECIFIC for THIS cube
             border_distance = min(min(px, py), min(dx - px, dy - py))
             if border_distance < 15:
@@ -544,32 +537,15 @@ if __name__ == "__main__":
                                spec.wave.get_step() / 10.0)
 
         ax1.step(waven, data1, where="mid", color="blue")
-        ax1.set_xticks(np.arange(crval, crmax, 200))
-        ax1.set_xlim(crval, crmax)
-        # find bottom:
-        lowest = min(data1)
-        if lowest >= 0:
-            bottom = -10
-        if lowest < 0:
-            bottom = lowest * 1.2
 
-        ax1.set_ylim(bottom, max(data1) * 1.2)
+        ax1 = find_bottom_of_plot(ax1, crval, crmax, data1)
 
         s2nspec = s2ncube[:, int(py) - ds:int(py) + ds,
                           int(px) - ds:int(px) + ds].mean(axis=(1, 2))
         data2 = s2nspec.data
         ax2.step(waven, data2, where="mid")
-        ax2.set_xticks(np.arange(crval, crmax, 200))
-        ax2.set_xlim(crval, crmax)
 
-        # find bottom:
-        lowest = min(data2)
-        if lowest >= 0:
-            bottom = -10
-        if lowest < 0:
-            bottom = lowest * 1.2
-
-        ax2.set_ylim(bottom, max(data2) * 1.2)
+        ax2 = find_bottom_of_plot(ax2, crval, crmax, data2)
 
         lines_found.sort()
 
@@ -738,13 +714,7 @@ if __name__ == "__main__":
                         labelright=False)
         plt.title("white")
 
-        plt.xlim(aw - 10, aw + 10)
-        plt.ylim(aw - 10, aw + 10)
-        plt.tick_params(axis="both", which="both", right=True,
-                        top=True, left=True, bottom=True,
-                        labelbottom=False, labelleft=False,
-                        labeltop=False, labelright=False)
-        plt.gca().invert_yaxis()
+        plt = add_ticks_to_plot(plt, aw, aw)
 
         full_plane = mpdaf.obj.Image(data=plane,
                                      wcs=wcs1)[int(py) -
@@ -759,14 +729,9 @@ if __name__ == "__main__":
         plt.imshow(full_plane.data, interpolation="none",
                    cmap="jet", vmax=1.0 * center_value)
         plt.title("quality")
-        plt.xlim(aw - 10, aw + 10)
-        plt.ylim(aw - 10, aw + 10)
 
-        plt.tick_params(axis="both", which="both", right=True,
-                        top=True, left=True, bottom=True,
-                        labelbottom=False, labelleft=False,
-                        labeltop=False, labelright=False)
-        plt.gca().invert_yaxis()
+        plt = add_ticks_to_plot(plt, aw, aw)
+
         bestgauss = full_plane.gauss_fit(circular=True,
                                          pos_min=[aw - 4, aw - 4],
                                          pos_max=[aw + 4, aw + 10],
@@ -791,14 +756,8 @@ if __name__ == "__main__":
         spic = plt.subplot2grid((rows, columns), (3, 10))
         plt.imshow(imused, interpolation="none", cmap="jet")
 
-        plt.xlim(px - 10, px + 10)
-        plt.ylim(py - 10, py + 10)
-        plt.tick_params(axis="both", which="both", right=True,
-                        top=True, left=True, bottom=True,
-                        labelbottom=False, labelleft=False,
-                        labeltop=False, labelright=False)
+        plt = add_ticks_to_plot(plt, px, py)
 
-        plt.gca().invert_yaxis()
         plt.title("no. lines")
 
         npx = px - aw + b

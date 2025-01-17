@@ -53,6 +53,8 @@ except ImportError as e:
     mpl.use("Agg")
 
 
+# MW23 it is ageneral annoyance to convert pixel positions in an
+# image to world coordinates (WCS) given as two angles on the sky (ra, dec)
 def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     """
     Convert pixel coordinates to world coordinates.
@@ -69,7 +71,7 @@ def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
     Returns:
         tuple: A tuple containing the RA and Dec in degrees.
     """
-    pixarray = np.array([[pix[0], pix[1], 0]], np.float_)
+    pixarray = np.array([[pix[0], pix[1], 0]], np.float64)
     world = coord.wcs_pix2world(pixarray, 0)
     ra = world[0][0]
     dec = world[0][1]
@@ -149,12 +151,7 @@ def write_to_file(catalog_list: list) -> None:
             file.write(line1 + '\n')
 
 
-if __name__ == "__main__":
-    hdu = astropy.io.fits.open(
-        os.path.join(project_path_config.DATA_PATH_PROCESSED,
-                     sys.argv[1]))
-    coord = astropy.wcs.WCS(hdu[1].header)
-
+def extract_arrays() -> tuple:
     with open(os.path.join(
             project_path_config.DATA_PATH_PROCESSED,
             "raw_reordered_s2ncube.dat"), "rb") as f:
@@ -164,9 +161,30 @@ if __name__ == "__main__":
     xd = struct.unpack("f", header[4:8])[0]
     yd = struct.unpack("f", header[8:12])[0]
 
-    xd = int(xd)
-    yd = int(yd)
-    dz = int(dz)
+    return  int(dz), int(xd), int(yd), header
+
+def resize_filters(xd: int, yd: int) -> tuple:
+    data = np.fromfile(
+        os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
+                     "float32_array_omp4.raw"), dtype="float32")
+    plane, redshift, template, used = np.split(data, 4)
+
+    plane.resize((xd, yd))
+    redshift.resize((xd, yd))
+    template.resize((xd, yd))
+    used.resize((xd, yd))
+
+    return plane, redshift, template, used
+
+
+
+if __name__ == "__main__":
+    hdu = astropy.io.fits.open(
+        os.path.join(project_path_config.DATA_PATH_PROCESSED,
+                     sys.argv[1]))
+    coord = astropy.wcs.WCS(hdu[1].header)
+
+    dz, xd, yd, _ = extract_arrays()
 
     catalog = [f"# Cube dimensions (z,y,x): {dz}, {xd}, {yd}"]
 
@@ -179,15 +197,7 @@ if __name__ == "__main__":
     isize = xd * yd
     size = isize
 
-    data = np.fromfile(
-        os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
-                     "float32_array_omp4.raw"), dtype="float32")
-    plane, redshift, template, used = np.split(data, 4)
-
-    plane.resize((xd, yd))
-    redshift.resize((xd, yd))
-    template.resize((xd, yd))
-    used.resize((xd, yd))
+    plane, redshift, template, used = resize_filters(xd, yd)
 
     # Scale the floating-point values to the range [0, 1]
     plane_scaled = (plane - np.min(plane)) / (np.max(plane) - np.min(plane))
