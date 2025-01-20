@@ -85,13 +85,13 @@ We provide a working implementation that produces identical results to the ``FEL
 
 Optionally, FELINE plots the three return parameters in real time via SDL surface along with storing them on disk.
 
-![FELINE output.\label{fig:results}](feline_result.png)
+![The visual FELINE output displays four metrics: signal strength, template, redshift, and line count. These values are presented using a shared color scheme to distinguish between the various peaks and objects. \label{fig:results}](feline_result.png)
 
 Shown are from left to right the quality of the best match, the corresponding redshift of the best match and its template. A fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value).
 
 We provide a simple python framework to further visualize and manually verify the ``FELINE`` detections:
 
-![Plot generated from the FELINE result.\label{fig:visualization}](feline_plot.png)
+![Plot generated from an individual source in the FELINE result.\label{fig:visualization}](feline_plot.png)
 
 
 # Acknowledgements
