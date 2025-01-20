@@ -36,12 +36,15 @@ Simple flux-level peak detection algorithms based on thresholding are prone to e
 
 # Statement of need
 The *F*ind *E*mission *LINE*s tool ``FELINE`` combines a fully parallelized galaxy line template matching with the matched filter approach for individual emission features of LSDcat [@HerenzE_17a; @herenz2023].
+This transformation cross-correlates the dataset with a template that ideally matches the properties of the signal to be detected. Here, the images are cross-correlated with a 2D template for the expected light distribution of the sources to be detected and the same is applied in spectral direction. The filter maximises the signal-to-noise ratio (S/N) of a source that is optimally represented by the template and still yields a significant S/N enhancement for similar signals.
 
 The VLT/MUSE [@Bacon+10; @Bacon+14] 3D spectrograph creates $\sim$ 90,000 medium resolution spectra arranged in a 300 $\times$ 300 spatial grid.
 These data cubes have typical sizes of 3-6 GiB per exposure, the sheer amount of data
 asks for automated processes to support the scientists.
 ￼
 The ``FELINE`` algorithm evaluates the likelihood of emission lines at specific positions in each spectrum of the data cube. It does this by probing all possible combinations of up to 14 typical emission features, including Hα, Hβ, Hγ, Hδ, [OII], [OIII], [NII], [SII], and [NeIII], for the redshift range of interest (0.4 < z < 1.4). This extensive analysis leads to approximately 230,000,000,000  iterations.
+
+While specialized software focuses on detecting individual emission features, traditional galaxy identification tools analyze entire images and often miss objects with minimal continuum flux. In contrast, the ``FELINE`` tool has been successfully tested as an automated identification system, providing rapid results for 3D data cubes that can be easily reviewed by humans.
 
 # Science field
 The signal-to-noise cube generated after matched filtering with a 3D emission line template reflects the probability of an emission line at a given spatial and spectral position,
@@ -83,9 +86,10 @@ We provide a working implementation that produces identical results to the ``FEL
 Optionally, FELINE plots the three return parameters in real time via SDL surface along with storing them on disk.
 
 ![FELINE output.\label{fig:results}](feline_result.png)
+
 Shown are from left to right the quality of the best match, the corresponding redshift of the best match and its template. A fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value).
 
-We provide a python framework to further visualize and verify the ``FELINE`` detections.
+We provide a simple python framework to further visualize and manually verify the ``FELINE`` detections:
 
 ![Plot generated from the FELINE result.\label{fig:visualization}](feline_plot.png)
 
