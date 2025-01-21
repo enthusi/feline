@@ -1,4 +1,11 @@
-CC ?= gcc
+# Allow manual override: use the CC variable if set, otherwise detect explicitly
+CC ?= $(shell (command -v gcc || command -v clang) 2>/dev/null)
+
+# Check if compiler is found
+ifeq ($(CC),)
+$(error "Neither GCC nor Clang found on the system. Please install one or set the variable <CC> manually.")
+endif
+
 CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99
 LDFLAGS = -lm
 TARGET = feline.bin
@@ -101,12 +108,12 @@ run:
 
 cuda:
 
-	@if [ -f $(CUBENAME) ]; then \
+	@if [ -f data/raw/$(CUBENAME) ]; then \
 		echo "File exists";\
 	else\
 		echo "Downloading Cube File...";\
 		wget --no-check-certificate $(CUBELINK) ;\
-		mv $(CUBENAME) data/raw/$(CUBENAME)
+		mv $(CUBENAME) data/raw/$(CUBENAME) ;\
 	fi
 
 	@if [ ! -d "venv" ]; then \
@@ -121,7 +128,7 @@ cuda:
 	@echo ""
 	@echo "apply median filter to 'flat' out the data (emission lines remain)..."
 	@. venv/bin/activate && \
-	python src/preprocessing/median-filter-cube.py data/raw/$(CUBEFILE) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
+	python src/preprocessing/median-filter-cube.py data/raw/$(CUBENAME) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
 	@echo ""
 	@echo "filter the data cube with a 'typical line' template in spatial dimension first..."
 	@. venv/bin/activate && \
@@ -136,7 +143,6 @@ cuda:
 	@echo "deleting tmp files..."
 	@rm data/processed/spatial_cc.fits
 	@rm data/processed/spectral_cc.fits
-	@ln -s $(CUBEFILE) data/raw/
 
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
