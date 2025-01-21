@@ -1,7 +1,8 @@
-DATACUBE_UDF-10.fits
-cube.fits
-.idea
 venv
 __pycache__
-/data/pdf_files/*
+.idea
+
+data/pdf_files/*
 docs/_build
+
+*.fits

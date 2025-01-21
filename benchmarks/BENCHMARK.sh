@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ..
+
 # Ergebnisdatei erstellen
 RESULT_FILE="benchmarks/benchmark_results_$(date +"%H_%M_%S").txt"
 echo "Benchmarking Results" > $RESULT_FILE
