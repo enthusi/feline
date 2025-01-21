@@ -17,12 +17,16 @@ Setup Instructions
 ------------------
 
 .. note::
-    **Mac OS users**: OpenMP is used for parallelization, however,
-    this is not supported by default with the system provided C compiler.
-    For best performance, please install ``gcc`` (`homebrew <https://brew.sh/>`_ is a good option for doing this) and
-    set the ``CC`` variable in the Makefile appropriately (e.g. ``gcc-14``, with the version number
-    depending on the installed version of ``gcc``). Even after installing ``gcc`` via homebrew, simply
-    leaving ``CC = gcc`` will not work. You must set it to the appropriate version of ``gcc`` you have just installed.
+   | **Mac OS users**: If you use ``clang`` you only need to install ``libomp`` e.g. ``brew install libomp``.
+   | For users which want to use ``gcc`` only need to adjust the following Makefile lines:
+   |
+   | ``[1] CC = gcc-<version>``
+   | ``[2] CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99``
+   |
+   | **Linux users (Debian/Ubuntu)**: If you use ``clang`` you only need to install ``libomp-dev`` e.g ``apt install libomp-dev``. For users which want to use ``gcc`` only need to adjust the following Makefile lines:
+   |
+   | ``[1] CC = gcc``
+   | ``[2] CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99``
 
 
 
