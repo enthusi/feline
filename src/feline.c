@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 #endif
     int i, x, y;
 
-    printf(FELINE_VERSION);
+    printf("%s\n", FELINE_VERSION);
     if (argc < 5) {
         printf("Syntax: %s zlow zhigh max_match ignore_below\n", argv[0]);
         return 1;
@@ -225,14 +225,14 @@ int main(int argc, char *argv[]) {
 
     printf("Seeking for Emitters... ");
 #if SDLavailable
-#pragma omp parallel for schedule(dynamic) shared(temp, dx, dy, dz, size_header, pixels, texture, res_i, prev_array, previous)  default(shared)
+#pragma omp parallel for schedule(static) shared(temp, dx, dy, dz, size_header, pixels, texture, res_i, prev_array, previous)  default(shared)
 #else
-#pragma omp parallel for schedule(dynamic) shared(temp, dx, dy, dz, size_header, res_i, prev_array, previous)  default(shared)
+#pragma omp parallel for schedule(static) shared(temp, dx, dy, dz, size_header, res_i, prev_array, previous)  default(shared)
 #endif
     for (int i = 0; i < dy * dx; i++) {
 
         float v;
-        
+
         int y = i / (dx);
         int x = i % (dx);
         int z;
@@ -326,7 +326,7 @@ int main(int argc, char *argv[]) {
                     z = (int) ((emission - lmin) / 1.25);
                     v = temp[z + y * dx * dz + x * dz + size_header];//*scale;
                     if (v < ignore_below) v = 0;
-                    
+
                     if (v > max_match) v = max_match + log(v); //crop intensity spikes
                     sum += v * scale;
                 }//Emission loop
@@ -365,7 +365,7 @@ int main(int argc, char *argv[]) {
 
         int tid = omp_get_thread_num();
         if (tid == 0) {
-       
+
             {
 #if SDLavailable
                 SDL_UpdateTexture(texture, NULL, pixels, dx * 4 * sizeof(Uint32));
@@ -373,16 +373,24 @@ int main(int argc, char *argv[]) {
                 SDL_RenderCopy(renderer, texture, NULL, NULL);
                 SDL_RenderPresent(renderer);
 #endif
-                printf("\rSeeking for Emitters... %.1f", ((i * 100.0) / (dy * dx)));
-                //fflush(stdout);
+                if (i % 10 == 0 && (i * omp_get_num_threads()) < (dx*dy)) {
+                    //printf("\rNumber of Threads:   %d", omp_get_num_threads());
+                    //printf("\rIteration i:   %d", i);
+                    printf("\rSeeking for Emitters... %.1f%%", ((omp_get_num_threads() * i * 100.0) / (dy * dx)));
+                    fflush(stdout); // Ensure immediate output
+                }
             }
-            
+
         }
+
 
 
     }//xy-loop
 
-    printf("\n%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
+
+    printf("\r                                 ");
+    printf("\rSeeking for Emitters... 100%%\n");
+    fflush(stdout);
 
     FILE *res_i_file;
     res_i_file = fopen(DATA_PATH_RUNTIME_FILES "float32_array_omp4.raw", "wb");
