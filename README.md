@@ -41,7 +41,7 @@ Ensure the following software is installed on your system:
 python3.x (3.8 or higher)
 python3.x-dev
 python3.x-venv
-clang (recommended, we had an significant performance boost compared to gcc) or gcc
+clang (recommended, we had a significant performance boost compared to gcc) or gcc
 SDL2 (Optional: Needed for graphical output during runtime)
 ```
 

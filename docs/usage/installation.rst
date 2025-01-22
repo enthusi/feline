@@ -10,7 +10,7 @@ Ensure the following software is installed on your system:
 - ``python 3.x`` (minimum version 3.8)
 - ``python3.x-dev`` package
 - ``python3.x-venv`` package
-- A C/C++ compiler, such as ``gcc`` or ``clang``
+- A C/C++ compiler, such as ``clang`` (recommended, we had a significant performance boost compared to gcc) or ``gcc``
 - ``SDL2`` (Optional: Needed for graphical output during runtime)
 
 Setup Instructions
@@ -59,48 +59,3 @@ Setup Instructions
    .. code-block:: bash
 
       make
-
-Optional GPU Acceleration
--------------------------
-If you have an NVIDIA GPU and the required CUDA tools installed, you can enable GPU acceleration by running:
-
-.. code-block:: bash
-
-   make cuda
-
-Testing the Installation
-------------------------
-To verify your installation, execute the workflow provided in the ``Makefile``:
-
-1. Edit the ``CUBENAME`` and ``CUBELINK`` parameters in the ``Makefile``:
-
-   - If the cube file is stored locally, place it in the project root directory and update ``CUBENAME`` accordingly.
-   - Alternatively, provide the cube file URL and Name in ``CUBELINK`` and ``CUBENAME``.
-
-2. Run the workflow:
-
-   .. code-block:: bash
-
-      make run
-
-3. (Optional) For GPU acceleration, execute:
-
-   .. code-block:: bash
-
-      make cuda
-
-Output
-------
-The final results will be available as PDF files in the ``data/pdf_files`` directory:
-
-.. code-block:: bash
-
-   data/pdf_files/result_*.pdf
-
-Clean Up
---------
-To remove temporary files and reset the project directory:
-
-.. code-block:: bash
-
-   make clean
