@@ -10,19 +10,23 @@ Ensure the following software is installed on your system:
 - ``python 3.x`` (minimum version 3.8)
 - ``python3.x-dev`` package
 - ``python3.x-venv`` package
-- A C/C++ compiler, such as ``gcc`` or ``clang``
+- A C/C++ compiler, such as ``clang`` (recommended, we had a significant performance boost compared to gcc) or ``gcc``
 - ``SDL2`` (Optional: Needed for graphical output during runtime)
 
 Setup Instructions
 ------------------
 
 .. note::
-    **Mac OS users**: OpenMP is used for parallelization, however,
-    this is not supported by default with the system provided C compiler.
-    For best performance, please install ``gcc`` (`homebrew <https://brew.sh/>`_ is a good option for doing this) and
-    set the ``CC`` variable in the Makefile appropriately (e.g. ``gcc-14``, with the version number
-    depending on the installed version of ``gcc``). Even after installing ``gcc`` via homebrew, simply
-    leaving ``CC = gcc`` will not work. You must set it to the appropriate version of ``gcc`` you have just installed.
+   | **Mac OS users**: If you use ``clang`` you only need to install ``libomp`` e.g. ``brew install libomp``.
+   | For users which want to use ``gcc`` only need to adjust the following Makefile lines:
+   |
+   | ``[1] CC = gcc-<version>``
+   | ``[2] CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99``
+   |
+   | **Linux users (Debian/Ubuntu)**: If you use ``clang`` you only need to install ``libomp-dev`` e.g ``apt install libomp-dev``. For users which want to use ``gcc`` only need to adjust the following Makefile lines:
+   |
+   | ``[1] CC = gcc``
+   | ``[2] CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99``
 
 
 
@@ -55,48 +59,3 @@ Setup Instructions
    .. code-block:: bash
 
       make
-
-Optional GPU Acceleration
--------------------------
-If you have an NVIDIA GPU and the required CUDA tools installed, you can enable GPU acceleration by running:
-
-.. code-block:: bash
-
-   make cuda
-
-Testing the Installation
-------------------------
-To verify your installation, execute the workflow provided in the ``Makefile``:
-
-1. Edit the ``CUBENAME`` and ``CUBELINK`` parameters in the ``Makefile``:
-
-   - If the cube file is stored locally, place it in the project root directory and update ``CUBENAME`` accordingly.
-   - Alternatively, provide the cube file URL and Name in ``CUBELINK`` and ``CUBENAME``.
-
-2. Run the workflow:
-
-   .. code-block:: bash
-
-      make run
-
-3. (Optional) For GPU acceleration, execute:
-
-   .. code-block:: bash
-
-      make cuda
-
-Output
-------
-The final results will be available as PDF files in the ``data/pdf_files`` directory:
-
-.. code-block:: bash
-
-   data/pdf_files/result_*.pdf
-
-Clean Up
---------
-To remove temporary files and reset the project directory:
-
-.. code-block:: bash
-
-   make clean

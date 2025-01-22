@@ -107,7 +107,7 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
    .. code-block:: bash
 
       cd src/preprocessing
-      python combination.py <cubename>.fits s2n_v250.fits
+      python combination.py <CUBENAME>.fits s2n_v250.fits
 
 10. **Compile and run the main program**:
     Compile and execute the FELINE binary with the following commands:
@@ -126,7 +126,7 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
       cd src/postprocessing
       python detect_objects.py s2n_v250.fits
 
-      python create_final_plots.py <cubename>.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
+      python create_final_plots.py <CUBENAME>.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
       python create_pdf.py
 
 12. **Find results**:

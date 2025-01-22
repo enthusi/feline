@@ -1,12 +1,5 @@
-# Allow manual override: use the CC variable if set, otherwise detect explicitly
-CC ?= $(shell (command -v gcc || command -v clang) 2>/dev/null)
-
-# Check if compiler is found
-ifeq ($(CC),)
-$(error "Neither GCC nor Clang found on the system. Please install one or set the variable <CC> manually.")
-endif
-
-CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99
+CC = clang
+CFLAGS = -O3 -ffast-math -fopenmp=libomp -g -std=c99
 LDFLAGS = -lm
 TARGET = feline.bin
 SOURCE = src/feline.c
