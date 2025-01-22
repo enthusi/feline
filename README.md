@@ -1,14 +1,8 @@
-[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)  [![Contributor Covenant](https://img.shields.io/badge/Contributor_Convenant-2.1-blue)](CONDUCT.md) [![CONTRIBUTION](https://img.shields.io/badge/CONTRIBUTING-1.0-blue)](CONTRIBUTING.md) [![status](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc/status.svg)](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc) [![Docs](http://img.shields.io/badge/Docs-latest-green.svg)](https://feline.readthedocs.io)
+[![status](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc/status.svg)](https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc) [![Docs](http://img.shields.io/badge/Docs-latest-green.svg)](https://feline.readthedocs.io)[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)  [![Contributor Covenant](https://img.shields.io/badge/Contributor_Convenant-2.1-blue)](CONDUCT.md) [![CONTRIBUTION](https://img.shields.io/badge/CONTRIBUTING-1.0-blue)](CONTRIBUTING.md) 
 
 
 
 # Feline (Find Emission Lines)
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Installation Instructions](#installation-instructions)
-- [Usage Guide](#usage-guide)
-- [Contribution Guidelines](#contribution-guidelines)
-- [Acknowledgments](#acknowledgments)
   
 ## Project Overview
 
