@@ -88,12 +88,7 @@ int previous = 0;
 int main(int argc, char *argv[]) {
     setbuf(stdout, NULL);
     float *temp;
-
     float *res_i;
-    float *res_z;
-    float *res_t;
-    float *res_u;
-
     float *prev_array;
 #if SDLavailable
     SDL_Surface *screen;
@@ -104,7 +99,6 @@ int main(int argc, char *argv[]) {
     Uint8 *keys;
     Uint8 pixelr, pixelg, pixelb;
 #endif
-    int i, x, y;
 
     printf(FELINE_VERSION);
     if (argc < 5) {
@@ -119,7 +113,6 @@ int main(int argc, char *argv[]) {
     printf("Checking for emission line objects between z=%f and z=%f\n", zlow, zqso);
 
     FILE *f;
-    FILE *image;
     temp = malloc(sizeof(float) * 4);
     if ((f = fopen(DATA_PATH_PROCESSED "raw_reordered_s2ncube.dat", "rb")) == NULL) {
         perror("No File found");
@@ -143,31 +136,6 @@ int main(int argc, char *argv[]) {
     float lmin = (float) (temp[3]);
     float lmax = lmin + dz * 1.25;
     printf("%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
-
-    if (argc==4){
-        printf("Loading previously generated file '%s'\n" , argv[3]);
-        FILE *prev_res_i_file;
-        prev_array=malloc(sizeof(float)*dy*dx*layer);
-        prev_res_i_file = fopen(argv[3], "rb");
-        if (prev_res_i_file == NULL) {
-            perror("Failed to open file");
-            free(prev_res_i_file);
-            free(temp);
-            free(prev_array); // Ensure to free allocated memory to avoid memory leak
-            return -1; // Or handle the error as appropriate
-        }
-        int r = fread(prev_array, (sizeof(float)*dy*dx*layer), 1, prev_res_i_file);
-        if (!r) {
-            perror("Failed to read from file");
-            fclose(prev_res_i_file);
-            free(prev_res_i_file);
-            free(temp);
-            free(prev_array); // Ensure to free allocated memory to avoid memory leak
-            return -1; // Or handle the error as appropriate
-        }
-        fclose(prev_res_i_file);
-        previous=1; //set proper flag
-    }
 
     printf("Reading in full cube (%.1f MB)... ", (dx * dy * dz * sizeof(float) / 1048576.0));
     free(temp);
@@ -238,7 +206,6 @@ int main(int argc, char *argv[]) {
         int z;
         //printf("%d %d\n",y,x);
         float all_lines[20];
-        int all_pix[20];
         //set to 0 as mask indicator by preprocessor
         //skip whole spaxel if first bin is 0, this might be because we masked it before
         //or its an area of NANs, i.e. in rotated cubes
@@ -263,7 +230,6 @@ int main(int argc, char *argv[]) {
         float zmax;
         float emission;
         float redshift;
-        int pix;
         float best_redshift = 0;
         int best_template = 0;
         float best_sum = 0;
@@ -385,7 +351,7 @@ int main(int argc, char *argv[]) {
     printf("\n%dx%dx%d (z,y,x) cube dimensions, start: %.2f end: %.2f\n", dz, dy, dx, lmin, lmax);
 
     FILE *res_i_file;
-    res_i_file = fopen(DATA_PATH_RUNTIME_FILES "float32_array_omp4.raw", "wb");
+    res_i_file = fopen(DATA_PATH_RUNTIME_FILES "feline_float32_array.raw", "wb");
     fwrite(res_i, (sizeof(float) * dy * dx * layer), 1, res_i_file);
 
 

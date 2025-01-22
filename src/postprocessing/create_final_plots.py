@@ -442,9 +442,15 @@ if __name__ == "__main__":
                   " y=%.1f, ra=%.6f dec=%.6f z=%.6f" %
                   (qso_id, run_id, px, py, ra, dec, z))
 
+        ax1.text(0.5, -0.2, r"wavelength ($\AA$)", ha="center", va="top",
+                 transform=ax1.transAxes, fontsize=10)
+
         ax2 = plt.subplot2grid((rows, columns), (1, 0), colspan=9)
         plt.title("%d used lines, match strength=%d, b=%.1f" % (
             used, quality, get_impact(qso_x, qso_y, px, py, z)))
+
+        ax2.text(0.5, -0.2, r"wavelength ($\AA$)", ha="center", va="top",
+                 transform=ax2.transAxes, fontsize=10)
 
         ax2.tick_params(
             axis="both",  # changes apply to the x-axis

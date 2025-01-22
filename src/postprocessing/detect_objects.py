@@ -166,7 +166,7 @@ def extract_arrays() -> tuple:
 def resize_filters(xd: int, yd: int) -> tuple:
     data = np.fromfile(
         os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
-                     "float32_array_omp4.raw"), dtype="float32")
+                     "feline_float32_array.raw"), dtype="float32")
     plane, redshift, template, used = np.split(data, 4)
 
     plane.resize((xd, yd))
