@@ -5,9 +5,9 @@ First off, thanks for taking the time to contribute! 🎉
 The following is a set of guidelines for contributing to our Project, which is hosted on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 
-## Code of Conduct [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CONDUCT.md)
+## Code of Conduct [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-Please always follow our [Code of Conduct](CONDUCT.md) to ensure a welcoming and inclusive environment for everyone. If you notice any violations, report them to the Community Leaders as stated in the [Code of Conduct](CONDUCT.md).
+Please always follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming and inclusive environment for everyone. If you notice any violations, report them to the Community Leaders as stated in the [Code of Conduct](CODE_OF_CONDUCT).
 
 ## Getting Started
 
