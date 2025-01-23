@@ -54,7 +54,7 @@ SDL2 (Optional: Needed for graphical output during runtime)
 For further information see our [Documentation Website](https://feline.readthedocs.io).
 
 ## Contribution Guidelines
-We Welcome everyone who wants to Contribute to our Project [Code of Conduct](CODE_OF_CONDUCT.md) and [Contribution Guidelines](CONTRIBUTING).
+We Welcome everyone who wants to Contribute to our Project [Code of Conduct](CODE_OF_CONDUCT.md) and [Contribution Guidelines](CONTRIBUTING.md).
 
 
 ## Acknowledgments
