@@ -1,13 +1,14 @@
 FELINE
 ============
-The FELINE algorithm then evaluates the likelihood in
+The FELINE (Find Emission LINEs) algorithm then evaluates the likelihood in
 each spectrum of the 3D data cube for emission lines at 
 the positions provided by a given redshift and a certain
 combination of typical emission features.
 
 FELINE does not evaluate the observed data cube directly, but instead 
 utilizes the result of an emission line matched filter to boost the signal-to-noise
-of any such feature in the data cube.
+of any such feature in the data cube. We use [LSDcat](https://ascl.net/1612.002) to create such a filtered
+data cube.
 FELINE, however, does not pick individual peaks from that data as separate objects but instead
 simulatenously assesses the accumulative signal at all spectral positions that correspond to a certain
 set of emission lines at any redshift within the range of interest.

@@ -7,7 +7,7 @@ Automatic Usage
 ---------------
 To use FELINE in an automated manner, you can use the pre-configured Makefile workflow.
 Herein, a 3D data cube observed with VLT/MUSE is being fetched from the wunderful
-public [AMUSED](https://amused.univ-lyon1.fr/) data base.
+public [AMUSED](https://amused.univ-lyon1.fr) data base.
 
 1. **Edit the Makefile**:
    Edit the `CUBELINK` and `CUBENAME` parameters inside the `Makefile`.
