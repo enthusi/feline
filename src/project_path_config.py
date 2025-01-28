@@ -23,7 +23,7 @@ should be imported wherever file paths are needed within the project.
 
 import os
 
-DATA_PATH_ROOT = os.path.abspath("../../")
+DATA_PATH_ROOT = os.getcwd()
 DATA_PATH_PDF = os.path.join(DATA_PATH_ROOT, "data", "pdf_files")
 DATA_PATH_LOOKUP = os.path.join(DATA_PATH_ROOT, "data", "lookup")
 DATA_PATH_PROCESSED = os.path.join(DATA_PATH_ROOT, "data", "processed")

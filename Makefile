@@ -34,6 +34,7 @@ MAX_MATCH="20"
 IGNORE_BELOW="7"
 CORES := $(shell uname -s| awk '{if ($$0 == "Darwin") print "sysctl -n hw.physicalcpu"; else print "nproc"}' | sh)
 
+
 all: $(TARGET)
 
 $(TARGET): $(SOURCE)
@@ -95,8 +96,7 @@ run:
 
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
-	cd src/preprocessing ; \
-	python combination.py $(CUBENAME) s2n_v250.fits
+	python -m src.preprocessing.combination $(CUBENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
 	@if [ -e feline.bin ]; then \
 		rm -f feline.bin; \
@@ -108,10 +108,9 @@ run:
 
 	@echo "Starting Postprocessing and creating PDF..."
 	@. venv/bin/activate ; \
-	cd src/postprocessing || exit ; \
-	python detect_objects.py s2n_v250.fits ; \
-	python create_final_plots.py $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
-	python create_pdf.py
+	python -m src.postprocessing.detect_objects s2n_v250.fits ; \
+	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
+	python -m src.postprocessing.create_pdf
 
 cuda:
 
@@ -167,8 +166,7 @@ cuda:
 
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
-	cd src/preprocessing ; \
-	python combination.py $(CUBENAME) s2n_v250.fits
+	python -m src.preprocessing.combination $(CUBENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
 	@if [ -e feline.bin ]; then \
                 rm -f feline.bin; \
@@ -180,10 +178,9 @@ cuda:
 
 	@echo "Starting Postprocessing and creating PDF..."
 	@. venv/bin/activate ; \
-	cd src/postprocessing || exit ; \
-	python detect_objects.py s2n_v250.fits ; \
-	python create_final_plots.py $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
-	python create_pdf.py
+	python -m src.postprocessing.detect_objects s2n_v250.fits ; \
+	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
+	python -m src.postprocessing.create_pdf
 
 clean:
 

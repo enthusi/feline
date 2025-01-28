@@ -11,4 +11,4 @@ def hash_raw_feline_output(file_path: str, algorithm: str ="sha256", chunk_size:
 
 
 if __name__ == "__main__":
-	print(hash_raw_feline_output("../data/runtime_files/float32_array_omp4.raw"))
+	hash_raw_feline_output("../data/runtime_files/feline_float32_array.raw")

@@ -32,10 +32,11 @@ convention (containing 'fig' in their names) and are located in a predefined
 data folder as specified in `project_path_config`.
 """
 
+import datetime
 import os
 import pypdf
-import project_path_config
-import datetime
+
+import src.project_path_config as project_path_config
 
 
 def create_pdf_file() -> None:
