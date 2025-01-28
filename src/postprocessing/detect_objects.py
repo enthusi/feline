@@ -152,6 +152,17 @@ def write_to_file(catalog_list: list) -> None:
 
 
 def extract_arrays() -> tuple:
+    """
+    Extracts grid spacing values from the header of a binary file.
+
+    Reads the first 16 bytes of the file, unpacks the Z, X, and Y spacing
+    values as floats, and returns them as integers along with the raw header.
+
+    Returns:
+        tuple: (dz, xd, yd, header)
+            - dz, xd, yd (int): Spacing values from the header.
+            - header (bytes): The raw 16-byte header.
+    """
     with open(os.path.join(
             project_path_config.DATA_PATH_PROCESSED,
             "raw_reordered_s2ncube.dat"), "rb") as f:
@@ -164,6 +175,16 @@ def extract_arrays() -> tuple:
     return  int(dz), int(xd), int(yd), header
 
 def resize_filters(xd: int, yd: int) -> tuple:
+    """
+    Resizes filter arrays to the specified dimensions.
+
+    Reads a raw binary file, splits it into four arrays, and resizes each to
+    the provided (xd, yd) dimensions.
+
+    Returns:
+        tuple: (plane, redshift, template, used)
+            - plane, redshift, template, used (ndarray): Resized arrays.
+    """
     data = np.fromfile(
         os.path.join(project_path_config.DATA_PATH_RUNTIME_FILES,
                      "feline_float32_array.raw"), dtype="float32")
@@ -175,7 +196,6 @@ def resize_filters(xd: int, yd: int) -> tuple:
     used.resize((xd, yd))
 
     return plane, redshift, template, used
-
 
 
 if __name__ == "__main__":

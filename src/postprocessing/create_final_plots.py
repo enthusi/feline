@@ -202,7 +202,20 @@ def galaxy(w: float, *p: int) -> np.ndarray:
     return flux
 
 
-def find_bottom_of_plot(ax, crval, crmax, data):
+def find_bottom_of_plot(ax: plt.Axes, crval:float,
+                        crmax: float, data: np.ndarray) -> plt.Axes:
+    """
+    Sets axis limits for a plot based on the data range.
+
+    Parameters:
+        ax (matplotlib.Axes): The plot axes.
+        crval (float): Start value for the x-axis.
+        crmax (float): Max value for the x-axis.
+        data (list or array-like): Data to determine y-axis limits.
+
+    Returns:
+        matplotlib.Axes: The modified axes.
+    """
     # find bottom:
     lowest = min(data)
     if lowest >= 0:
@@ -217,7 +230,19 @@ def find_bottom_of_plot(ax, crval, crmax, data):
     return ax
 
 
-def add_ticks_to_plot(plt, aw, px_py):
+def add_ticks_to_plot(plt: plt.Axes, aw: float, px_py: float) -> plt.Axes:
+    """
+    Adjusts the plot by setting limits, hiding tick labels, and
+    inverting the y-axis.
+
+    Parameters:
+        plt (matplotlib.pyplot.Axes): The plot axes object to modify.
+        aw (float): The center value for the x-axis limits.
+        px_py (float): The center value for the y-axis limits.
+
+    Returns:
+        matplotlib.pyplot.Axes: The modified axes object.
+    """
     plt.xlim(aw - 10, aw + 10)
     plt.ylim(px_py - 10, px_py + 10)
     plt.tick_params(axis="both", which="both", right=True,
@@ -227,6 +252,7 @@ def add_ticks_to_plot(plt, aw, px_py):
     plt.gca().invert_yaxis()
 
     return plt
+
 
 if __name__ == "__main__":
     mpl.use("Agg")
