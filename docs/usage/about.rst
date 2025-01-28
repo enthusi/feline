@@ -1,4 +1,4 @@
-About
+FELINE
 ============
 The FELINE algorithm then evaluates the likelihood in
 each spectrum of the 3D data cube for emission lines at 
@@ -14,7 +14,7 @@ set of emission lines at any redshift within the range of interest.
 
 FELINE probes all possible combinations of up to
 14 transitions paired in 9 groups:
-H$\alpha$, H$\beta$, H$\gamma$, H$\delta$, [O ii], [O iii], [N ii], [S ii], and Ne iii for the
+Hα, Hβ, Hγ, Hδ, [O ii], [O iii], [N ii], [S ii], and Ne iii for the
 full redshift range of interest (e.g., 0.4 < z < 1.4).
 This particular selection of lines is motivated by the most prominent
 emission features expected in the MUSE data within the
