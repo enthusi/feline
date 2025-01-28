@@ -44,7 +44,7 @@ import scipy.ndimage
 import skimage.feature
 import struct
 
-import project_path_config
+import src.project_path_config as project_path_config
 
 
 try:

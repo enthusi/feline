@@ -39,7 +39,7 @@ import sys
 import numpy as np
 import mpdaf
 
-import project_path_config
+import src.project_path_config as project_path_config
 
 
 def load_data(file: str, ext: int) -> mpdaf.obj.Cube:

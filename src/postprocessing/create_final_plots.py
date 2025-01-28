@@ -53,10 +53,9 @@ import mpdaf
 import numpy as np
 import ref_index
 import struct
-import project_path_config
 
-import detect_objects
-
+import src.project_path_config as project_path_config
+import src.postprocessing.detect_objects as detect_objects
 
 
 def scale_params(redshift: float) -> float:
