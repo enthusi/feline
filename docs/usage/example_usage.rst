@@ -129,7 +129,7 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
       | ``make SDLavailable=0``
 
 11. **Postprocessing**:
-    Run scripts to detect objects and generate plots:
+    Run scripts to detect objects, generate plots and create the PDF file:
 
     .. code-block:: bash
 
