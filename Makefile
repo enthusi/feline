@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -O3 -ffast-math -fopenmp=libomp -g -std=c99
+CFLAGS = -O3 -ffast-math -march=native -mtune=native -fopenmp=libomp -g -std=c99
 LDFLAGS = -lm
 TARGET = feline.bin
 SOURCE = src/feline.c
@@ -26,7 +26,7 @@ CFLAGS += -D SDLavailable=$(SDLavailable)
 
 CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
 CUBENAME := "DATACUBE_UDF-10.fits"
-
+CUBESIZE := $$(wget --spider --server-response --no-check-certificate $(CUBELINK) 2>&1 | awk -F '[()]' '/Length:/ {print $$2}' | tail -n 1)
 
 ZLOW="0"
 ZHIGH="1.9"
@@ -46,15 +46,29 @@ run:
 
 	@if [ -f data/raw/$(CUBENAME) ]; then \
 		echo "File exists";\
-	else\
-		echo "Downloading Cube File...";\
-		wget --no-check-certificate $(CUBELINK) ;\
-		mv $(CUBENAME) data/raw/$(CUBENAME);\
+	else \
+		read -p "Do you want to download the cubefile ($(CUBESIZE))? (y/n) " yn; \
+		if [ "$$yn" = "y" ]; then \
+			echo "Downloading Cube File..."; \
+			wget --no-check-certificate $(CUBELINK); \
+			mv $(CUBENAME) data/raw/$(CUBENAME); \
+		else \
+			echo "Download aborted. Exiting Makefile"; \
+			exit 1; \
+		fi \
 	fi
 
 	@if [ ! -d "venv" ]; then \
-		echo "Setting up environment..."; \
-		python3 -m venv venv; \
+		read -p "Do you want to create a Python virtual environment and install requirements? (y/n) " yn; \
+		if [ "$$yn" = "y" ]; then \
+			echo "Setting up environment..."; \
+			python3 -m venv venv; \
+		else \
+			echo "Exiting setup."; \
+			exit 1; \
+		fi \
+	else \
+		echo "Virtual environment already exists."; \
 	fi
 
 	@. venv/bin/activate; pip install --prefer-binary -r requirements.txt > /dev/null
@@ -102,15 +116,29 @@ cuda:
 
 	@if [ -f data/raw/$(CUBENAME) ]; then \
 		echo "File exists";\
-	else\
-		echo "Downloading Cube File...";\
-		wget --no-check-certificate $(CUBELINK) ;\
-		mv $(CUBENAME) data/raw/$(CUBENAME) ;\
+	else \
+		read -p "Do you want to download the cubefile ($(CUBESIZE))? (y/n) " yn; \
+		if [ "$$yn" = "y" ]; then \
+			echo "Downloading Cube File..."; \
+			wget --no-check-certificate $(CUBELINK); \
+			mv $(CUBENAME) data/raw/$(CUBENAME); \
+		else \
+			echo "Download aborted. Exiting Makefile"; \
+			exit 1; \
+		fi \
 	fi
 
 	@if [ ! -d "venv" ]; then \
-		echo "Setting up environment..."; \
-		python3 -m venv venv; \
+		read -p "Do you want to create a Python virtual environment and install requirements? (y/n) " yn; \
+		if [ "$$yn" = "y" ]; then \
+			echo "Setting up environment..."; \
+			python3 -m venv venv; \
+		else \
+			echo "Exiting setup."; \
+			exit 1; \
+		fi \
+	else \
+		echo "Virtual environment already exists."; \
 	fi
 
 	@. venv/bin/activate; pip install --prefer-binary -r requirements.txt > /dev/null
@@ -161,6 +189,3 @@ clean:
 	find data/processed ! -name '.gitkeep' -type f -delete
 	find src/postprocessing -type f \( -name '*.txt' -o -name '*.fits' -o -name '*.png' -o -name '*.log' -o ! -name "*.*" \) -delete
 	find data/runtime_files ! -name '.gitkeep' -type f -delete
-
-debug:
-
