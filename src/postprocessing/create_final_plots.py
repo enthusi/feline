@@ -203,19 +203,19 @@ def galaxy(w: float, *p: int) -> np.ndarray:
     return flux
 
 
-def find_bottom_of_plot(ax: plt.axes.Axes, crval:float,
-                        crmax: float, data: np.ndarray) -> plt.axes.Axes:
+def find_bottom_of_plot(ax: plt.Axes, crval:float,
+                        crmax: float, data: np.ndarray) -> plt.Axes:
     """
     Sets axis limits for a plot based on the data range.
 
     Parameters:
-        ax (matplotlib.axes.Axes): The plot axes.
+        ax (matplotlib.Axes): The plot axes.
         crval (float): Start value for the x-axis.
         crmax (float): Max value for the x-axis.
         data (list or array-like): Data to determine y-axis limits.
 
     Returns:
-        matplotlib.axes.Axes: The modified axes.
+        matplotlib.Axes: The modified axes.
     """
     # find bottom:
     lowest = min(data)
@@ -243,7 +243,7 @@ def add_ticks_to_plot(plt: plt.Axes, aw: float, px_py: float) -> plt.Axes:
 
     Returns:
         matplotlib.pyplot.Axes: The modified axes object.
-        """
+    """
     plt.xlim(aw - 10, aw + 10)
     plt.ylim(px_py - 10, px_py + 10)
     plt.tick_params(axis="both", which="both", right=True,

@@ -10,7 +10,7 @@ Ensure the following software is installed on your system:
 - ``python 3.x`` (minimum version 3.8)
 - ``python3.x-dev`` package
 - ``python3.x-venv`` package
-- A C/C++ compiler, such as ``clang`` (recommended, we had a significant performance boost compared to gcc) or ``gcc``
+- A C/C++ compiler, such as ``clang`` (recommended due to a significant performance boost compared to gcc) or ``gcc``
 - ``SDL2`` (Optional: Needed for graphical output during runtime)
 
 Setup Instructions

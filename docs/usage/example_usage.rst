@@ -47,7 +47,7 @@ To use FELINE in an automated manner, you can use the pre-configured Makefile wo
 
 Manual Usage
 -------------
-Alternatively, you can manually execute each step of the FELINE workflow. Follow the instructions below to process the data manually.
+Alternatively, you can manually execute each step of the FELINE workflow. Follow the instructions below to process the data manually. Each command must be executed from the project's root directory.
 
 1. **Copy the cube file**:
    Place the cube file into the `data/raw/` directory of the project.
@@ -106,15 +106,13 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
 
    .. code-block:: bash
 
-      cd src/preprocessing
-      python combination.py <CUBENAME>.fits s2n_v250.fits
+      python -m src.preprocessing.combination <CUBENAME>.fits s2n_v250.fits
 
 10. **Compile and run the main program**:
     Compile and execute the FELINE binary with the following commands:
 
     .. code-block:: bash
 
-      cd ../../
       make
       ./feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
 
@@ -123,11 +121,9 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
 
     .. code-block:: bash
 
-      cd src/postprocessing
-      python detect_objects.py s2n_v250.fits
-
-      python create_final_plots.py <CUBENAME>.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
-      python create_pdf.py
+      python -m src.postprocessing.detect_objects s2n_v250.fits
+      python -m src.postprocessing.create_final_plots <CUBENAME>.fits s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028
+      python -m src.postprocessing.create_pdf
 
 12. **Find results**:
     After postprocessing, the results will be saved in the `data/pdf_files/` directory:
@@ -141,5 +137,4 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
 
     .. code-block:: bash
 
-      cd ../..
       make clean
