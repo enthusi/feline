@@ -40,9 +40,8 @@ Code of Conduct and Contribution Guidelines here:
    :caption: Documentation
    :hidden:
 
-   src/postprocessing/modules
-   src/preprocessing/modules
-
+   source/postprocessing/modules
+   source/preprocessing/modules
 
 
 

@@ -62,7 +62,7 @@ def create_pdf_file() -> None:
 
     for pdf_file in pdf_files:
         merger.append(pdf_file)
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
     file_name = f"result_{timestamp}.pdf"
     merger.write(os.path.join(project_path_config.DATA_PATH_PDF, file_name))
     merger.close()

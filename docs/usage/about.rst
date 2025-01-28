@@ -1,5 +1,5 @@
 FELINE
-============
+======
 The FELINE (Find Emission LINEs) algorithm then evaluates the likelihood in
 each spectrum of the 3D data cube for emission lines at 
 the positions provided by a given redshift and a certain
@@ -15,18 +15,18 @@ set of emission lines at any redshift within the range of interest.
 
 FELINE probes all possible combinations of up to
 14 transitions paired in 9 groups:
-Hα, Hβ, Hγ, Hδ, [O ii], [O iii], [N ii], [S ii], and Ne iii for the
-full redshift range of interest (e.g., 0.4 < z < 1.4).
+:math:`\rm{H}\alpha, \rm{H}\beta, \rm{H}\gamma, \rm{H}\delta, \rm{[O II]}, \rm{[O III]}, \rm{[N III]}, \rm{[S II]}  \text{ and } \rm{[Ne III]}` for the
+full redshift range of interest (e.g., :math:`0.4 < z < 1.4`).
 This particular selection of lines is motivated by the most prominent
 emission features expected in the MUSE data within the
-redshift range of [O ii] emitters.
-This results in 512 (2$^9$) different models that
+redshift range of :math:`\rm{[O II]}` emitters.
+This results in 512 :math:`(2^9)` different models that
 are assessed at roughly 8,000 different redshifts for each of
-the $\approx$ 90,000 spectra in a single data cube.
+the :math:`\approx 90,000` spectra in a single data cube.
 
 
 Thresholds
--------------
+----------
 To ensure that only lines above a certain S/N threshold 
 contribute to each model, a penalty value is subtracted for each additional
 line:
@@ -52,7 +52,7 @@ This can be applied to each spatial element independently and was
 thus fully parallelized.
 
 Result
--------------
+------
 FELINE creates an binary file that contains the information that is being plotted during the evaluation
 (if an SDL environment is present).
 The created file contains raw 32bit data of four arrays - each with Y x X spatial dimension:
@@ -65,7 +65,7 @@ The created file contains raw 32bit data of four arrays - each with Y x X spatia
 The latter simply representing a bit-count of the template integer value.
 
 Command line parameters
--------------
+-----------------------
 
 .. code-block:: bash
 
@@ -81,7 +81,7 @@ is not very critical.
 to the template score. Our example uses a value of `7` which is also the used value for our runs on MUSE data cubes.
 
 Postprocessing illustration
------------------------------
+---------------------------
 We provide an exemplary Python framework to visualize and verifiy the 
 FELINE results.
 
@@ -93,7 +93,7 @@ redshift. In addition to the individual line strengths, the redshift is the only
 in an early redshift estimate and in deriving further diagnostics for the later manual inspection.
 
 Modifications
-----------------
+-------------
 The used set of lines is prominently defined in `feline.c`:
 
 .. code-block:: c
