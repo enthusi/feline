@@ -25,7 +25,8 @@ CFLAGS += -D SDLavailable=$(SDLavailable)
 
 
 CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-CUBENAME := "DATACUBE_UDF-10.fits"
+#CUBENAME := "DATACUBE_UDF-10.fits"
+CUBENAME := "cube.fits"
 CUBESIZE := $$(wget --spider --server-response --no-check-certificate $(CUBELINK) 2>&1 | awk -F '[()]' '/Length:/ {print $$2}' | tail -n 1)
 
 ZLOW="0"
@@ -45,7 +46,7 @@ $(TARGET): $(SOURCE)
 run:
 
 	@if [ -f data/raw/$(CUBENAME) ]; then \
-		echo "File exists";\
+		echo "File exists.";\
 	else \
 		read -p "Do you want to download the cubefile ($(CUBESIZE))? (y/n) " yn; \
 		if [ "$$yn" = "y" ]; then \
@@ -96,7 +97,7 @@ run:
 
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
-	python -m src.preprocessing.combination $(CUBENAME) s2n_v250.fits
+	python -m src.preprocessing.masking_and_transpose $(CUBENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
 	@if [ -e feline.bin ]; then \
 		rm -f feline.bin; \
@@ -166,7 +167,7 @@ cuda:
 
 	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
-	python -m src.preprocessing.combination $(CUBENAME) s2n_v250.fits
+	python -m src.preprocessing.masking_and_transpose $(CUBENAME) s2n_v250.fits
 	@echo "Starting FELINE..."
 	@if [ -e feline.bin ]; then \
                 rm -f feline.bin; \
