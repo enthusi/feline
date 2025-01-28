@@ -13,6 +13,12 @@ We welcome everyone who wants to contribute to our project you can find our
 Code of Conduct and Contribution Guidelines here:
 
 
+.. toctree::
+   :maxdepth: 1
+   :caption: About
+   :hidden:
+
+   usage/about
 
 .. toctree::
    :maxdepth: 1
