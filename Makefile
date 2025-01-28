@@ -11,9 +11,9 @@ SDL2_CFLAGS := $(shell $(SDL_CONFIG) --cflags 2>/dev/null)
 SDL2_LIBS := $(shell $(SDL_CONFIG) --libs 2>/dev/null)
 
 ifeq ($(SDL2_CFLAGS)$(SDL2_LIBS),)
-    SDLavailable = 0
+    SDLavailable ?= 0
 else
-    SDLavailable = 1
+    SDLavailable ?= 1
 endif
 
 # Add the SDL2 availability macro to the compilation flags

@@ -1,24 +1,16 @@
 """
-This module, `project_path_config`, centralizes the path configurations for an
-astronomical data analysis project. It defines the root directory and specific
-subdirectories for storing PDF files, lookup data, processed data,
-and raw data.
+The `project_path_config` module centralizes path configurations.
+It defines paths for the key directories.
 
 Attributes:
-    DATA_PATH_ROOT (str): The absolute path to the project's root directory.
-    DATA_PATH_PDF (str): The path to the directory for storing PDF files.
-    DATA_PATH_LOOKUP (str): The path to the directory for lookup data.
-    DATA_PATH_PROCESSED (str): The path to the directory for processed data.
-    DATA_PATH_RAW (str): The path to the directory for raw data.
+    - DATA_PATH_ROOT (str): Root directory path.
+    - DATA_PATH_PDF (str): Directory for PDF files.
+    - DATA_PATH_LOOKUP (str): Directory for lookup data.
+    - DATA_PATH_PROCESSED (str): Directory for processed data.
+    - DATA_PATH_RAW (str): Directory for raw data.
 
-This configuration module ensures that paths are consistently managed across
-different parts of the project, facilitating access to data files and
-directories. It uses the `os` module to construct absolute paths, making it
-easier to reference data across the project's codebase.
-
-Note:
-This module is essential for maintaining an organized file structure and
-should be imported wherever file paths are needed within the project.
+Dependencies:
+	- os: For file and system operations.
 """
 
 import os

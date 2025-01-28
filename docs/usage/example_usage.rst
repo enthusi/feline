@@ -6,8 +6,8 @@ FELINE offers both automated and manual execution methods. Below are instruction
 Automatic Usage
 ---------------
 To use FELINE in an automated manner, you can use the pre-configured Makefile workflow.
-Herein, a 3D data cube observed with VLT/MUSE is being fetched from the wunderful
-public [AMUSED](https://amused.univ-lyon1.fr) data base.
+Herein, a 3D data cube observed with VLT/MUSE is being fetched from the wonderful
+public `AMUSED <https://amused.univ-lyon1.fr>`_ data base.
 
 1. **Edit the Makefile**:
    Edit the `CUBELINK` and `CUBENAME` parameters inside the `Makefile`.
@@ -25,6 +25,11 @@ public [AMUSED](https://amused.univ-lyon1.fr) data base.
    .. code-block:: bash
 
       make run
+
+   .. note::
+      | **For SDL Usage**: By default the Makefile activates SDL if it is available.
+      | If you want to disable SDL you need to add the following macro to the make command:
+      | ``make run SDLavailable=0``
 
 3. **Optional GPU acceleration**:
    If a compatible NVIDIA GPU is available, and the necessary developer tools are installed, you can enable GPU acceleration:
@@ -117,6 +122,11 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
 
       make
       ./feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
+
+    .. note::
+      | **For SDL Usage**: By default the Makefile activates SDL if it is available.
+      | If you want to disable SDL you need to add the following macro to the make command:
+      | ``make SDLavailable=0``
 
 11. **Postprocessing**:
     Run scripts to detect objects and generate plots:

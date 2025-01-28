@@ -7,7 +7,7 @@ combination of typical emission features.
 
 FELINE does not evaluate the observed data cube directly, but instead 
 utilizes the result of an emission line matched filter to boost the signal-to-noise
-of any such feature in the data cube. We use [LSDcat](https://ascl.net/1612.002) to create such a filtered
+of any such feature in the data cube. We use `LSDcat <https://ascl.net/1612.002>`_ to create such a filtered
 data cube.
 FELINE, however, does not pick individual peaks from that data as separate objects but instead
 simulatenously assesses the accumulative signal at all spectral positions that correspond to a certain

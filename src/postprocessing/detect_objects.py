@@ -1,34 +1,23 @@
 """
-This module, `detect_objects`, is part of an astronomical data analysis
-project. It includes functionalities for converting between world and pixel
-coordinates, calculating 2D Gaussian values, and detecting objects in
-astronomical images.
+The `detect_objects` module provides functionalities for converting between
+world and pixel coordinates, calculating Gaussian values, and detecting objects
+in astronomical images.
 
 Functions:
-- world_to_pix: Converts world coordinates (RA, Dec) to pixel coordinates.
-- pix_to_world: Converts pixel coordinates to world coordinates (RA, Dec).
-- print_lines: Returns catalog lines for a given toggle and redshift.
-- sort_catalog: Sorts the catalog based on a specific value.
-- write_to_file: Writes sorted catalog data to a file.
-
-This module utilizes libraries such as `astropy` for WCS transformations,
-`matplotlib` for plotting, `numpy` and `scipy` for numerical operations, and
-`skimage` for feature detection. It supports the analysis of astronomical data
-by identifying and cataloging objects based on their spectral and spatial
-characteristics.
+    - world_to_pix: Converts world coordinates (RA, Dec) to pixel coordinates.
+    - pix_to_world: Converts pixel coordinates to world coordinates (RA, Dec).
+    - print_lines: Returns catalog lines for a given toggle and redshift.
+    - sort_catalog: Sorts the catalog based on a specific value.
+    - write_to_file: Writes sorted catalog data to a file.
 
 Dependencies:
-- astropy: For FITS file handling and WCS transformations.
-- matplotlib: For plotting and visualizations.
-- numpy, scipy: For numerical calculations and array manipulations.
-- skimage: For object detection in images.
-- json, os, sys: For file and system operations.
-
-Note:
-This module is designed to work with specific project path configurations and
-assumes the availability of certain global variables and data files defined
-elsewhere in the project.
+    - astropy: For WCS transformations.
+    - matplotlib: For visualizations.
+    - numpy, scipy: For numerical operations.
+    - skimage: For object detection.
+    - json, os, sys: For file operations.
 """
+
 
 import json
 import os
@@ -80,15 +69,15 @@ def pix_to_world(coord: astropy.wcs.WCS, pix: tuple) -> tuple:
 
 def print_lines(toggle: int, z: float) -> list:
     """
-        This function returns the lines of the catalog for the given
-        toggle and redshift.
+    This function returns the lines of the catalog for the given
+    toggle and redshift.
 
-        Args:
-            toggle: Integer value representing the toggle.
-            z: Float value representing the redshift.
+    Args:
+        toggle: Integer value representing the toggle.
+        z: Float value representing the redshift.
 
-        Returns:
-            lines: List of strings containing the lines of the catalog.
+    Returns:
+        lines: List of strings containing the lines of the catalog.
     """
     lines = []
     for k in range(len(atoms["atoms"])):
@@ -110,14 +99,14 @@ def print_lines(toggle: int, z: float) -> list:
 
 def sort_catalog(catalog_lines: list) -> list:
     """
-        This function sorts the catalog based on the 5th value in
-        descending order.
+    This function sorts the catalog based on the 5th value in
+    descending order.
 
-        Args:
-            catalog_lines: List of strings containing the catalog data.
+    Args:
+        catalog_lines: List of strings containing the catalog data.
 
-        Returns:
-            sorted_catalog: List of strings containing sorted catalog data.
+    Returns:
+        sorted_catalog: List of strings containing sorted catalog data.
     """
     # Separate lines starting with '#' and lines not starting with '#'
     hash_lines = [line for line in
@@ -137,14 +126,14 @@ def sort_catalog(catalog_lines: list) -> list:
 
 def write_to_file(catalog_list: list) -> None:
     """
-        This function writes the sorted catalog to a file named
-        'sorted_catalog.txt'.
+    This function writes the sorted catalog to a file named
+    'sorted_catalog.txt'.
 
-        Args:
-            catalog_list: List of strings containing the catalog data.
+    Args:
+        catalog_list: List of strings containing the catalog data.
 
-        Returns:
-            None
+    Returns:
+        None
     """
     with open(f'{project_path_config.DATA_PATH_RUNTIME_FILES}/sorted_catalog.txt', 'w') as file:
         for line1 in catalog_list:
