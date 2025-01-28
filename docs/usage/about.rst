@@ -31,6 +31,7 @@ contribute to each model, a penalty value is subtracted for each additional
 line:
 
 .. code-block:: c
+
    sum = sum - lines_ptr * scale * significance;
 
 The ``scale`` parameter (default = 10) enhances the signal of every considered line.
@@ -67,7 +68,7 @@ Command line parameters
 
 .. code-block:: bash
 
-      ./feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
+   ./feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
 
 `ZLOW` and `ZHIGH` set the range of the redshift of interest. E.g., 0 - 1.9 (as in the example)
 
@@ -95,6 +96,7 @@ Modifications
 The used set of lines is prominently defined in `feline.c`:
 
 .. code-block:: c
+
    const float lines_first[11] = {6564.61, 4862.72, 4341.68, 4102.89, 3727.09, 4960.30, 6549.86, 6718.29, 3869.81, 1908.73, 1215.67};
    const float lines_second[11] ={   0   ,    0   ,    0   ,    0   , 3729.88, 5008.24, 6585.27, 6732.67, 3968.53, 1906.68,    0   };
    
