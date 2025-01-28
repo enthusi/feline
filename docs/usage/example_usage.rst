@@ -26,6 +26,11 @@ public `AMUSED <https://amused.univ-lyon1.fr>`_ data base.
 
       make run
 
+   .. note::
+      | **For SDL Usage**: By default the Makefile activates SDL if it is available.
+      | If you want to disable SDL you need to add the following macro to the make command:
+      | ``make run SDLavailable=0``
+
 3. **Optional GPU acceleration**:
    If a compatible NVIDIA GPU is available, and the necessary developer tools are installed, you can enable GPU acceleration:
 
@@ -117,6 +122,11 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
 
       make
       ./feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
+
+    .. note::
+      | **For SDL Usage**: By default the Makefile activates SDL if it is available.
+      | If you want to disable SDL you need to add the following macro to the make command:
+      | ``make SDLavailable=0``
 
 11. **Postprocessing**:
     Run scripts to detect objects and generate plots:

@@ -11,9 +11,9 @@ SDL2_CFLAGS := $(shell $(SDL_CONFIG) --cflags 2>/dev/null)
 SDL2_LIBS := $(shell $(SDL_CONFIG) --libs 2>/dev/null)
 
 ifeq ($(SDL2_CFLAGS)$(SDL2_LIBS),)
-    SDLavailable = 0
+    SDLavailable ?= 0
 else
-    SDLavailable = 1
+    SDLavailable ?= 1
 endif
 
 # Add the SDL2 availability macro to the compilation flags
@@ -25,8 +25,7 @@ CFLAGS += -D SDLavailable=$(SDLavailable)
 
 
 CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-#CUBENAME := "DATACUBE_UDF-10.fits"
-CUBENAME := "cube.fits"
+CUBENAME := "DATACUBE_UDF-10.fits"
 CUBESIZE := $$(wget --spider --server-response --no-check-certificate $(CUBELINK) 2>&1 | awk -F '[()]' '/Length:/ {print $$2}' | tail -n 1)
 
 ZLOW="0"
