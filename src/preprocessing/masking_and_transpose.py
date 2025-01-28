@@ -1,36 +1,22 @@
 """
-This module, `masking_and_transpose`, is designed for preprocessing astronomical data in
-the context of an astronomical data analysis project. It provides
-functionalities for loading data from files, creating masking plots, and
-processing cube data to facilitate further analysis.
+This module, `masking_and_transpose`, is used for preprocessing and analyzing
+astronomical data. It includes functions for data loading, masking, and cube
+processing to prepare the data for further analysis.
 
 Functions:
-- load_data: Loads data from a specified file and extension number, returning
-a summed cube data along a specified axis.
-
-- create_masking_plot: Generates a masking plot based on signal-to-noise ratio
-  and writes it to a file, aiding in identifying areas of interest.
-- write_to_file: Writes numerical data to a file in binary format, supporting
-  data persistence and sharing.
-- process_cube_data: Processes cube data by extracting spectra from each pixel
-  and writing the processed data to a file, enabling detailed spectral
-  analysis.
-
-This module leverages the `mpdaf` library for handling astronomical data cubes,
-`numpy` for numerical operations, and standard libraries such as `os` and
-`struct` for file and system operations. It plays a crucial role in the
-preprocessing stage of the project, preparing data for subsequent
-analysis steps.
+    - load_data: Loads and sums data from a file
+      along a specified axis.
+    - create_masking_plot: Generates a masking
+      plot based on signal-to-noise ratio.
+    - write_to_file: Writes numerical data to a file in binary
+      format.
+    - transpose_cube_data: transposes and writes spectra
+      for each pixel for analysis.
 
 Dependencies:
-- mpdaf: For manipulation and analysis of astronomical data cubes.
-- numpy: For numerical calculations and array manipulations.
-- os, sys, struct: For file and system operations.
-
-Note:
-This module is part of a larger project focused on the analysis of astronomical
-data. It assumes the availability of project-specific path configurations
-defined in the `project_path_config` module.
+    - mpdaf: For handling astronomical data cubes.
+    - numpy: For numerical calculations.
+    - os, sys, struct: For file and system operations.
 """
 
 import os
@@ -67,7 +53,7 @@ def create_masking_plot() -> None:
 
     Returns:
         None
-      """
+    """
     filename_first_argument = sys.argv[1]
     file = os.path.join(
         project_path_config.DATA_PATH_RAW,
@@ -81,7 +67,7 @@ def create_masking_plot() -> None:
 
 def write_to_file(file_path: str, data: float) -> None:
     """
-    Function to write data to a file
+    Function to write data to a file.
 
     Args:
         file_path (str): Path to the file
@@ -93,10 +79,10 @@ def write_to_file(file_path: str, data: float) -> None:
         fout.write(struct.pack("f", data))
 
 
-def process_cube_data(cube_data: np.ndarray, dy: int, dx: int,
-                      file_path: str) -> None:
+def transpose_cube_data(cube_data: np.ndarray, dy: int, dx: int,
+                        file_path: str) -> None:
     """
-    Function to process cube data and write it to a file
+    Function to transpose cube data and write it to a file.
 
     Args:
         cube_data (np.ndarray): The cube data to be processed
@@ -141,7 +127,7 @@ if __name__ == "__main__":
                                "raw_reordered_s2ncube.dat"),
                   wavelength_at_reference_pixel)
 
-    process_cube_data(cube_from_processed_file.data, cube_dimensions_y,
-                      cube_dimensions_x,
-                      os.path.join(project_path_config.DATA_PATH_PROCESSED,
+    transpose_cube_data(cube_from_processed_file.data, cube_dimensions_y,
+                        cube_dimensions_x,
+                        os.path.join(project_path_config.DATA_PATH_PROCESSED,
                                    "raw_reordered_s2ncube.dat"))
