@@ -3,14 +3,14 @@
 FELINE - A tool to detect emission line galaxies in 3d data
 ===========================================================
 
-About
------
 Welcome to the Feline project! This documentation provides an overview of the project and its components.
+
 
 Contributing
 ------------
-We welcome everyone who wants to contribute to our project you can find our
-Code of Conduct and Contribution Guidelines here:
+We welcome everyone who wants to contribute to our project. For more information visit
+`Code of Conduct <https://github.com/enthusi/feline/blob/main/CODE_OF_CONDUCT.md>`_ and
+`Contribution Guidelines <https://github.com/enthusi/feline/blob/main/CONTRIBUTING.md>`_.
 
 
 .. toctree::
