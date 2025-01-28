@@ -23,7 +23,7 @@ def test_load_data_returns_correct_sum():
 
 @patch('mpdaf.obj.Image.write')
 def test_create_masking_plot(mock_write, mocker, tmpdir):
-    mocker.patch('sys.argv', ['combination.py', 'test_file.fits'])
+    mocker.patch('sys.argv', ['masking_and_transpose.py', 'test_file.fits'])
     file = tmpdir.mkdir('data').join('image00.fits')
     mocker.patch('os.path.join', return_value='data/raw/test_file.fits')
     mock_write().write('image00.fits')

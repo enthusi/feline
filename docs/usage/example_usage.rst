@@ -106,7 +106,7 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
 
    .. code-block:: bash
 
-      python -m src.preprocessing.combination <CUBENAME>.fits s2n_v250.fits
+      python -m src.preprocessing.masking_and_transpose <CUBENAME>.fits s2n_v250.fits
 
 10. **Compile and run the main program**:
     Compile and execute the FELINE binary with the following commands:
@@ -131,6 +131,8 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
     .. code-block:: bash
 
       data/pdf_files/result_*.pdf
+
+    PDF Format: ``result_YYYY_MM_DD_HH:MM:SS``
 
 13. **Clean up**:
     To clean up temporary files after processing:

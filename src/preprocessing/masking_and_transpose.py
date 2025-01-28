@@ -1,5 +1,5 @@
 """
-This module, `combination`, is designed for preprocessing astronomical data in
+This module, `masking_and_transpose`, is designed for preprocessing astronomical data in
 the context of an astronomical data analysis project. It provides
 functionalities for loading data from files, creating masking plots, and
 processing cube data to facilitate further analysis.

@@ -1,9 +1,8 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../src/postprocessing'))
-sys.path.insert(0, os.path.abspath('../src/preprocessing'))
-
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 extensions = [
     'sphinx_rtd_theme',
