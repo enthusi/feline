@@ -24,6 +24,7 @@ This results in 512 :math:`(2^9)` different models that
 are assessed at roughly 8,000 different redshifts for each of
 the :math:`\approx 90,000` spectra in a single data cube.
 
+For further Information see the `Paper <https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc>`_.
 
 Thresholds
 ----------

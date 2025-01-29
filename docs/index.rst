@@ -29,15 +29,16 @@ We welcome everyone who wants to contribute to our project. For more information
 
 .. toctree::
    :maxdepth: 1
-   :caption: Example Usage
+   :caption: Usage Guide
    :hidden:
 
-   usage/example_usage
+   usage/automatic_usage
+   usage/manual_usage
 
 
 .. toctree::
    :maxdepth: 1
-   :caption: Documentation
+   :caption: Source Documentation
    :hidden:
 
    source/postprocessing/modules
