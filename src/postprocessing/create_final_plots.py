@@ -1,42 +1,25 @@
 """
-This module, `create_final_plots`, is designed for generating various plots
-and visualizations
-related to the analysis of astronomical data. It includes functions for
-converting pixel to world coordinates and vice versa, calculating the impact
-parameter between a quasar and a galaxy, fitting spectral templates to observed
-galaxy data, and more. The module utilizes libraries such as matplotlib for
-plotting, astropy for astronomical calculations and coordinate transformations,
-and mpdaf for handling data cubes. It also includes functionality for reading
-and processing data from specific project paths and files, as defined in the
-`project_path_config` module.
+The `create_final_plots` module generates plots and visualizations for
+the cube data. It includes functions for coordinate transformations,
+calculating impact parameters, fitting spectral templates, and visualizing data cubes.
 
-Key functionalities include:
-- Converting between pixel and world (RA, Dec) coordinates.
-- Calculating the plate scale and impact parameter at a given redshift.
-- Fitting galaxy models to observed spectra using Gaussian functions.
-- Generating plots for spectral data, including overlays of model fits and
-annotations for expected absorption and emission lines.
-
-- Visualizing data cubes and quality metrics for astronomical objects.
-
-This module is part of a larger project focused on the analysis of astronomical
-data cubes, with a particular emphasis on the study of galaxies and quasars.
+Functions:
+    - scale_params: Converts redshift to plate scale in kpc per arcsec.
+    - get_impact: Calculates the impact parameter between a quasar and a galaxy.
+    - get_num_lines: Counts the active emission lines based on a model integer.
+    - gauss_function: Computes the value of a Gaussian function.
+    - galaxy: Generates a synthetic galaxy spectrum using Gaussian profiles for emission lines.
+    - find_bottom_of_plot: Sets axis limits for a plot based on the data range.
+    - add_ticks_to_plot: Adjusts plot limits and hides tick labels.
 
 Dependencies:
-- astropy: For cosmological calculations, FITS file handling, and
-WCS transformations.
-
-- matplotlib: For creating plots and visualizations.
-- mpdaf: For manipulating data cubes from astronomical observations.
-- numpy: For numerical calculations and array manipulations.
-- json, os, sys, logging, struct: For handling files, logging, and other system
-  operations.
-
-Note:
-This module assumes the availability of specific global variables and
-configurations defined elsewhere in the project, such as cosmological
-parameters and project path configurations.
+    - astropy: For cosmological calculations and WCS transformations.
+    - matplotlib: For plotting and visualizations.
+    - mpdaf: For handling data cubes.
+    - numpy: For numerical operations.
+    - json, os, sys, logging, struct: For file handling and system operations.
 """
+
 
 import json
 import math
@@ -155,7 +138,6 @@ def gauss_function(x: float, a: float, x0: float, sigma: float) -> float:
 # a Gaussian function for each detected emission
 def galaxy(w: float, *p: int) -> np.ndarray:
     """
-
     Generates a model galaxy spectrum by summing Gaussian profiles for each
     emission line. This function takes a wavelength array and parameters
     for each emission line, including the redshift, line width (sigma),
@@ -467,14 +449,14 @@ if __name__ == "__main__":
                   " y=%.1f, ra=%.6f dec=%.6f z=%.6f" %
                   (qso_id, run_id, px, py, ra, dec, z))
 
-        ax1.text(0.5, -0.2, r"wavelength ($\AA$)", ha="center", va="top",
+        ax1.text(0.5, -0.2, r"wavelength ($\rm{\AA}$)", ha="center", va="top",
                  transform=ax1.transAxes, fontsize=10)
 
         ax2 = plt.subplot2grid((rows, columns), (1, 0), colspan=9)
         plt.title("%d used lines, match strength=%d, b=%.1f" % (
             used, quality, get_impact(qso_x, qso_y, px, py, z)))
 
-        ax2.text(0.5, -0.2, r"wavelength ($\AA$)", ha="center", va="top",
+        ax2.text(0.5, -0.2, r"wavelength ($\rm{\AA}$)", ha="center", va="top",
                  transform=ax2.transAxes, fontsize=10)
 
         ax2.tick_params(

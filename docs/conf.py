@@ -12,7 +12,7 @@ extensions = [
     'sphinx_copybutton',
 ]
 
-project = 'Feline'
+project = 'FELINE'
 author = 'Martin Wendt, Marvin Henschel, Oskar Soth'
 release = '1.0.0'
 

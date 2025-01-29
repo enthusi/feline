@@ -59,3 +59,8 @@ Setup Instructions
    .. code-block:: bash
 
       make
+
+   .. note::
+      | **For SDL Usage**: By default the Makefile activates SDL if it is available.
+      | If you want to disable SDL you need to add the following macro to the make command:
+      | ``make SDLavailable=0``

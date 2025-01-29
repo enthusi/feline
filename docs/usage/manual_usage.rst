@@ -1,52 +1,3 @@
-Example Usage
-=============
-
-FELINE offers both automated and manual execution methods. Below are instructions for each approach.
-
-Automatic Usage
----------------
-To use FELINE in an automated manner, you can use the pre-configured Makefile workflow.
-Herein, a 3D data cube observed with VLT/MUSE is being fetched from the wunderful
-public [AMUSED](https://amused.univ-lyon1.fr) data base.
-
-1. **Edit the Makefile**:
-   Edit the `CUBELINK` and `CUBENAME` parameters inside the `Makefile`.
-   If the cube file is stored locally, copy it into the /data/raw directory and update `CUBENAME`.
-   If you wish to use a URL, update `CUBELINK`.
-
-   .. code-block:: bash
-
-       [27] CUBELINK := <link>
-       [28] CUBENAME := <name>
-
-2. **Run the workflow**:
-   To run the workflow, use the following command:
-
-   .. code-block:: bash
-
-      make run
-
-3. **Optional GPU acceleration**:
-   If a compatible NVIDIA GPU is available, and the necessary developer tools are installed, you can enable GPU acceleration:
-
-   .. code-block:: bash
-
-      make cuda
-
-4. **Find results**:
-   Once the workflow completes successfully and the PDF files are merged, you can find the results in the `data/pdf_files/` directory:
-
-   .. code-block:: bash
-
-      data/pdf_files/result_*.pdf
-
-5. **Clean up**:
-   To clean up temporary files:
-
-   .. code-block:: bash
-
-      make clean
-
 Manual Usage
 -------------
 Alternatively, you can manually execute each step of the FELINE workflow. Follow the instructions below to process the data manually. Each command must be executed from the project's root directory.
@@ -118,8 +69,13 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
       make
       ./feline.bin <ZLOW> <ZHIGH> <MAX_MATCH> <IGNORE_BELOW>
 
+    .. note::
+      | **For SDL Usage**: By default the Makefile activates SDL if it is available.
+      | If you want to disable SDL you need to add the following macro to the make command:
+      | ``make SDLavailable=0``
+
 11. **Postprocessing**:
-    Run scripts to detect objects and generate plots:
+    Run scripts to detect objects, generate plots and create the PDF file:
 
     .. code-block:: bash
 
