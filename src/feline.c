@@ -4,6 +4,7 @@
 #include <math.h>
 #if SDLavailable
     #include <SDL.h>
+    #include <SDL_render.h>
 #endif
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -55,6 +56,13 @@ int getcolor(int v) {
  * @param v The integer whose set bits are to be counted.
  * @return The number of set bits (1s) in the integer.
  */
+
+ void truncate_float_array(float *arr, int size) {
+    for (int i = 0; i < size; i++) {
+        arr[i] = trunc(arr[i] * 1000) / 1000.0;  // Truncate to 3 decimal places
+    }
+}
+
 inline int countbits(int v) {
     int c;
     for (c = 0; v; v >>= 1) { c += v & 1; }
@@ -162,7 +170,7 @@ int main(int argc, char *argv[]) {
 
     atexit(SDL_Quit);
 
-    window = SDL_CreateWindow(FELINE_VERSION, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, dx * 4, dy + 1, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(FELINE_VERSION, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1440, 360 * ((float)dy / dx) + 1, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         fputs(SDL_GetError(), stderr);
         exit(1);
@@ -173,14 +181,15 @@ int main(int argc, char *argv[]) {
         fputs(SDL_GetError(), stderr);
         exit(1);
     }
+    SDL_RenderSetLogicalSize(renderer, 1440, 360 * ((float)dy / dx) + 1);
 
 // Access pixels directly from the window surface
-    screen = SDL_CreateRGBSurface(0, dx * 4, dy + 1, 32, 0, 0, 0, 0);
+    screen = SDL_CreateRGBSurface(0, 1440, 360 * ((float)dy / dx) + 1, 32, 0, 0, 0, 0);
     if (screen == NULL) {
-        fputs(SDL_GetError(), stderr);
+        fprintf(stderr, "SDL_CreateRGBSurface failed: %s\n", SDL_GetError());
         exit(1);
     }
-    SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, dx * 4, dy + 1);
+    SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, dx*4, dy + 1);
     if (SDL_MUSTLOCK(screen)) {
         SDL_LockSurface(screen);
     }
@@ -359,12 +368,15 @@ int main(int argc, char *argv[]) {
     fflush(stdout);
 
     FILE *res_i_file;
+    int total_size = dx * dy * layer;
+    truncate_float_array(res_i, total_size);
     res_i_file = fopen(DATA_PATH_RUNTIME_FILES "feline_float32_array.raw", "wb");
     fwrite(res_i, (sizeof(float) * dy * dx * layer), 1, res_i_file);
 
 
 #if SDLavailable
     char *file = DATA_PATH_RUNTIME_FILES "map_omp4.bmp";
+    SDL_RenderPresent(renderer);
     SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, screen->pixels, screen->pitch);
     if (SDL_SaveBMP(screen, file) != 0) {
         fprintf(stderr, "Could not write %s!\n", file);
@@ -372,7 +384,6 @@ int main(int argc, char *argv[]) {
 
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
 
     if (SDL_MUSTLOCK(screen)) {
         SDL_UnlockSurface(screen);
