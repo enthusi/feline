@@ -75,19 +75,19 @@ run:
 	@. venv/bin/activate; pip install --prefer-binary -r requirements.txt > /dev/null
 	@export PYTHONWARNING="ignore"
 
-	@echo "Starting preprocessing of the cubefile..."
+	@echo "starting preprocessing of the cubefile..."
 	@echo ""
-	@echo "apply median filter to 'flat' out the data (emission lines remain)..."
+	@echo "applying median filter to 'flat' out the data (emission lines remain)..."
 	@. venv/bin/activate && \
 	python src/preprocessing/median-filter-cube.py data/raw/$(CUBENAME) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
 	@echo ""
-	@echo "filter the data cube with a 'typical line' template in spatial dimension first..."
+	@echo "filtering the data cube with a 'typical line' template in spatial dimension first..."
 	@. venv/bin/activate && \
 	python src/preprocessing/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=$(CORES) --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite > /dev/null
-	@echo "filter the data cube with a 'typical line' template in spectral dimension..."
+	@echo "filtering the data cube with a 'typical line' template in spectral dimension..."
 	@. venv/bin/activate && \
 	python src/preprocessing/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=$(CORES) --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite > /dev/null
-	@echo "construct a signal-to-noise cube..."
+	@echo "constructing a signal-to-noise cube..."
 	@. venv/bin/activate && \
 	python src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1 > /dev/null
 
@@ -95,10 +95,10 @@ run:
 	@rm data/processed/spatial_cc.fits
 	@rm data/processed/spectral_cc.fits
 
-	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
+	@echo "creating Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
 	python -m src.preprocessing.masking_and_transpose $(CUBENAME) s2n_v250.fits
-	@echo "Starting FELINE..."
+	@echo "starting FELINE..."
 	@if [ -e feline.bin ]; then \
 		rm -f feline.bin; \
 	else \
@@ -107,7 +107,7 @@ run:
 	@$(CC) $(CFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
 	./feline.bin $(ZLOW) $(ZHIGH) $(MAX_MATCH) $(IGNORE_BELOW)
 
-	@echo "Starting Postprocessing and creating PDF..."
+	@echo "starting Postprocessing and creating PDF..."
 	@. venv/bin/activate ; \
 	python -m src.postprocessing.detect_objects s2n_v250.fits ; \
 	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
@@ -147,17 +147,17 @@ cuda:
 
 	@echo "Starting preprocessing of the cubefile..."
 	@echo ""
-	@echo "apply median filter to 'flat' out the data (emission lines remain)..."
+	@echo "applying median filter to 'flat' out the data (emission lines remain)..."
 	@. venv/bin/activate && \
 	python src/preprocessing/median-filter-cube.py data/raw/$(CUBENAME) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
 	@echo ""
-	@echo "filter the data cube with a 'typical line' template in spatial dimension first..."
+	@echo "filtering the data cube with a 'typical line' template in spatial dimension first..."
 	@. venv/bin/activate && \
 	python src/preprocessing/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=$(CORES) --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite > /dev/null
-	@echo "filter the data cube with a 'typical line' template in spectral dimension..."
+	@echo "filtering the data cube with a 'typical line' template in spectral dimension..."
 	@. venv/bin/activate && \
 	python src/preprocessing/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=$(CORES) --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite > /dev/null
-	@echo "construct a signal-to-noise cube..."
+	@echo "constructing a signal-to-noise cube..."
 	@. venv/bin/activate && \
 	python src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1 > /dev/null
 
@@ -165,10 +165,10 @@ cuda:
 	@rm data/processed/spatial_cc.fits
 	@rm data/processed/spectral_cc.fits
 
-	@echo "Create Masking Plot and transpose Cube for better Cache Access..."
+	@echo "creating Masking Plot and transpose Cube for better Cache Access..."
 	@. venv/bin/activate ; \
 	python -m src.preprocessing.masking_and_transpose $(CUBENAME) s2n_v250.fits
-	@echo "Starting FELINE..."
+	@echo "starting FELINE..."
 	@if [ -e feline.bin ]; then \
                 rm -f feline.bin; \
         else \
@@ -177,7 +177,7 @@ cuda:
 	nvcc -O3 --use_fast_math -o feline.bin src/feline.cu
 	./feline.bin $(ZLOW) $(ZHIGH) $(MAX_MATCH) $(IGNORE_BELOW)
 
-	@echo "Starting Postprocessing and creating PDF..."
+	@echo "starting Postprocessing and creating PDF..."
 	@. venv/bin/activate ; \
 	python -m src.postprocessing.detect_objects s2n_v250.fits ; \
 	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
