@@ -1,7 +1,7 @@
 Example visualization
 ======
 We provide a Python script to visualize the FELINE output.
-The -> Automatic usage executes it as well.
+The :ref:`_automaticusage-label` executes it as well.
 
 The FELINE output contains a raw 32bit data of four arrays - each with X :math:`\times` Y spatial dimension:
 - ``quality``, a float32 which reflects the score of the best matching template for this spaxel
