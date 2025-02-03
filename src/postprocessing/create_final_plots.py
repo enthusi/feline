@@ -248,7 +248,7 @@ def fit_template(t,z,f,w):
         w (float): The wavelength array from the median filtered data cube
 
     Returns:
-        matplotlib.pyplot.Axes: The modified axes object.
+        new_z (float): The fitted redshift for this galaxy model
     """
     global forfit_t, forfit_w
     forfit_t=t
