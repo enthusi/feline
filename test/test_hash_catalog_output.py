@@ -1,7 +1,7 @@
 import hashlib
 
 # Hardcoded expected SHA-256 hash
-EXPECTED_HASH = "d6228cf8a992d4a65befe830c1144ab0e6bee832b96e794367350afc2d84d70d"
+EXPECTED_HASH = "528df34011402095eee3833c35abe34c14a5687bcf4e047b193654ac7425d3a5"
 
 # Path to the file to check
 FILE_PATH = "../data/runtime_files/sorted_catalog.txt"

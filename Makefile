@@ -109,7 +109,7 @@ run:
 	@echo "starting Postprocessing and creating PDF..."
 	@. venv/bin/activate ; \
 	python -m src.postprocessing.detect_objects s2n_v250.fits ; \
-	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
+	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits AMUSED_UDF10 ; \
 	python -m src.postprocessing.create_pdf
 
 cuda:
