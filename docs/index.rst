@@ -38,6 +38,13 @@ We welcome everyone who wants to contribute to our project. For more information
 
 .. toctree::
    :maxdepth: 1
+   :caption: Example visualization
+   :hidden:
+
+   usage/example_vis
+      
+.. toctree::
+   :maxdepth: 1
    :caption: Source Documentation
    :hidden:
 

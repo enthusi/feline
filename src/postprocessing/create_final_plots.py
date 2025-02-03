@@ -175,8 +175,8 @@ def galaxy(w: float, *p: int) -> np.ndarray:
         for emission in atom:
             vacline = emission
             pos = vacline * (z + 1)
-            newpos = ref_index.vac2air(pos / 10.0) * 10.0
-
+            #newpos = ref_index.vac2air(pos / 10.0) * 10.0
+            newpos=pos
             amplitude = p[2 + i]
 
             flux += gauss_function(w, amplitude, newpos, sigma)
