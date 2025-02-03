@@ -25,10 +25,11 @@ are assessed at roughly 8,000 different redshifts for each of
 the :math:`\approx 90,000` spectra in a single data cube.
 
 FELINE was utilized in the following publications:
-- `MusE GAs FLOw and Wind (MEGAFLOW) XII. Rationale and design of a MgII survey of the cool circum-galactic medium with MUSE and UVES: The MEGAFLOW Survey <https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_
-- `MusE GAs FLOw and Wind (MEGAFLOW) XI. Scaling relations between outflows and host galaxy properties <https://ui.adsabs.harvard.edu/abs/2024A&A...687A..39S>`_
-- `MusE GAs FLOw and Wind (MEGAFLOW) X. The cool gas and covering fraction of Mg II in galaxy groups <https://ui.adsabs.harvard.edu/abs/2024MNRAS.528..481C>`_
-- `MusE GAs FLOw and Wind (MEGAFLOW) IX. The impact of gas flows on the relations between the mass, star formation rate, and metallicity of galaxies <https://ui.adsabs.harvard.edu/abs/2023MNRAS.521..546L>`_
+|- `MusE GAs FLOw and Wind (MEGAFLOW) XII. Rationale and design of a MgII survey of the cool circum-galactic medium with MUSE and 
+|- `UVES: The MEGAFLOW Survey <https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_
+|- `MusE GAs FLOw and Wind (MEGAFLOW) XI. Scaling relations between outflows and host galaxy properties <https://ui.adsabs.harvard.edu/abs/2024A&A...687A..39S>`_
+|- `MusE GAs FLOw and Wind (MEGAFLOW) X. The cool gas and covering fraction of Mg II in galaxy groups <https://ui.adsabs.harvard.edu/abs/2024MNRAS.528..481C>`_
+|- `MusE GAs FLOw and Wind (MEGAFLOW) IX. The impact of gas flows on the relations between the mass, star formation rate, and metallicity of galaxies <https://ui.adsabs.harvard.edu/abs/2023MNRAS.521..546L>`_
 
 For further Information see the `JOSS Paper <https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc>`_.
 

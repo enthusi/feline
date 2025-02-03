@@ -462,7 +462,7 @@ if __name__ == "__main__":
             zfit=fit_template(gtemplate,z,raw_data,raw_wave)
             #print 1/0
         except:
-            print("No galaxy model fitted!")
+            #print("No galaxy model fitted!")
             zfit=z
         z=zfit
         
