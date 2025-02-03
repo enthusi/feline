@@ -81,7 +81,7 @@ const float lmin = 4699.59;
 const float lmax = 9350.84;
 //how many frames do we store?
 const int layer = 4;
-const float redshift_step = 0.0002;
+const float redshift_step = 0.00015;
 //const float max_match=20.0;
 //for VERY weak ones
 float max_match = 8.0;

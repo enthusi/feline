@@ -34,6 +34,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patheffects as path_effects
 import mpdaf
 import numpy as np
+from scipy.optimize import curve_fit
 import ref_index
 import struct
 
@@ -107,10 +108,10 @@ def get_num_lines(toggle: int) -> int:
     lines = 0
     for k in range(len(atoms)):
         if toggle & 0x1 == 0:
-            toggle = toggle / 2
+            toggle = toggle // 2
             continue
-        toggle = toggle / 2
-        atom = atoms[k]
+        toggle = toggle // 2
+        atom = atoms["atoms"][k]
         # atoms_found.append(k)
         for emission in atom:
             lines += 1
@@ -166,10 +167,10 @@ def galaxy(w: float, *p: int) -> np.ndarray:
     i = 0
     for k in range(len(atoms)):
         if toggle & 0x1 == 0:
-            toggle = toggle / 2
+            toggle = toggle // 2
             continue
-        toggle = toggle / 2
-        atom = atoms[k]
+        toggle = toggle // 2
+        atom = atoms["atoms"][k]
         # atoms_found.append(k)
         for emission in atom:
             vacline = emission
@@ -237,13 +238,14 @@ def add_ticks_to_plot(plt: plt.Axes, aw: float, px_py: float) -> plt.Axes:
 
 def fit_template(t,z,f,w):
     """
-    Adjusts the plot by setting limits, hiding tick labels, and
-    inverting the y-axis.
+    fits a series of galaxy model to a series of lines 
+    as indicated by the best match template
 
     Parameters:
-        plt (matplotlib.pyplot.Axes): The plot axes object to modify.
-        aw (float): The center value for the x-axis limits.
-        px_py (float): The center value for the y-axis limits.
+        t (int): The galaxy template 
+        z (float): The redshift guess from FELINE
+        f (float): The flux array from the median filtered data cube
+        w (float): The wavelength array from the median filtered data cube
 
     Returns:
         matplotlib.pyplot.Axes: The modified axes object.
@@ -259,6 +261,7 @@ def fit_template(t,z,f,w):
     param_bounds_high=[]
     param_bounds_low.append(z-0.002)
     param_bounds_high.append(z+0.002)
+    #sigma bounds in pixels
     param_bounds_low.append(0.9)
     param_bounds_high.append(4.0)
     
@@ -452,13 +455,16 @@ if __name__ == "__main__":
                              raw_flux.wave.get_step() *
                              raw_flux.wave.shape,
                              raw_flux.wave.get_step())
+        #print("redshift coarse: ",z)
         try:
     
-            zfit,gal_model=fit_template(gtemplate,z,raw_data,raw_wave)
+            zfit=fit_template(gtemplate,z,raw_data,raw_wave)
             #print 1/0
         except:
+            #print("No galaxy model fitted!")
             zfit=z
         z=zfit
+        #print("redshift refined: ",z)
         for k in range(len(atoms["atoms"])):
             # is k in the template?
             if toggle & 0x1 == 0:
@@ -827,5 +833,6 @@ if __name__ == "__main__":
                                                  i)
         plt.savefig(os.path.join(project_path_config.DATA_PATH_PDF,
                                  file), format="pdf")
+        #plt.show()
         plt.close()
         i += 1
