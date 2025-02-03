@@ -160,7 +160,8 @@ def galaxy(w: float, *p: int) -> np.ndarray:
     """
     global forfit_t, atoms
     z = p[0]
-    sigma = p[1]
+    #sigma = p[1]
+    sigma=2.0
     # print p
     toggle = forfit_t
     flux = np.zeros(len(w))
@@ -175,9 +176,9 @@ def galaxy(w: float, *p: int) -> np.ndarray:
         for emission in atom:
             vacline = emission
             pos = vacline * (z + 1)
-            #newpos = ref_index.vac2air(pos / 10.0) * 10.0
-            newpos=pos
-            amplitude = p[2 + i]
+            newpos = ref_index.vac2air(pos / 10.0) * 10.0
+            
+            amplitude = p[1 + i]
 
             flux += gauss_function(w, amplitude, newpos, sigma)
 
@@ -256,14 +257,14 @@ def fit_template(t,z,f,w):
     params = []
     
     params.append(z)
-    params.append(1.0)
+    #params.append(1.0)
     param_bounds_low=[]
     param_bounds_high=[]
     param_bounds_low.append(z-0.002)
     param_bounds_high.append(z+0.002)
     #sigma bounds in pixels
-    param_bounds_low.append(0.9)
-    param_bounds_high.append(10.0)
+    #param_bounds_low.append(0.9)
+    #param_bounds_high.append(10.0)
     
     #but how many actual lines are that?
     lines=get_num_lines(t)
@@ -455,7 +456,7 @@ if __name__ == "__main__":
                              raw_flux.wave.get_step() *
                              raw_flux.wave.shape,
                              raw_flux.wave.get_step())
-        print("redshift coarse: ",z)
+        #print("redshift coarse: ",z)
         try:
     
             zfit=fit_template(gtemplate,z,raw_data,raw_wave)
@@ -465,7 +466,7 @@ if __name__ == "__main__":
             zfit=z
         z=zfit
         
-        print("redshift refined: ",z)
+        #print("redshift refined: ",z)
         for k in range(len(atoms["atoms"])):
             # is k in the template?
             if toggle & 0x1 == 0:
@@ -614,9 +615,7 @@ if __name__ == "__main__":
 
         # plot all found lines AND always Ha,Hb
         first = True
-        height2b = 1
-        height2a = 1
-        oiifound = False
+       
 
         for h in range(min(len(positions), max_lines_shown)):
             ax3 = plt.subplot2grid((rows, columns), (2, h))
@@ -644,9 +643,8 @@ if __name__ == "__main__":
                      color="orange")
 
             # Set y-axis limits based on the blue line (data1)
-            y_min = min(data1)
-            y_max = max(data1)
-            ax3.set_ylim(y_min, y_max)
+            
+            
 
             dl = 15.0
             lim_low = max(crval, wobs - dl)
@@ -656,6 +654,18 @@ if __name__ == "__main__":
             ax3.set_xlim(lim_low, lim_high)
             ax3.set_xticks([wobs])
 
+            values_zoom=[]
+            for i in range(len(waven)):
+                wavei=waven[i]
+                if wavei>lim_low and wavei<=lim_high:
+                    values_zoom.append(data1[i])
+
+            
+            y_max = max(values_zoom)*2
+            y_min = min(values_zoom)-y_max*0.1
+            ax3.set_ylim(y_min, y_max)
+            
+            
             # only plot axis/label for the first window
             if first:
                 ax3.tick_params(
@@ -686,39 +696,6 @@ if __name__ == "__main__":
                             wspace=0.6, hspace=0.7)
 
         mark = 0
-
-        # NEW 2020! plot o2 zoom in with model
-        if oiifound:
-            ax4 = plt.subplot2grid((rows, columns),
-                                   (3, 0), colspan=4)
-            wobs = ref_index.vac2air(3728.0 * (z + 1) / 10.0) * 10.0
-
-            wobs1 = ref_index.vac2air(3727.09 * (z + 1) / 10.0) * 10.0
-            wobs2 = ref_index.vac2air(3729.88 * (z + 1) / 10.0) * 10.0
-            ax4.axvline(x=wobs1, color="k", linestyle="--")
-            ax4.axvline(x=wobs2, color="k", linestyle="--")
-            ax4.axhline(y=0, color="lightgrey")
-            ax4.fill_between(waven, data1 - raw_sigma,
-                             data1 + raw_sigma, alpha=0.3,
-                             facecolor="#888888")
-            ax4.plot(waven, data1, linestyle="-", drawstyle="steps-mid")
-
-            dl = 25.0
-            lim_low = max(crval, wobs - dl)
-            lim_high = min(wobs + dl, crmax)
-            while (lim_high - lim_low) < (2 * dl):
-                lim_high += dl / 3.0
-            ax4.set_xlim(lim_low, lim_high)
-
-            ax4.tick_params(
-                axis="both",  # changes apply to the x-axis
-                which="both",  # both major and minor ticks are affected
-                bottom="on",  # ticks along the bottom edge are off
-                top="off",  # ticks along the top edge are off
-                labelbottom="off",
-                right="off",
-                left="off",
-                labelleft="off")  # labels along the bottom edge are off
 
         bigpic = plt.subplot2grid((rows, 12), (0, 9), rowspan=2,
                                   colspan=4)
