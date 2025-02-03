@@ -62,7 +62,7 @@ For each set of parameters (spatial position in the cube, redshift, and line com
 The data cube contains 300 x 300 spectra, each of which is relatively small (< 64KB). The algorithm performs 512 x 5000 iterations on each spectrum, returning only 3 values: the quality of the best match, the redshift of the best match, and the line combination of the best match. Importantly, the outer 300 x 300 iterations are completely independent of each other.
 
 To take advantage of this independence, the code utilizes full parallelization of the outer loop using ``OpenMP``, with most variables shared due to their independence. As a result, FELINE scales quite well with the number of CPU cores.
-Runtimes for the ``FELINE`` code on the provided 2.8 GB example cube [@Bacon+22] (CC BY-NC-SA 4.0):
+Runtimes for the ``FELINE`` code on the provided 2.9 GB example cube [@Bacon+22] (CC BY-NC-SA 4.0):
 
 +-------------------+------------+--------------------+
 | Device            | Cores      | Runtime in seconds |
@@ -89,7 +89,7 @@ Optionally, FELINE plots the three return parameters in real time via SDL surfac
 
 Shown are from left to right the quality of the best match, the corresponding redshift of the best match and its template. A fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value).
 
-We provide a simple python framework to further visualize and manually verify the ``FELINE`` detections:
+We alos provide a simple python framework to further visualize and manually verify the ``FELINE`` detections:
 
 ![Plot generated from an individual source in the FELINE result.\label{fig:visualization}](feline_plot.png)
 
