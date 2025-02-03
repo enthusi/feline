@@ -235,7 +235,7 @@ def add_ticks_to_plot(plt: plt.Axes, aw: float, px_py: float) -> plt.Axes:
 
     return plt
 
-def fit_template(t,z,f,w,sigma_array):
+def fit_template(t,z,f,w):
     """
     Adjusts the plot by setting limits, hiding tick labels, and
     inverting the y-axis.
@@ -274,7 +274,7 @@ def fit_template(t,z,f,w,sigma_array):
     param_bounds=(param_bounds_low,param_bounds_high)
     popt,pcov = curve_fit(galaxy,w,f,p0=params,bounds=param_bounds,max_nfev=1000)
     new_z=popt[0]
-    return new_z,popt
+    return new_z
 
 if __name__ == "__main__":
     mpl.use("Agg")
@@ -452,22 +452,13 @@ if __name__ == "__main__":
                              raw_flux.wave.get_step() *
                              raw_flux.wave.shape,
                              raw_flux.wave.get_step())
-        raw_sigma = cubestat[:, int(py) - ds:int(py) + ds,
-                             int(px) - ds:int(px) + ds].mean(axis=(1, 2))
-        
         try:
     
-            newz,zerr,gal_model=fit_template(gtemplate,z,raw_data,raw_wave,raw_sigma.data)
+            zfit,gal_model=fit_template(gtemplate,z,raw_data,raw_wave)
             #print 1/0
         except:
-            print "** fit did not converge!"
-            error_log.write('no valid model %d %.3f %d\n' % (run_id,z,gtemplate))
-            #sys.exit(1)
-            newz=z
-            zerr=100
-            gal_model=0
-            valid_model=False
-    
+            zfit=z
+        z=zfit
         for k in range(len(atoms["atoms"])):
             # is k in the template?
             if toggle & 0x1 == 0:

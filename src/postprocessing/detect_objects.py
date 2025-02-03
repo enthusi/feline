@@ -245,7 +245,7 @@ if __name__ == "__main__":
     # data=plane
     coordinates = skimage.feature.peak_local_max(
         data, min_distance=1, threshold_abs=50,
-        exclude_border=10, num_peaks=300)
+        exclude_border=10, num_peaks=100)
 
     width = 0
     bleft = width
