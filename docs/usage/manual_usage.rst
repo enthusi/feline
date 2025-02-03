@@ -31,28 +31,28 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
 
    .. code-block:: bash
 
-      python src/preprocessing/median-filter-cube.py data/raw/<CUBENAME>.fits --signalHDU=1 --varHDU=2 --num_cpu=<num_cores> --width=151 --output=data/processed/med_filt.fits
+      python src/preprocessing/lsdcat/median-filter-cube.py data/raw/<CUBENAME>.fits --signalHDU=1 --varHDU=2 --num_cpu=<num_cores> --width=151 --output=data/processed/med_filt.fits
 
 6. **Apply spatial template matching**:
    Filter the data cube with a spatial template:
 
    .. code-block:: bash
 
-      python src/preprocessing/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=<num_cores> --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite
+      python src/preprocessing/lsdcat/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=<num_cores> --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite
 
 7. **Apply spectral template matching**:
    Filter the data cube with a spectral template:
 
    .. code-block:: bash
 
-      python src/preprocessing/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=<num_cores> --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite
+      python src/preprocessing/lsdcat/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=<num_cores> --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite
 
 8. **Construct signal-to-noise cube**:
    Build the S/N cube:
 
    .. code-block:: bash
 
-      python src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1
+      python src/preprocessing/lsdcat/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1
 
 9. **Transpose the cube**:
    For better cache access, transpose the cube:

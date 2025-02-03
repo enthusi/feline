@@ -1,7 +1,9 @@
 import hashlib
 
 
-def hash_raw_feline_output(file_path: str, algorithm: str ="sha256", chunk_size: int =1048576) -> str:
+def hash_raw_feline_output(file_path: str,
+                           algorithm: str ="sha256",
+                           chunk_size: int =1048576) -> str:
 	hasher = hashlib.new(algorithm)
 	with open(file_path, "rb") as f:
 		# 1 MB chunks
@@ -11,4 +13,5 @@ def hash_raw_feline_output(file_path: str, algorithm: str ="sha256", chunk_size:
 
 
 if __name__ == "__main__":
-	hash_raw_feline_output("../data/runtime_files/feline_float32_array.raw")
+	print(hash_raw_feline_output("../data/runtime_files/sorted_catalog.txt"))
+	print(hash_raw_feline_output("../data/runtime_files/sorted_catalog2.txt"))

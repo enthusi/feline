@@ -40,6 +40,8 @@ public `AMUSED <https://amused.univ-lyon1.fr>`_ data base.
 
       data/pdf_files/result_*.pdf
 
+   PDF Format: ``result_YYYY_MM_DD_HH:MM:SS``
+
 5. **Clean up**:
    To clean up temporary files:
 
