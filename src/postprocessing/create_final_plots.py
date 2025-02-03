@@ -235,6 +235,46 @@ def add_ticks_to_plot(plt: plt.Axes, aw: float, px_py: float) -> plt.Axes:
 
     return plt
 
+def fit_template(t,z,f,w,sigma_array):
+    """
+    Adjusts the plot by setting limits, hiding tick labels, and
+    inverting the y-axis.
+
+    Parameters:
+        plt (matplotlib.pyplot.Axes): The plot axes object to modify.
+        aw (float): The center value for the x-axis limits.
+        px_py (float): The center value for the y-axis limits.
+
+    Returns:
+        matplotlib.pyplot.Axes: The modified axes object.
+    """
+    global forfit_t, forfit_w
+    forfit_t=t
+    forfit_w=w
+    params = []
+    
+    params.append(z)
+    params.append(1.0)
+    param_bounds_low=[]
+    param_bounds_high=[]
+    param_bounds_low.append(z-0.002)
+    param_bounds_high.append(z+0.002)
+    param_bounds_low.append(0.9)
+    param_bounds_high.append(4.0)
+    
+    #but how many actual lines are that?
+    lines=get_num_lines(t)
+    for i in range(lines):
+        amp=20.0
+        sig=1.0
+        params.append(amp)
+        param_bounds_low.append(0) #amp
+        param_bounds_high.append(np.inf)
+        
+    param_bounds=(param_bounds_low,param_bounds_high)
+    popt,pcov = curve_fit(galaxy,w,f,p0=params,bounds=param_bounds,max_nfev=1000)
+    new_z=popt[0]
+    return new_z,popt
 
 if __name__ == "__main__":
     mpl.use("Agg")
@@ -414,8 +454,20 @@ if __name__ == "__main__":
                              raw_flux.wave.get_step())
         raw_sigma = cubestat[:, int(py) - ds:int(py) + ds,
                              int(px) - ds:int(px) + ds].mean(axis=(1, 2))
-        valid_model = True
-
+        
+        try:
+    
+            newz,zerr,gal_model=fit_template(gtemplate,z,raw_data,raw_wave,raw_sigma.data)
+            #print 1/0
+        except:
+            print "** fit did not converge!"
+            error_log.write('no valid model %d %.3f %d\n' % (run_id,z,gtemplate))
+            #sys.exit(1)
+            newz=z
+            zerr=100
+            gal_model=0
+            valid_model=False
+    
         for k in range(len(atoms["atoms"])):
             # is k in the template?
             if toggle & 0x1 == 0:
@@ -758,6 +810,7 @@ if __name__ == "__main__":
                             int(px) - aw:int(px) + aw]
         plt.xlim(aw - 10, aw + 10)
         plt.ylim(aw - 10, aw + 10)
+        plt.gca().invert_yaxis()
         plt.imshow(testarea, interpolation="none", cmap="jet")
         plt.tick_params(axis="both", which="both", right=True,
                         top=True, left=True, bottom=True,
