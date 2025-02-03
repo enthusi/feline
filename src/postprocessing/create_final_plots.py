@@ -263,7 +263,7 @@ def fit_template(t,z,f,w):
     param_bounds_high.append(z+0.002)
     #sigma bounds in pixels
     param_bounds_low.append(0.9)
-    param_bounds_high.append(4.0)
+    param_bounds_high.append(10.0)
     
     #but how many actual lines are that?
     lines=get_num_lines(t)
@@ -455,16 +455,17 @@ if __name__ == "__main__":
                              raw_flux.wave.get_step() *
                              raw_flux.wave.shape,
                              raw_flux.wave.get_step())
-        #print("redshift coarse: ",z)
+        print("redshift coarse: ",z)
         try:
     
             zfit=fit_template(gtemplate,z,raw_data,raw_wave)
             #print 1/0
         except:
-            #print("No galaxy model fitted!")
+            print("No galaxy model fitted!")
             zfit=z
         z=zfit
-        #print("redshift refined: ",z)
+        
+        print("redshift refined: ",z)
         for k in range(len(atoms["atoms"])):
             # is k in the template?
             if toggle & 0x1 == 0:
