@@ -89,7 +89,7 @@ Optionally, FELINE plots the three return parameters in real time via SDL surfac
 
 Shown are from left to right the quality of the best match, the corresponding redshift of the best match and its template. A fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value).
 
-We alos provide a simple python framework to further visualize and manually verify the ``FELINE`` detections:
+We also provide a simple python framework to further visualize and manually verify the ``FELINE`` detections:
 
 ![Plot generated from an individual source in the FELINE result.\label{fig:visualization}](feline_plot.png)
 
