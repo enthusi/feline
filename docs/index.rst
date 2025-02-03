@@ -34,7 +34,7 @@ We welcome everyone who wants to contribute to our project. For more information
 
    usage/automatic_usage
    usage/manual_usage
-
+   usage/test
 
 .. toctree::
    :maxdepth: 1
