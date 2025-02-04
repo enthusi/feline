@@ -32,7 +32,16 @@ FELINE was utilized in the following publications:
 | - `MusE GAs FLOw and Wind (MEGAFLOW) X. The cool gas and covering fraction of Mg II in galaxy groups <https://ui.adsabs.harvard.edu/abs/2024MNRAS.528..481C>`_
 | - `MusE GAs FLOw and Wind (MEGAFLOW) IX. The impact of gas flows on the relations between the mass, star formation rate, and metallicity of galaxies <https://ui.adsabs.harvard.edu/abs/2023MNRAS.521..546L>`_
 
+
+.. image:: megaflow_survey.png
+   :alt: Detection histogram from the MEGAFLOW XII paper.
+  
+This histogram from the `MEGAFLOW XII paper (Fig. 15) <https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_ reflects
+the typical usecase of FELINE.
+It shows that there is a significant population of galaxies detected solely based on their emission line with FELINE (no continuum).
+  
 For further Information see the `JOSS Paper <https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc>`_.
+
 
 Thresholds
 ----------
@@ -64,15 +73,21 @@ Result
 ------
 FELINE creates an binary file that contains the information that is being plotted during the evaluation
 (if an SDL environment is present).
-The created file contains raw 32bit data of four arrays - each with Y x X spatial dimension:
+The created file contains raw 32bit data of four arrays - each with X :math:`\times` Y spatial dimension:
 
 - ``quality``, a float32 which reflects the score of the best matching template for this spaxel
-- ``redshift``, a float32 of the corresponding redshift of the best match
 - ``template``, an int32 the corresponding template of the best match
+- ``redshift``, a float32 of the corresponding redshift of the best match
 - ``used``    , an int32 with the number of used line(pairs) in the template
 
 The latter simply representing a bit-count of the template integer value.
 
+   
+.. image:: feline_result.png
+  :alt: Bitmaps of the FELINE result.
+  
+  
+  
 Command line parameters
 -----------------------
 
@@ -82,12 +97,12 @@ Command line parameters
 
 `ZLOW` and `ZHIGH` set the range of the redshift of interest. E.g., 0 - 1.9 (as in the example)
 
-`MAX_MATCH` is the threshold for very bright features. `20` yields reasonable results for all data cubes we
-handled. If you explicitly aim for weak objects, values in the range down to `10` can be tested. This parameter
+`MAX_MATCH` is the threshold for very bright features. `10` yields reasonable results for all data cubes we
+handled. If you explicitly aim for weak objects, values in the range up to `20` can be tested. This parameter
 is not very critical.
 
 `IGNORE_BELOW` is the numerical value below which a feature in the matched filter signal-to-noise cube does not contribute
-to the template score. Our example uses a value of `7` which is also the used value for our runs on MUSE data cubes.
+to the template score. Our example uses a value of `3` which is also the used value for our runs on MUSE data cubes.
 
 Postprocessing illustration
 ---------------------------
@@ -100,6 +115,8 @@ each emission line galaxy candidate.
 Those extracted spectra are fitted with the corresponding emission line galaxy template and its 
 redshift. In addition to the individual line strengths, the redshift is the only free parameter to reach sub pixel accuracy
 in an early redshift estimate and in deriving further diagnostics for the later manual inspection.
+
+See :ref:`visualize-label`.
 
 Modifications
 -------------

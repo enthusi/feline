@@ -98,3 +98,8 @@ Alternatively, you can manually execute each step of the FELINE workflow. Follow
     .. code-block:: bash
 
       make clean
+      
+.. image:: running_on_80cores.png
+   :alt: SDL Window of Feline running on a 80 cores machine.
+  
+SDL Window of Feline running the UDF MUSE field on a 80 cores machine.
