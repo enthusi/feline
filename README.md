@@ -30,12 +30,17 @@ manual inspection.
 FELINE requires specific software dependencies for installation and operation. Please follow the instructions below to set up FELINE:
 
 ### Prerequisites
+To clone the repository with ssh run the following command:
+```bash
+git clone git@github.com:enthusi/feline.git
+```
+
 Ensure the following software is installed on your system:
 ```bash
 python3.x (3.8 or higher)
 python3.x-dev
 python3.x-venv
-clang (recommended, we had a significant performance boost compared to gcc) or gcc
+clang (recommended due to a significant performance boost compared to gcc) or gcc
 SDL2 (Optional: Needed for graphical output during runtime)
 ```
 

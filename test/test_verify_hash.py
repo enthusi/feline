@@ -1,6 +1,6 @@
 import hashlib
+import typing
 import numpy as np
-import math
 
 # Hardcoded expected SHA-256 hash
 EXPECTED_HASH_SORTED_CATALOG = "21d8cd338f8dca4fbc7a8b0c3015a41ace5c984c59a1854158997a68f5925790"
@@ -12,7 +12,7 @@ FILE_PATH_RAW_ARRAY = "../data/runtime_files/feline_float32_array.raw"
 FILE_PATH_ROUNDED_ARRAY = "../data/runtime_files/rounded_feline_float32_array.raw"
 
 
-def calculate_sha256(file_path: str) -> str | None:
+def calculate_sha256(file_path: str) -> typing.Union[str, None]:
     """Calculate the SHA-256 hash of a file."""
     sha256 = hashlib.sha256()
     try:
