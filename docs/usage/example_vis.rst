@@ -1,3 +1,4 @@
+.. _visualize-label:
 Plots of individual detections
 ======
 We provide a Python script to visualize the FELINE output.

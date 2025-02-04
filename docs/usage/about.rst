@@ -32,7 +32,16 @@ FELINE was utilized in the following publications:
 | - `MusE GAs FLOw and Wind (MEGAFLOW) X. The cool gas and covering fraction of Mg II in galaxy groups <https://ui.adsabs.harvard.edu/abs/2024MNRAS.528..481C>`_
 | - `MusE GAs FLOw and Wind (MEGAFLOW) IX. The impact of gas flows on the relations between the mass, star formation rate, and metallicity of galaxies <https://ui.adsabs.harvard.edu/abs/2023MNRAS.521..546L>`_
 
+
+.. image:: megaflow_survery.png
+  :alt: Detection histogram from the MEGAFLOW XII paper.
+  
+This histogram from the `MEGAFLOW XII paper (Fig. 15)<https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_ reflects
+the typical usecase of FELINE.
+It shows that there is a significant popultion of galaxies detected solely on their emission line with FELINE (no continuum).
+  
 For further Information see the `JOSS Paper <https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc>`_.
+
 
 Thresholds
 ----------
@@ -73,6 +82,9 @@ The created file contains raw 32bit data of four arrays - each with Y x X spatia
 
 The latter simply representing a bit-count of the template integer value.
 
+.. image:: feline_result.png
+  :alt: Bitmaps of the FELINE result.
+  
 Command line parameters
 -----------------------
 
@@ -100,6 +112,8 @@ each emission line galaxy candidate.
 Those extracted spectra are fitted with the corresponding emission line galaxy template and its 
 redshift. In addition to the individual line strengths, the redshift is the only free parameter to reach sub pixel accuracy
 in an early redshift estimate and in deriving further diagnostics for the later manual inspection.
+
+See :ref:`visualize-label`.
 
 Modifications
 -------------
