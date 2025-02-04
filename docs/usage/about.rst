@@ -26,7 +26,7 @@ the :math:`\approx 90,000` spectra in a single data cube.
 
 FELINE was utilized in the following publications:
 
-| - `MusE GAs FLOw and Wind (MEGAFLOW) XII. Rationale and design of a MgII survey of the cool circum-galactic medium with MUSE and 
+| - `MusE GAs FLOw and Wind (MEGAFLOW) XII. Rationale and design of a MgII survey of the cool circum-galactic medium with MUSE and <https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_
 | - `UVES: The MEGAFLOW Survey <https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_
 | - `MusE GAs FLOw and Wind (MEGAFLOW) XI. Scaling relations between outflows and host galaxy properties <https://ui.adsabs.harvard.edu/abs/2024A&A...687A..39S>`_
 | - `MusE GAs FLOw and Wind (MEGAFLOW) X. The cool gas and covering fraction of Mg II in galaxy groups <https://ui.adsabs.harvard.edu/abs/2024MNRAS.528..481C>`_
