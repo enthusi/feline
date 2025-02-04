@@ -73,7 +73,7 @@ Result
 ------
 FELINE creates an binary file that contains the information that is being plotted during the evaluation
 (if an SDL environment is present).
-The created file contains raw 32bit data of four arrays - each with Y x X spatial dimension:
+The created file contains raw 32bit data of four arrays - each with X :math:`\times` Y spatial dimension:
 
 - ``quality``, a float32 which reflects the score of the best matching template for this spaxel
 - ``redshift``, a float32 of the corresponding redshift of the best match
@@ -82,9 +82,11 @@ The created file contains raw 32bit data of four arrays - each with Y x X spatia
 
 The latter simply representing a bit-count of the template integer value.
 
+   
 .. image:: feline_result.png
-   :alt: Bitmaps of the FELINE result.
-           
+  :alt: Bitmaps of the FELINE result.
+  
+  
   
 Command line parameters
 -----------------------
@@ -95,12 +97,12 @@ Command line parameters
 
 `ZLOW` and `ZHIGH` set the range of the redshift of interest. E.g., 0 - 1.9 (as in the example)
 
-`MAX_MATCH` is the threshold for very bright features. `20` yields reasonable results for all data cubes we
-handled. If you explicitly aim for weak objects, values in the range down to `10` can be tested. This parameter
+`MAX_MATCH` is the threshold for very bright features. `10` yields reasonable results for all data cubes we
+handled. If you explicitly aim for weak objects, values in the range up to `20` can be tested. This parameter
 is not very critical.
 
 `IGNORE_BELOW` is the numerical value below which a feature in the matched filter signal-to-noise cube does not contribute
-to the template score. Our example uses a value of `7` which is also the used value for our runs on MUSE data cubes.
+to the template score. Our example uses a value of `3` which is also the used value for our runs on MUSE data cubes.
 
 Postprocessing illustration
 ---------------------------
