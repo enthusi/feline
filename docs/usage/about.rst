@@ -76,8 +76,8 @@ FELINE creates an binary file that contains the information that is being plotte
 The created file contains raw 32bit data of four arrays - each with X :math:`\times` Y spatial dimension:
 
 - ``quality``, a float32 which reflects the score of the best matching template for this spaxel
-- ``redshift``, a float32 of the corresponding redshift of the best match
 - ``template``, an int32 the corresponding template of the best match
+- ``redshift``, a float32 of the corresponding redshift of the best match
 - ``used``    , an int32 with the number of used line(pairs) in the template
 
 The latter simply representing a bit-count of the template integer value.

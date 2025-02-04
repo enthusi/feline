@@ -6,8 +6,8 @@ The :ref:`automaticusage-label` executes it as well.
 
 The FELINE output contains a raw 32bit data of four arrays - each with X :math:`\times` Y spatial dimension:
 - ``quality`` , a float32 which reflects the score of the best matching template for this spaxel
-- ``redshift``, a float32 of the corresponding redshift of the best match
 - ``template``, an int32 the corresponding template of the best match
+- ``redshift``, a float32 of the corresponding redshift of the best match
 - ``used``    , an int32 with the number of used line(pairs) in the template
 
 The plot script creates a multipage PDF document with one page per potential galaxy for quick
