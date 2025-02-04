@@ -148,17 +148,17 @@ cuda:
 	@echo ""
 	@echo "applying median filter to 'flat' out the data (emission lines remain)..."
 	@. venv/bin/activate && \
-	python src/preprocessing/median-filter-cube.py data/raw/$(CUBENAME) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
+	python src/preprocessing/lsdcat/median-filter-cube.py data/raw/$(CUBENAME) --signalHDU=1 --varHDU=2 --num_cpu=$(CORES) --width=151 --output=data/processed/med_filt.fits > /dev/null
 	@echo ""
 	@echo "filtering the data cube with a 'typical line' template in spatial dimension first..."
 	@. venv/bin/activate && \
-	python src/preprocessing/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=$(CORES) --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite > /dev/null
+	python src/preprocessing/lsdcat/lsd_cc_spatial.py --input=data/processed/med_filt.fits --SHDU=1 --NHDU=2 --threads=$(CORES) --gaussian --lambda0=7050 -pc 0.7 --classic --output=data/processed/spatial_cc.fits --overwrite > /dev/null
 	@echo "filtering the data cube with a 'typical line' template in spectral dimension..."
 	@. venv/bin/activate && \
-	python src/preprocessing/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=$(CORES) --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite > /dev/null
+	python src/preprocessing/lsdcat/lsd_cc_spectral.py --input=data/processed/spatial_cc.fits --threads=$(CORES) --FWHM=250 --SHDU=1 --NHDU=2 --classic --output=data/processed/spectral_cc.fits --overwrite > /dev/null
 	@echo "constructing a signal-to-noise cube..."
 	@. venv/bin/activate && \
-	python src/preprocessing/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1 > /dev/null
+	python src/preprocessing/lsdcat/s2n-cube.py --input=data/processed/spectral_cc.fits --output=data/processed/s2n_v250.fits --clobber --NHDU=2 --SHDU=1 > /dev/null
 
 	@echo "deleting tmp files..."
 	@rm data/processed/spatial_cc.fits

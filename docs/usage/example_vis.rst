@@ -1,6 +1,6 @@
 .. _visualize-label:
 Plots of individual detections
-======
+==============================
 We provide a Python script to visualize the FELINE output.
 The :ref:`automaticusage-label` executes it as well.
 
