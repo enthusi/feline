@@ -24,14 +24,16 @@ LDFLAGS += $(SDL2_LIBS)
 CFLAGS += -D SDLavailable=$(SDLavailable)
 
 
-CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
-CUBENAME := "DATACUBE_UDF-10.fits"
+#CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10.fits"
+CUBELINK := "https://amused.univ-lyon1.fr/data/megaflow/download/J0014m0028/J0014m0028_dr2_zap_wpsf1_qsosub.corrEBV.fits"
+#CUBENAME := "DATACUBE_UDF-10.fits"
+CUBENAME := "J0014m0028_dr2_zap_wpsf1_qsosub.corrEBV.fits"
 CUBESIZE := $$(wget --spider --server-response --no-check-certificate $(CUBELINK) 2>&1 | awk -F '[()]' '/Length:/ {print $$2}' | tail -n 1)
 
-ZLOW="0.0"
-ZHIGH="1.9"
-MAX_MATCH="10"
-IGNORE_BELOW="3"
+ZLOW="0"
+ZHIGH="1.924"
+MAX_MATCH="20"
+IGNORE_BELOW="7"
 CORES := $(shell uname -s| awk '{if ($$0 == "Darwin") print "sysctl -n hw.physicalcpu"; else print "nproc"}' | sh)
 
 
@@ -109,7 +111,7 @@ run:
 	@echo "starting Postprocessing and creating PDF..."
 	@. venv/bin/activate ; \
 	python -m src.postprocessing.detect_objects s2n_v250.fits ; \
-	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits AMUSED_UDF10 ; \
+	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
 	python -m src.postprocessing.create_pdf
 
 cuda:
@@ -179,7 +181,7 @@ cuda:
 	@echo "starting Postprocessing and creating PDF..."
 	@. venv/bin/activate ; \
 	python -m src.postprocessing.detect_objects s2n_v250.fits ; \
-	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits AMUSED_UDF10 ; \
+	python -m src.postprocessing.create_final_plots $(CUBENAME) s2n_v250.fits sorted_catalog.txt med_filt.fits J0014m0028 ; \
 	python -m src.postprocessing.create_pdf
 
 clean:
