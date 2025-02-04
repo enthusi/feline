@@ -36,7 +36,7 @@ FELINE was utilized in the following publications:
 .. image:: megaflow_survery.png
   :alt: Detection histogram from the MEGAFLOW XII paper.
   
-This histogram from the `MEGAFLOW XII paper (Fig. 15)<https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_ reflects
+This histogram from the `MEGAFLOW XII paper (Fig. 15) <https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_ reflects
 the typical usecase of FELINE.
 It shows that there is a significant popultion of galaxies detected solely on their emission line with FELINE (no continuum).
   
