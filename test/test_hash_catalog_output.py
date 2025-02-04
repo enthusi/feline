@@ -1,12 +1,15 @@
 import hashlib
+import numpy as np
+import math
 
 # Hardcoded expected SHA-256 hash
 EXPECTED_HASH_SORTED_CATALOG = "8478f7da42d44e9d99bff025d76e07b1fd8fdae814327621d5f99621322cbd59"
-EXPECTED_HASH_RAW_ARRAY = "ef43be7379c84430a48095d9ebe4aa4043673d43443e524753301c87f702de44"
+EXPECTED_HASH_RAW_ARRAY = ""
 
 # Path to the file to check
 FILE_PATH_SORTED_CATALOG = "../data/runtime_files/sorted_catalog.txt"
 FILE_PATH_RAW_ARRAY = "../data/runtime_files/feline_float32_array.raw"
+FILE_PATH_ROUNDED_ARRAY = "../data/runtime_files/rounded_feline_float32_array.raw"
 
 
 def calculate_sha256(file_path):
@@ -34,11 +37,14 @@ def show_result(expected_hash, file_path):
         print("❌Failed: File hash does not match expected value.")
 
 
-def main():
-    show_result(EXPECTED_HASH_RAW_ARRAY, FILE_PATH_RAW_ARRAY)
-    print()
-    show_result(EXPECTED_HASH_SORTED_CATALOG, FILE_PATH_SORTED_CATALOG)
+def round_raw_array(file_path):
+    return np.round(np.fromfile(file_path), 3).tofile("../data/runtime_files/rounded_feline_float32_array.raw")
 
 
 if __name__ == "__main__":
-    main()
+
+    round_raw_array(FILE_PATH_RAW_ARRAY)
+
+    show_result(EXPECTED_HASH_RAW_ARRAY, FILE_PATH_ROUNDED_ARRAY)
+    print()
+    show_result(EXPECTED_HASH_SORTED_CATALOG, FILE_PATH_SORTED_CATALOG)

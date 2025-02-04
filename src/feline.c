@@ -56,13 +56,6 @@ int getcolor(int v) {
  * @param v The integer whose set bits are to be counted.
  * @return The number of set bits (1s) in the integer.
  */
-
- void truncate_float_array(float *arr, int size) {
-    for (int i = 0; i < size; i++) {
-        arr[i] = trunc(arr[i] * 1000) / 1000.0;  // Truncate to 3 decimal places
-    }
-}
-
 inline int countbits(int v) {
     int c;
     for (c = 0; v; v >>= 1) { c += v & 1; }
@@ -368,8 +361,6 @@ int main(int argc, char *argv[]) {
     fflush(stdout);
 
     FILE *res_i_file;
-    int total_size = dx * dy * layer;
-    truncate_float_array(res_i, total_size);
     res_i_file = fopen(DATA_PATH_RUNTIME_FILES "feline_float32_array.raw", "wb");
     fwrite(res_i, (sizeof(float) * dy * dx * layer), 1, res_i_file);
 
