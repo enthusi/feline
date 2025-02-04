@@ -1,4 +1,5 @@
 .. _automaticusage-label:
+
 Automatic Usage
 ---------------
 To use FELINE in an automated manner, you can use the pre-configured Makefile workflow.
