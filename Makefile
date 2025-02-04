@@ -28,7 +28,7 @@ CUBELINK := "https://amused.univ-lyon1.fr/data/UDF/HUDF/download/DATACUBE_UDF-10
 CUBENAME := "DATACUBE_UDF-10.fits"
 CUBESIZE := $$(wget --spider --server-response --no-check-certificate $(CUBELINK) 2>&1 | awk -F '[()]' '/Length:/ {print $$2}' | tail -n 1)
 
-ZLOW="0.0"
+ZLOW="0"
 ZHIGH="1.9"
 MAX_MATCH="10"
 IGNORE_BELOW="3"
