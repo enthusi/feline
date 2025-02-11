@@ -36,10 +36,12 @@ FELINE was utilized in the following publications:
 .. image:: megaflow_survey.png
    :alt: Detection histogram from the MEGAFLOW XII paper.
   
+In our research we use a dual galaxy identiﬁcation process based both on continuum (using `SExtractor <https://ui.adsabs.harvard.edu/abs/1996A&AS..117..393B>`_) and on
+emission lines using ``FELINE``. Overall, we find that up to one third of our detected galaxies have no continuum
+detection within our magnitude limit.
 This histogram from the `MEGAFLOW XII paper (Fig. 15) <https://ui.adsabs.harvard.edu/abs/2024arXiv241107014B>`_ reflects
-the typical usecase of FELINE.
-It shows that there is a significant population of galaxies detected solely based on their emission line with FELINE (no continuum).
-  
+this typical usecase of FELINE. It shows that there is a significant population of galaxies detected solely based on their emission line with FELINE.
+ 
 For further Information see the `JOSS Paper <https://joss.theoj.org/papers/a575acd1ffab0604de7e26eb83fd9bdc>`_.
 
 
