@@ -13,8 +13,8 @@ public `AMUSED <https://amused.univ-lyon1.fr>`_ data base.
 
    .. code-block:: bash
 
-       [27] CUBELINK := <link>
-       [28] CUBENAME := <name>
+       [32] CUBELINK := <link>
+       [33] CUBENAME := <name>
 
 2. **Run the workflow**:
    To run the workflow, use the following command:

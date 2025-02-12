@@ -17,18 +17,17 @@ Setup Instructions
 ------------------
 
 .. note::
-   | **Mac OS users**: If you use ``clang`` you only need to install ``libomp`` e.g. ``brew install libomp``.
-   | For users which want to use ``gcc`` only need to adjust the following Makefile lines:
+   | **macOS users**: If you use ``clang``, make sure native ``clang`` is installed (``brew install clang``) since Apple's Clang doesn't support ``openmp``. Secondly, you need ``libomp``, e.g., ``brew install libomp``.
+   | For users who want to use ``gcc``, only need to adjust the following Makefile lines:
    |
    | ``[1] CC = gcc-<version>``
    | ``[2] CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99``
    |
-   | **Linux users (Debian/Ubuntu)**: If you use ``clang`` you only need to install ``libomp-dev`` e.g ``apt install libomp-dev``. For users which want to use ``gcc`` only need to adjust the following Makefile lines:
+   | **Linux users (Debian/Ubuntu)**: If you use ``clang``, you only need to install ``libomp-dev``, e.g., ``apt install libomp-dev``.
+   | For users who want to use ``gcc``, only need to adjust the following Makefile lines:
    |
    | ``[1] CC = gcc``
    | ``[2] CFLAGS = -O3 -ffast-math -fopenmp -g -std=c99``
-
-
 
 1. **Clone the repository**:
    Clone the FELINE repository to your local machine:
