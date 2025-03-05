@@ -9,6 +9,7 @@
 #define DATA_PATH "data/raw/"
 #define DATA_PATH_PROCESSED "data/processed/"
 #define DATA_PATH_RUNTIME_FILES "data/runtime_files/"
+#define FELINE_VERSION "Feline v1.1.0"
 
 const float lines_first[11] = {6564.61, 4862.72, 4341.68, 4102.89, 3727.09, 4960.30, 6549.86, 6718.29, 3869.81, 1908.73,
                                1215.67};
@@ -124,7 +125,7 @@ int main(int argc, char *argv[]) {
 
     float *res_i;
 
-    printf("Feline v1.0.0 - 2024/09/12\n");
+    printf("%s\n", FELINE_VERSION);
     printf("Martin Wendt\n");
     if (argc < 5) {
         printf("Syntax: %s zlow zhigh max_match ignore_below\n", argv[0]);

@@ -11,7 +11,7 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #define DATA_PATH_PROCESSED "data/processed/"
 #define DATA_PATH_RUNTIME_FILES "data/runtime_files/"
-#define FELINE_VERSION "Feline v1.0.0"
+#define FELINE_VERSION "Feline v1.1.0"
 
 
 /**
