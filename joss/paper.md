@@ -91,12 +91,12 @@ This arrangement further motivated an implementation of ``FELINE`` in ``CUDA`` t
 Typical full size MUSE data cubes can be fully loaded into the GPU memory of any modern ``CUDA``-enabled GPU.
 We provide a working implementation that produces identical results to the ``FELINE`` C variant.
 
-Optionally, FELINE plots the four return parameters in real time via SDL_Surface and also saves them to disk
+Optionally, FELINE plots the return parameters in real time via SDL_Surface and also saves them to disk
 (see Figure 1).
 
 ![The visual FELINE output displays four metrics: signal strength, template, redshift, and line count. These values are presented using a shared color scheme to distinguish between the various peaks and objects. \label{fig:results}](feline_result.png)
 
-Shown in Figure 1 from left to right are the quality of the best match, the corresponding redshift of the best match and its template. A fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value). 
+Shown in Figure 1 from left to right are the quality of the best match, the corresponding template integer of the best match and its redshift. The fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value). 
 
 We also provide a simple Python framework for further visualization and manual verification of the FELINE detections (see Figure 2).
 
