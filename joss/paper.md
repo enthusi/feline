@@ -38,7 +38,7 @@ Simple flux level peak detection algorithms based on thresholding are prone to e
 The *F*ind *E*mission *LINE*s tool ``FELINE`` combines a fully parallelized galaxy line template matching with the matched filter approach for individual emission features of LSDcat [@HerenzE_17a; @herenz2023].
 This transformation cross-correlates the dataset with a template that ideally matches the properties of the signal to be detected. Here, the images are cross-correlated with a 2D template for the expected light distribution of the sources to be detected and the same is applied in the spectral direction. The filter maximizes the signal-to-noise ratio (S/N) of a source that is optimally represented by the template while still producing a significant S/N enhancement for similar signals.
 
-The VLT/MUSE [@Bacon+10; @Bacon+14] 3D spectrograph creates $\sim$ 90,000 medium-resolution spectra arranged in a 300 $\times$ 300 spatial grid.
+The VLT/MUSE [@Bacon+10] 3D spectrograph creates $\sim$ 90,000 medium-resolution spectra arranged in a 300 $\times$ 300 spatial grid.
 These data cubes have typical sizes of 3-6 GiB per exposure, the sheer volume of data
 requires automated processes to support the scientists.
 ￼
@@ -83,18 +83,20 @@ Runtimes for the ``FELINE`` code on the provided 2.9 GB example cube [@Bacon+22]
 | NVIDIA A100 GPU   |       64   |              27    |
 +-------------------+------------+--------------------+
 
-Another major improvement in execution time was accomplished by rearranging the data to maximize the number of cache hits. Initially, the cube data is stored as a series of images, i.e., 300 x 300 spatial data points arranged in an array of 4,000 in spectral dimension. The algorithm works on spectral that would be highly interleaved by  ~360 KB for consecutive data points and the full spectrum exceeding a range of 1 GiB.
-As a preprocessing step, the data cube is rearranged as a spatial grid of full spectra.
+Another major improvement in execution time was accomplished by rearranging the data to maximize the number of cache hits. Initially, the cube data is stored as a series of images, i.e., 300 x 300 spatial data points arranged in an array of 4,000 in spectral dimension. 
+The spectral data the algorithm works on is highly interleaved by ~360 KB for consecutive data points. A single spectrum is spread over more than 1 GiB in the original data.
+As a preprocessing step, the cube data is therefor rearranged as a spatial grid of full spectra. 
 
 This arrangement further motivated an implementation of ``FELINE`` in ``CUDA`` to utilize GPUs for parallelization.
 Typical full size MUSE data cubes can be fully loaded into the GPU memory of any modern ``CUDA``-enabled GPU.
 We provide a working implementation that produces identical results to the ``FELINE`` C variant.
 
-Optionally, FELINE plots the three return parameters in real time via SDL_Surface and also saves them to disk.
+Optionally, FELINE plots the four return parameters in real time via SDL_Surface and also saves them to disk
+(see Figure 1).
 
 ![The visual FELINE output displays four metrics: signal strength, template, redshift, and line count. These values are presented using a shared color scheme to distinguish between the various peaks and objects. \label{fig:results}](feline_result.png)
 
-Shown are from left to right are the quality of the best match, the corresponding redshift of the best match and its template. A fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value). (See Figure 1)
+Shown in Figure 1 from left to right are the quality of the best match, the corresponding redshift of the best match and its template. A fourth panel shows the number of lines that contributed to the most successful model for ease of human readability (it reflects the number of set bits in the best model value). 
 
 We also provide a simple Python framework for further visualization and manual verification of the FELINE detections (see Figure 2).
 
@@ -103,7 +105,7 @@ We also provide a simple Python framework for further visualization and manual v
 
 # Acknowledgements
 
-We acknowledge the work on LSDcat by Christian Herenz
+We acknowledge the work on LSDcat by Christian Herenz, as well as the helpful MUSE Python Data Analysis Framework MPDAF for visualisation [@Bacon16].
 
 # References
 
