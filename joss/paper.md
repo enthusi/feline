@@ -45,7 +45,7 @@ requires automated processes to support the scientists.
 The ``FELINE`` algorithm evaluates the likelihood of emission lines at specific positions in each spectrum of the data cube. It does this by probing all possible combinations of up to 14 typical emission features, including Hα, Hβ, Hγ, Hδ, [OII], [OIII], [NII], [SII], and [NeIII], for the redshift range of interest (0.4 < z < 1.4). This extensive analysis leads to approximately $2.3\cdot 10^{11}$  iterations.
 
 There are generally two approaches to source identification. Image based, such as SExtractor [@Bertin1996] and its many
-derivatives or emission line based, such as, the ORIGIN code [@Mary2020] or the aforementioned LSDcat[@HerenzE_17a; @herenz2023].
+derivatives or emission line based, such as, the ORIGIN code [@Mary2020] or the previously mentioned LSDcat[@HerenzE_17a; @herenz2023].
 The former group analyzes white or narrow band images and is prone to miss objects with minimal or no continuum flux.
 On the other hand specialized software that focuses on detecting emission features is generally targeted at individual lines, like Lyman-$\alpha$. In contrast, the ``FELINE`` tool evaluates a physically connected set of emission lines simultaneously
 and has been successfully tested as an automated identification system, providing rapid results for 3D data cubes that can be easily reviewed by humans.
