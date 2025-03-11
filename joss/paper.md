@@ -42,14 +42,14 @@ The VLT/MUSE [@Bacon+10] 3D spectrograph creates $\sim$ 90,000 medium-resolution
 These data cubes have typical sizes of 3-6 GiB per exposure, the sheer volume of data
 requires automated processes to support the scientists.
 ￼
-The ``FELINE`` algorithm evaluates the likelihood of emission lines at specific positions in each spectrum of the data cube. It does this by probing all possible combinations of up to 14 typical emission features, including Hα, Hβ, Hγ, Hδ, [OII], [OIII], [NII], [SII], and [NeIII], for the redshift range of interest (0.4 < z < 1.4). This extensive analysis leads to approximately $2.3\cdot 10^{11}$  iterations.
+The ``FELINE`` algorithm evaluates the likelihood of emission lines at specific positions in each spectrum of the data cube. It does this by probing all possible combinations of up to 14 typical emission features, including Hα, Hβ, Hγ, Hδ, [OII], [OIII], [NII], [SII], and [NeIII], for the redshift range of interest (0.4 < z < 1.4). This extensive analysis leads to approximately $2.3\times 10^{11}$  iterations.
 
-There are generally two approaches to source identification. Image based, such as SExtractor [@Bertin1996] and its many
-derivatives or emission line based, such as, the ORIGIN code [@Mary2020] or the previously mentioned LSDcat[@HerenzE_17a; @herenz2023].
+There are generally two approaches to source identification. Image based, such as Source Extractor [@Bertin1996] and its many
+derivatives or emission line based, such as, the ORIGIN code [@Mary2020] or the previously mentioned LSDcat [@HerenzE_17a; @herenz2023].
 The former group analyzes white or narrow band images and is prone to miss objects with minimal or no continuum flux.
 On the other hand specialized software that focuses on detecting emission features is generally targeted at individual lines, like Lyman-$\alpha$. In contrast, the ``FELINE`` tool evaluates a physically connected set of emission lines simultaneously
 and has been successfully tested as an automated identification system, providing rapid results for 3D data cubes that can be easily reviewed by humans.
-In [@Bouche2024] we use a dual galaxy identiﬁcation process based both on continuum (using SExtractor) and on
+In @Bouche2024 we use a dual galaxy identiﬁcation process based both on continuum (using Source Extractor) and on
 emission lines using FELINE. Overall, we find that up to one third of our detected galaxies have no continuum
 detection within our magnitude limit.
 
@@ -59,7 +59,7 @@ which is significantly boosted by the filtering process.
 As a result, galaxies with multiple weak emission features can be detected with a significance that exceeds the significance of each individual contributing line.
 This approach is particularly successful for galaxies that show little or no continuum flux in the data, and therefore would generally go undetected in imaging data alone.
 
-``FELINE`` was used for the galaxy catalogs of the MEGAFLOW survey in [@Langan2023; @Cherrey2024; @Schroetter2024; @Bouche2024].
+``FELINE`` was used for the galaxy catalogs of the MEGAFLOW survey [@Langan2023; @Cherrey2024; @Schroetter2024; @Bouche2024].
 
 # Implementation
 The tool uses a brute-force search of the parameter space. Due to the size of the parameter space, the language of implementation was chosen as C for computational efficiency. This approach demonstrates the success of filtering the data with expected templates for individual emission lines, rather than testing full physical models of galaxies (including simulated continuum and temperature-broadened emission lines) against the raw observed data. This reduces the individual models to a single position where the likelihood of a line is being probed.
