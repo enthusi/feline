@@ -10,7 +10,7 @@ utilizes the result of an emission line matched filter to boost the signal-to-no
 of any such feature in the data cube. We use `LSDcat <https://ascl.net/1612.002>`_ to create such a filtered
 data cube.
 FELINE, however, does not pick individual peaks from that data as separate objects but instead
-simulatenously assesses the accumulative signal at all spectral positions that correspond to a certain
+simultaneously assesses the accumulative signal at all spectral positions that correspond to a certain
 set of emission lines at any redshift within the range of interest.
 
 FELINE probes all possible combinations of up to
@@ -108,7 +108,7 @@ to the template score. Our example uses a value of `3` which is also the used va
 
 Postprocessing illustration
 ---------------------------
-We provide an exemplary Python framework to visualize and verifiy the 
+We provide an exemplary Python framework to visualize and verify the 
 FELINE results.
 
 From the resulting spatial map of best model probabilities, the peaks are automatically

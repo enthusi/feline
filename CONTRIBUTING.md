@@ -48,8 +48,8 @@ Understand the layout of the project to navigate and contribute effectively:
 - `src/preprocessing`: Source Code for everything related to preprocessing the data
 - `src/postprocessing`: Source Code for everything after running the main program
 - `src/`: feline.c and feline.cu for either CPU or GPU execution
-- `data/`: Here is all temporary data stored while excecuting the workflow
-- `data/pdf_files`: Here will be all of the resulting PDF files stored after excecuting the workflow
+- `data/`: Here is all temporary data stored while executing the workflow
+- `data/pdf_files`: Here will be all of the resulting PDF files stored after executing the workflow
 
 
 ## Branching and Workflow
