@@ -13,7 +13,7 @@ authors:
     given-names: Oskar
     affiliation: University of Potsdam
     orcid: https://orcid.org/0009-0004-1200-9130
-title: "FELINE - Find Emission Lines"
+title: "FELINE: A Tool to Detect Emission Line Galaxies in 3D Data"
 version: 1.0.0
 identifiers:
   - type: doi
