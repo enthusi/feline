@@ -17,5 +17,5 @@ title: "FELINE - Find Emission Lines"
 version: 1.0.0
 identifiers:
   - type: doi
-    value: doi value will come here after publishing
+    value: 10.21105/joss.07528
 date-released: 2024-09-12
