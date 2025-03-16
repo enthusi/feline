@@ -39,7 +39,7 @@ def show_result(expected_hash: str, file_path: str) -> None:
 
 
 def round_raw_array(file_path: str) -> None:
-    """Read aand round the raw array to the first decimal place."""
+    """Read and round the raw array to the first decimal place."""
     np.round(np.fromfile(file_path, dtype=np.float32), 1).astype(np.float32).tofile(FILE_PATH_ROUNDED_ARRAY)
 
 
