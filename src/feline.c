@@ -364,22 +364,39 @@ int main(int argc, char *argv[]) {
     res_i_file = fopen(DATA_PATH_RUNTIME_FILES "feline_float32_array.raw", "wb");
     fwrite(res_i, (sizeof(float) * dy * dx * layer), 1, res_i_file);
 
-
 #if SDLavailable
     char *file = DATA_PATH_RUNTIME_FILES "map_omp4.bmp";
-    SDL_RenderPresent(renderer);
-    SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, screen->pixels, screen->pitch);
-    if (SDL_SaveBMP(screen, file) != 0) {
-        fprintf(stderr, "Could not write %s!\n", file);
+    
+    // Get renderer's output size
+    int w = 1440;
+    int h = 360 * ((float)dy / dx) + 1;
+    Uint32 format = SDL_GetWindowPixelFormat(window);
+    // Create a new surface with the same dimensions and format
+    SDL_Surface *screenshot = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format);
+    if (!screenshot) {
+        fprintf(stderr, "SDL_CreateRGBSurfaceWithFormat failed: %s\n", SDL_GetError());
+    } else {
+        // Present the rendered content to ensure it's updated on screen
+        SDL_RenderPresent(renderer);
+        
+        // Read pixels from the current render target into the screenshot surface
+        if (SDL_RenderReadPixels(renderer, NULL, format,
+                                 screenshot->pixels, screenshot->pitch) != 0) {
+            fprintf(stderr, "SDL_RenderReadPixels failed: %s\n", SDL_GetError());
+        }
+        else {
+            // Save the screenshot to a BMP file
+            if (SDL_SaveBMP(screenshot, file) != 0) {
+                fprintf(stderr, "Could not write %s!\n", file);
+            }
+        }
+        // Free the temporary surface
+        SDL_FreeSurface(screenshot);
     }
 
+    // Continue with your rendering routine
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
-
-    if (SDL_MUSTLOCK(screen)) {
-        SDL_UnlockSurface(screen);
-    }
-
 #endif
     return 0;
 }
